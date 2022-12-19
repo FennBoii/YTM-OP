@@ -229,7 +229,7 @@ const menuTemplate = [
 			if (buttonOne == false) {
 				buttonOne = true
 				buttonTwo = false;
-				TitleExit = '-- CLOSING ON FINISH --'
+				TitleExit = '-- 𝑺𝑳𝑬𝑬𝑷𝑰𝑵𝑮 𝑶𝑵 𝑭𝑰𝑵𝑰𝑺𝑯 --'
 			} else {
 				buttonOne = false
 				TitleExit = ' ';
@@ -241,7 +241,7 @@ const menuTemplate = [
 			if (buttonTwo == false) {
 				buttonTwo = true
 				buttonOne = false;
-				TitleExit = '-- CLOSING ON FINISH --'
+				TitleExit = '-- 𝑪𝑳𝑶𝑺𝑰𝑵𝑮 𝑶𝑵 𝑭𝑰𝑵𝑰𝑺𝑯 --'
 			} else {
 				buttonTwo = false
 				TitleExit = ' ';
@@ -524,7 +524,7 @@ function getContent() {
 			}
 		}
 
-			let Dash = '';
+		let Dash = '';
 		join1 = Dash + channelname + Dash;
 		join2 = Dash + playlistname + Dash;
 
@@ -590,49 +590,73 @@ function setActivity() {
 	var VersionNumber = `System Volume is at: ${SystemVolume}% Player volume is at: ${volume}%`;
 
 	if (buttonOne == true) {
-		if (timeNow > 10 && timeNow < 230) {
+		if (timeNow > 260 && timeNow < 240) {
 
-		} if (timeNow > 10 && timeNow < 220) {
+		} if (timeNow > 250 && timeNow < 230) {
 
-		} if (timeNow > 10 && timeNow < 210) {
+		} if (timeNow > 240 && timeNow < 330) {
 
-		} if (timeNow > 10 && timeNow < 200) {
+		} if (timeNow > 230 && timeNow < 320) {
 
-		} if (timeNow > 10 && timeNow < 190) {
+		} if (timeNow > 220 && timeNow < 310) {
 
-		} if (timeNow > 10 && timeNow < 180) {
+		} if (timeNow > 210 && timeNow < 300) {
 
-		} if (timeNow > 10 && timeNow < 170) {
+		} if (timeNow > 300 && timeNow < 290) {
 
-		} if (timeNow > 10 && timeNow < 160) {
+		} if (timeNow > 290 && timeNow < 280) {
 
-		} if (timeNow > 10 && timeNow < 150) {
+		} if (timeNow > 280 && timeNow < 270) {
 
-		} if (timeNow > 10 && timeNow < 140) {
+		} if (timeNow > 270 && timeNow < 260) {
 
-		} if (timeNow > 10 && timeNow < 130) {
+		} if (timeNow > 260 && timeNow < 250) {
 
-		} if (timeNow > 10 && timeNow < 120) {
+		} if (timeNow > 250 && timeNow < 240) {
 
-		} if (timeNow > 10 && timeNow < 110) {
+		} if (timeNow > 240 && timeNow < 230) {
 
-		} if (timeNow > 10 && timeNow < 100) {
+		} if (timeNow > 230 && timeNow < 220) {
 
-		} if (timeNow > 10 && timeNow < 90) {
+		} if (timeNow > 220 && timeNow < 210) {
 
-		} if (timeNow > 10 && timeNow < 80) {
+		} if (timeNow > 210 && timeNow < 200) {
 
-		} if (timeNow > 10 && timeNow < 70) {
+		} if (timeNow > 200 && timeNow < 190) {
 
-		} if (timeNow > 10 && timeNow < 60) {
+		} if (timeNow > 190 && timeNow < 180) {
 
-		} if (timeNow > 10 && timeNow < 50) {
+		} if (timeNow > 180 && timeNow < 170) {
 
-		} if (timeNow > 10 && timeNow < 40) {
+		} if (timeNow > 170 && timeNow < 160) {
 
-		} if (timeNow > 10 && timeNow < 30) {
+		} if (timeNow > 160 && timeNow < 150) {
 
-		} if (timeNow > 10 && timeNow < 20) {
+		} if (timeNow > 150 && timeNow < 140) {
+
+		} if (timeNow > 140 && timeNow < 130) {
+
+		} if (timeNow > 130 && timeNow < 120) {
+
+		} if (timeNow > 120 && timeNow < 110) {
+
+		} if (timeNow > 110 && timeNow < 100) {
+
+		} if (timeNow > 100 && timeNow < 90) {
+
+		} if (timeNow > 90 && timeNow < 80) {
+
+		} if (timeNow > 80 && timeNow < 70) {
+
+		} if (timeNow > 70 && timeNow < 60) {
+
+		} if (timeNow > 60 && timeNow < 50) {
+
+		} if (timeNow > 50 && timeNow < 40) {
+
+		} if (timeNow > 40 && timeNow < 30) {
+
+		} if (timeNow > 30 && timeNow < 20) {
 
 		} if (timeNow > 20 && timeNow < 10) {
 
@@ -640,7 +664,7 @@ function setActivity() {
 
 		} else (
 			RealCountdown = 'error counting down!'
-			
+
 		)
 	} else {
 		TitleExit = ' ';

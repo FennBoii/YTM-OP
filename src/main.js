@@ -556,6 +556,8 @@ let startTimestamp = new Date(),
 	endTimestamp;
 let songInfo;
 
+var theElement = "document.querySelector('#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > span:nth-child(1)').textContent"
+
 // eslint-disable-next-line complexity
 function setActivity() {
 	if (!rpc || !win) {
@@ -744,6 +746,7 @@ function setActivity() {
 		state = `${NewerTitle} ${artist[0] || 'Unknown'} • ${artist[1] || 'Unknown'} • ${artist[2] || 'Unknown'}`;
 		// state = `${artist[0] || 'Unknown'} • ${artist[1] || 'Unknown'} • ${artist[2] || 'Unknown'}`;
 
+		
 		let fennecc = imageicon.replace('w60', 'w2080');
 		fennec = fennecc.replace('h60', 'h2080');
 		let largeImagePresent = VersionNumber; // ----------------------------- //

@@ -36,6 +36,7 @@ const { comparatorTrimReplace } = require('prettier/doc');
 const { receiveMessageOnPort } = require('worker_threads');
 const sleep = delay => new Promise(resolve => setTimeout(resolve, delay));
 const { timeStamp } = require('console'); */
+LETITREAD();
 var port = 8008;
 var host = "127.0.0.1";
 const dataPath = app.getPath('userData');
@@ -53,7 +54,7 @@ var titleTwo = ' ';
 var detailsTwo = '- Loading -';
 var stateTwo = '- Loading -';
 // var button = 'none';
-var ConnectDis = '- Disconnected -';
+var ConnectDis = '[ Disconnected ]';
 var detailsThree = 'Default';
 var channel = 'https://google.com';
 var error_bool = false;
@@ -82,11 +83,11 @@ var buttonTwo = false;
 var buttonThree = false;
 var buttonFour = false;
 var username;
-var getNAME;
-var TitleExit;
+var getNAME = 'noneforNow';
+var TitleExit = ' ';
 var connectCounter = 1;
-// win.setTitle('𝕎𝕖𝕝𝕔𝕠𝕞𝕖 𝕓𝕒𝕔𝕜 𝔽𝕖𝕟𝕟𝕖𝕔 ' + `[ ${titleTwo} - ${stateTwo} ] [ ${ConnectionTitle} ]`); // Added 'PageTitleReload' function for constant reload
-// var setTitleVar = `𝕎𝕖𝕝𝕔𝕠𝕞𝕖 𝕓𝕒𝕔𝕜 𝔽𝕖𝕟𝕟𝕖𝕔 ` + `[ ${titleTwo} - ${stateTwo} ] [ ${ConnectionTitle} ]` // Added 'PageTitleReload' function for constant reload"
+var RealCountdownTitleBar = ' ';
+var CountdownTimerVar = false;
 
 // [ ------------------------------------------------------- ]
 // [ ------------------------------------------------------- ]
@@ -103,9 +104,6 @@ var SystemVolume = 78;
 // 	SystemVolume = winAudio.speaker.get();
 // 	setTimeout(LoopAudioGet, 500);
 // }
-
-process.stdout.write('\x1Bc');
-console.log('-- Welcome Back Fennec --');
 
 try {
 	JSON.parse(fs.readFileSync(generalConfigPath));
@@ -130,20 +128,368 @@ function executeJavaScript(code) {
 	});
 }
 
-fs.readFile('src/username.txt', 'utf-8', (err, data) => {
-	if (err) throw err;
 
-	// Converting Raw Buffer to text
-	// data using tostring function.
-	getNAME = data;
-});
+
+function LETITREAD() {
+	fs.readFile('src\\username.txt', 'utf8', (err, data) => {
+		if (err) {
+			console.error(err);
+			return;
+		}
+		getNAME = data;
+	});
+}
+
+function SETITSNAME() {
+	console.log('-- Welcome Back ' + getNAME + ' --');
+}
+
+process.stdout.write('\x1Bc');
+setTimeout(SETITSNAME, 600);
 
 
 let win, settingsWin;
 const menuTemplate = [{
-		label: 'Welcome back',
-		getNAME,
-		click() {},
+		// 	label: 'Welcome back' + getNAME,
+		// 	click() {
+		// 		LETITREAD();
+		// {
+		//
+
+		label: 'Utils',
+		submenu: [{
+				label: 'Connection',
+				submenu: [{
+						label: '-- Connect --',
+						click() {
+							if (connectCounter == 0) {
+								reconnect();
+								ConnectDis = '[ Connected ]';
+								error_bool = false;
+								connectCounter += 1;
+							}
+							if (connectCounter == 1) {
+								console.log('NO!')
+							}
+						},
+						accelerator: 'Ctrl+Alt+1',
+					},
+					{
+						label: '-- Disconnect --',
+						click() {
+							error_bool = true;
+							rpc.destroy();
+							ConnectDis = '[ Disconnected ]';
+							connectCounter -= 1;
+						},
+						accelerator: 'Ctrl+Alt+2',
+					},
+					{
+						label: 'Reset RPC Connection',
+						click() {
+							setTimeout(DiscordDisconnect, 0);
+							setTimeout(DiscordConnect, 100);
+						},
+					},
+				],
+			},
+			{
+				label: 'On End Power Options',
+				submenu: [{
+						label: 'Quit Application',
+						click() {
+							if (buttonOne == false) {
+								buttonOne = true;
+								buttonTwo = false;
+								buttonThree = false;
+								buttonFour = false;
+								TitleExit = ' [ -- 𝑪𝑳𝑶𝑺𝑰𝑵𝑮 𝑨𝑷𝑷𝑳𝑰𝑪𝑨𝑻𝑰𝑶𝑵 𝑶𝑵 𝑬𝑵𝑫 -- ]';
+								CountdownTimerVar = true;
+							} else {
+								buttonOne = false;
+								TitleExit = ' ';
+								CountdownTimerVar = false;
+							}
+						},
+					},
+					{
+						label: 'Sleep PC',
+						click() {
+							if (buttonTwo == false) {
+								buttonOne = false;
+								buttonTwo = true;
+								buttonThree = false;
+								buttonFour = false;
+								TitleExit = ' [ -- 𝑺𝑳𝑬𝑬𝑷𝑰𝑵𝑮 𝑷𝑪 𝑶𝑵 𝑬𝑵𝑫 -- ]';
+								CountdownTimerVar = true;
+							} else {
+								buttonTwo = false;
+								TitleExit = ' ';
+								CountdownTimerVar = false;
+							}
+						},
+					},
+					{
+						label: 'Restart PC',
+						click() {
+							if (buttonThree == false) {
+								buttonOne = false;
+								buttonTwo = false;
+								buttonThree = true;
+								buttonFour = false;
+								TitleExit = ' [ -- 𝑹𝑬𝑺𝑻𝑨𝑹𝑻𝑰𝑵𝑮 𝑷𝑪 𝑶𝑵 𝑬𝑵𝑫 -- ]';
+								CountdownTimerVar = true;
+							} else {
+								buttonThree = false;
+								TitleExit = ' ';
+								CountdownTimerVar = false;
+							}
+						},
+					},
+					{
+						label: 'Shutdown PC',
+						click() {
+							if (buttonFour == false) {
+								buttonOne = false;
+								buttonTwo = false;
+								buttonThree = false;
+								buttonFour = true;
+								TitleExit = ' [ -- 𝑺𝑯𝑼𝑻𝑻𝑰𝑵𝑮 𝑫𝑶𝑾𝑵 𝑷𝑪 𝑶𝑵 𝑬𝑵𝑫 -- ]';
+								CountdownTimerVar = true;
+							} else {
+								buttonFour = false;
+								TitleExit = ' ';
+								CountdownTimerVar = false;
+							}
+						},
+					},
+					{
+						label: 'Toggle Off',
+						click() {
+							buttonOne = false;
+							buttonTwo = false;
+							buttonThree = false;
+							buttonFour = false;
+							TitleExit = ' ';
+							CountdownTimerVar = false;
+						},
+					},
+				]
+			},
+			{
+				label: 'Buttons',
+				submenu: [
+					// {
+					// 	label: '- Button Stats -',
+					// 	label:	PlaylistCounter,
+					// },
+					{
+						label: 'ToggleButtonsOn',
+						click() {
+							ToggleButtons = true;
+							ToggleArtist = true;
+							TogglePlaylist = true;
+							secondTitle = true;
+							thirdTitle = true;
+						},
+					},
+					{
+						label: 'ToggleButtonsOff',
+						click() {
+							ToggleButtons = false;
+							ToggleArtist = false;
+							TogglePlaylist = false;
+							secondTitle = false;
+							thirdTitle = false;
+						},
+					},
+					{
+						label: 'TogglePlaylist',
+						click() {
+							if (TogglePlaylist === true) {
+								TogglePlaylist = false;
+								ToggleButtons = false;
+								secondTitle = false;
+							} else {
+								TogglePlaylist = true;
+								ToggleButtons = true;
+								secondTitle = true;
+							}
+						},
+					},
+					{
+						label: 'ToggleArtist',
+						click() {
+							if (ToggleArtist === true) {
+								ToggleArtist = false;
+								ToggleButtons = false;
+								thirdTitle = false;
+							} else {
+								ToggleArtist = true;
+								ToggleButtons = true;
+								thirdTitle = true;
+							}
+						},
+					},
+					{
+						label: 'ToggleChannel',
+						click() {
+							if (ChannelToggle === true) {
+								ChannelToggle = false;
+							} else {
+								ChannelToggle = true;
+							}
+						},
+					},
+				]
+			},
+			{
+				label: 'Incoming Connections',
+				submenu: [{
+						label: 'None',
+						click() {
+							ConnectionTitle = ' '
+						},
+					},
+					{
+						label: 'Sending',
+						click() {
+							ConnectionTitle = '[ -- Sending -- ]'
+
+						},
+					},
+					{
+						label: 'Recieving',
+						click() {
+							ConnectionTitle = '[ -- Recieving -- ]'
+
+							storeValues.get('/stream', (req, res) => {
+								const ffmpegCommand = "ffmpeg";
+								var ffmpegOptions =
+									"-f s16le -ar 48000 -ac 2 -i udp://127.0.0.1:65535 -f wav -";
+
+								var ffm = children.spawn(ffmpegCommand, ffmpegOptions.split(" "));
+
+								res.writeHead(200, {
+									"Content-Type": "audio/wav; codecs=PCM"
+								});
+								ffm.stdout.pipe(res);
+							});
+						},
+					}
+				],
+			},
+			{
+				label: 'Confirm Connection',
+				click() {
+					console.log('Connected');
+					if (ConnectionTitle = 'None') {
+						storeValues.listen(port, host, () => {
+							console.log("Server running at http://" + host + ":" + port + "/");
+						});
+
+					}
+					if (ConnectionTitle = '[ -- Sending -- ]') {
+
+					}
+					if (ConnectionTitle = '[ -- Recieving -- ]') {
+
+					}
+				},
+			},
+			// {
+			// 	label: 'Some Checks',
+			// 	submenu: [{
+			// 			label: 'Full Sync Check',
+			// 			click() {
+			// 				fullSync();
+			// 			},
+			// 		},
+			// 		{
+			// 			label: 'Check',
+			// 			click() {
+
+			// 			},
+			// 		},
+			// 		{
+			// 			label: 'CheckExistsNormal',
+			// 			click() {
+			// 				if (typeof (NormalElement) != 'undefined' && element != null) {
+			// 					alert('Element exists');
+			// 				} else {
+			// 					alert('Element does not exist');
+			// 				}
+			// 			},
+			// 		},
+			// 		{
+			// 			label: 'CheckExistsChannelToggle',
+			// 			click() {
+			// 				if (typeof (ChannelMutatedElement) != 'undefined' && element != null) {
+			// 					alert('Element exists');
+			// 				} else {
+			// 					alert('Element does not exist');
+			// 				}
+			// 			},
+			// 		},
+			// 	],
+			// },
+			{
+				label: 'Extra',
+				submenu: [{
+						role: 'Reload'
+					},
+					{
+						type: 'separator'
+					},
+					{
+						role: 'toggledevtools'
+					},
+					{
+						type: 'separator'
+					},
+					{
+						role: 'minimize'
+					},
+					{
+						type: 'separator'
+					},
+					{
+						role: 'undo'
+					},
+					{
+						role: 'redo'
+					},
+					{
+						type: 'separator'
+					},
+					{
+						role: 'cut'
+					},
+					{
+						role: 'copy'
+					},
+					{
+						role: 'paste'
+					},
+					{
+						type: 'separator'
+					},
+					{
+						role: 'quit',
+						accelerator: 'Ctrl+Q',
+					},
+					{
+						type: 'separator'
+					},
+					{
+						label: 'Copy CoverImageURL',
+						click() {
+							clipboard.writeText(fennec);
+						},
+					},
+				]
+			},
+		],
 	},
 	{
 		label: 'Go Back',
@@ -157,325 +503,6 @@ const menuTemplate = [{
 			win.webContents.goForward();
 		},
 	},
-	{
-		label: 'Power Options',
-		submenu: [{
-				label: 'Quit Application',
-				click() {
-					if (buttonOne == false) {
-						buttonOne = true;
-						buttonTwo = false;
-						buttonThree = false;
-						buttonFour = false;
-						TitleExit = '-- 𝑪𝑳𝑶𝑺𝑰𝑵𝑮 𝑶𝑵 𝑬𝑵𝑫 --';
-					} else {
-						buttonOne = false
-						TitleExit = ' ';
-					}
-				},
-			},
-			{
-				label: 'Sleep PC',
-				click() {
-					if (buttonTwo == false) {
-						buttonOne = false;
-						buttonTwo = true;
-						buttonThree = false;
-						buttonFour = false;
-						TitleExit = '-- 𝑺𝑳𝑬𝑬𝑷𝑰𝑵𝑮 𝑶𝑵 𝑬𝑵𝑫 --';
-					} else {
-						buttonTwo = false
-						TitleExit = ' ';
-					}
-				},
-			},
-			{
-				label: 'Restart PC',
-				click() {
-					if (buttonThree == false) {
-						buttonOne = false;
-						buttonTwo = false;
-						buttonThree = false;
-						buttonFour = false;
-						TitleExit = '-- 𝑹𝑬𝑺𝑻𝑨𝑹𝑻𝑰𝑵𝑮 𝑶𝑵 𝑬𝑵𝑫 --';
-					} else {
-						buttonThree = false
-						TitleExit = ' ';
-					}
-				},
-			},
-			{
-				label: 'Shutdown PC',
-				click() {
-					if (buttonFour == false) {
-						buttonOne = false;
-						buttonTwo = false;
-						buttonThree = false;
-						buttonFour = false;
-						TitleExit = '-- 𝑺𝑯𝑼𝑻𝑫𝑶𝑾𝑵 𝑶𝑵 𝑬𝑵𝑫 --';
-					} else {
-						buttonFour = false
-						TitleExit = ' ';
-					}
-				},
-			},
-			{
-				label: 'SET ALL FALSE',
-				click() {
-					buttonOne = false;
-					buttonTwo = false;
-					buttonThree = false;
-					buttonFour = false;
-				},
-			},
-		]
-	},
-	{
-		label: 'Buttons',
-		submenu: [{
-				label: 'ToggleButtonsOn',
-				click() {
-					ToggleButtons = true;
-					ToggleArtist = true;
-					TogglePlaylist = true;
-					secondTitle = true;
-					thirdTitle = true;
-				},
-			},
-			{
-				label: 'ToggleButtonsOff',
-				click() {
-					ToggleButtons = false;
-					ToggleArtist = false;
-					TogglePlaylist = false;
-					secondTitle = false;
-					thirdTitle = false;
-				},
-			},
-			{
-				label: 'TogglePlaylist',
-				click() {
-					if (TogglePlaylist === true) {
-						TogglePlaylist = false;
-						ToggleButtons = false;
-						secondTitle = false;
-					} else {
-						TogglePlaylist = true;
-						ToggleButtons = true;
-						secondTitle = true;
-					}
-				},
-			},
-			{
-				label: 'ToggleArtist',
-				click() {
-					if (ToggleArtist === true) {
-						ToggleArtist = false;
-						ToggleButtons = false;
-						thirdTitle = false;
-					} else {
-						ToggleArtist = true;
-						ToggleButtons = true;
-						thirdTitle = true;
-					}
-				},
-			},
-			{
-				label: 'ToggleChannel',
-				click() {
-					if (ChannelToggle === true) {
-						ChannelToggle = false;
-					} else {
-						ChannelToggle = true;
-					}
-				},
-			},
-
-		],
-	},
-	{
-		label: 'Connections',
-		submenu: [{
-				label: 'None',
-				click() {
-					ConnectionTitle = 'None'
-				},
-			},
-			{
-				label: 'Connecting',
-				click() {
-					ConnectionTitle = '-Connecting-'
-
-				},
-			},
-			{
-				label: 'Recieving',
-				click() {
-					ConnectionTitle = '-Recieving-'
-
-					storeValues.get('/stream', (req, res) => {
-						const ffmpegCommand = "ffmpeg";
-						var ffmpegOptions =
-							"-f s16le -ar 48000 -ac 2 -i udp://127.0.0.1:65535 -f wav -";
-
-						var ffm = children.spawn(ffmpegCommand, ffmpegOptions.split(" "));
-
-						res.writeHead(200, {
-							"Content-Type": "audio/wav; codecs=PCM"
-						});
-						ffm.stdout.pipe(res);
-					});
-				},
-			}
-		],
-	},
-	{
-		label: 'Confirm',
-		click() {
-			console.log('Connected');
-			if (ConnectionTitle = 'None') {
-				storeValues.listen(port, host, () => {
-					console.log("Server running at http://" + host + ":" + port + "/");
-				});
-
-			}
-			if (ConnectionTitle = '-Connecting-') {
-
-			}
-			if (ConnectionTitle = '-Recieving-') {
-
-			}
-		},
-	},
-	{
-		label: 'Extra',
-		submenu: [{
-				role: 'Reload'
-			},
-			{
-				type: 'separator'
-			},
-			{
-				role: 'toggledevtools'
-			},
-			{
-				type: 'separator'
-			},
-			{
-				role: 'minimize'
-			},
-			{
-				type: 'separator'
-			},
-			{
-				role: 'undo'
-			},
-			{
-				role: 'redo'
-			},
-			{
-				type: 'separator'
-			},
-			{
-				role: 'cut'
-			},
-			{
-				role: 'copy'
-			},
-			{
-				role: 'paste'
-			},
-			{
-				type: 'separator'
-			},
-			{
-				role: 'quit',
-				accelerator: 'Ctrl+Q',
-			},
-			{
-				type: 'separator'
-			},
-			{
-				label: 'Copy CoverImageURL',
-				click() {
-					clipboard.writeText(fennec);
-				},
-			},
-		],
-	},
-	{
-		label: 'Connection',
-		submenu: [{
-				label: '-- Connect --',
-				click() {
-					if (connectCounter == 0) {
-						reconnect();
-						ConnectDis = '| Connected |';
-						error_bool = false;
-						connectCounter += 1;
-					}
-					if (connectCounter == 1) {
-						console.log('NO!')
-						connectCounter -= 1;
-					}
-				},
-				accelerator: 'Ctrl+Alt+1',
-			},
-			{
-				label: '-- Disconnect --',
-				click() {
-					error_bool = true;
-					rpc.destroy();
-					ConnectDis = '| Disconnected |';
-					connectCounter -= 1;
-				},
-				accelerator: 'Ctrl+Alt+2',
-			},
-			{
-				label: 'Reset RPC Connection',
-				click() {
-					setTimeout(DiscordDisconnect, 0);
-					setTimeout(DiscordConnect, 100);
-				},
-			},
-		],
-	},
-	{
-		label: 'Some Checks',
-		submenu: [{
-				label: 'Full Sync Check',
-				click() {
-					fullSync();
-				},
-			},
-			{
-				label: 'Check',
-				click() {
-
-				},
-			},
-			{
-				label: 'CheckExistsNormal',
-				click() {
-					if (typeof (NormalElement) != 'undefined' && element != null) {
-						alert('Element exists');
-					} else {
-						alert('Element does not exist');
-					}
-				},
-			},
-			{
-				label: 'CheckExistsChannelToggle',
-				click() {
-					if (typeof (ChannelMutatedElement) != 'undefined' && element != null) {
-						alert('Element exists');
-					} else {
-						alert('Element does not exist');
-					}
-				},
-			}
-		]
-	}
 ];
 
 var NormalElement = "document.querySelector('#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(3)').text";
@@ -489,7 +516,7 @@ function DiscordConnect() {
 
 function DiscordDisconnect() {
 	rpc.destroy();
-	ConnectDis = '-- Disconnected --';
+	ConnectDis = '[ Disconnected ]';
 }
 
 if (process.platform === 'win64') {
@@ -549,12 +576,12 @@ function createWindow() {
 		fs.writeFileSync(generalConfigPath, JSON.stringify(config, null, '\t'));
 	});
 	win.on('closed', () => {
+		rpc.destroy();
+		ConnectDis = '[ Disconnected ]';
 		win = null;
 	});
 	win.on('page-title-updated', (e, title) => {
-		// win.setTitle(`${title} - v${require('../package.json').version}${ConnectDis}`); 
-		// win.setTitle(`${titleTwo} - v${require('../package.json').version} ${ConnectDis} ${TitleExit} [ ${ConnectionTitle} ]`);
-		win.setTitle(`${titleTwo} - ${stateTwo} - ${PlaylistCounter} ${TitleExit} [ ${ConnectionTitle} ]`); // Added 'PageTitleReload' function for onload, connect
+		win.setTitle(`Welcome back ${getNAME} ${ConnectDis} ` + `${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}`); // Added 'PageTitleReload' function for constant reload
 		e.preventDefault();
 	});
 
@@ -751,42 +778,56 @@ function getContent() {
 		CountdownTime = timeMax - timeNow;
 		RealCountdown = CountdownTime - 3;
 
+		if (CountdownTimerVar == true) {
+			RealCountdownTitleBar = '[ Countdown Till End: ' + RealCountdown + ' ]';
+		}
+
+		if (CountdownTimerVar == false) {
+			RealCountdownTitleBar = ' ';
+		}
+
 		if (buttonFour == true) {
 			if (timeNow == timeMaxMinus) {
-				// var exec = require('child_process').exec;
+				rpc.destroy();
+				ConnectDis = '[ Disconnected ]';
+				var exec = require('child_process').exec;
 
-				// exec('shutdown /s',
-				// 	function (error, stdout, stderr) {
-				// 		console.log('stdout: ' + stdout);
-				// 		console.log('stderr: ' + stderr);
-				// 		if (error !== null) {
-				// 			console.log('exec error: ' + error);
-				// 		}
-				// 	});
-				// app.quit();
+				exec('shutdown /s',
+					function (error, stdout, stderr) {
+						console.log('stdout: ' + stdout);
+						console.log('stderr: ' + stderr);
+						if (error !== null) {
+							console.log('exec error: ' + error);
+						}
+					});
+				app.quit();
 				console.log('SHUTDOWN TIME');
 			}
 		}
 
 		if (buttonThree == true) {
 			if (timeNow == timeMaxMinus) {
-				// var exec = require('child_process').exec;
+				rpc.destroy();
+				ConnectDis = '[ Disconnected ]';
+				var exec = require('child_process').exec;
 
-				// exec('shutdown /r /t 10s',
-				// 	function (error, stdout, stderr) {
-				// 		console.log('stdout: ' + stdout);
-				// 		console.log('stderr: ' + stderr);
-				// 		if (error !== null) {
-				// 			console.log('exec error: ' + error);
-				// 		}
-				// 	});
-				// app.quit();
+				exec('shutdown /r /t 2s',
+					function (error, stdout, stderr) {
+						console.log('stdout: ' + stdout);
+						console.log('stderr: ' + stderr);
+						if (error !== null) {
+							console.log('exec error: ' + error);
+						}
+					});
+				app.quit();
 				console.log('REBOOT TIME');
 			}
 		}
 
 		if (buttonTwo == true) {
 			if (timeNow == timeMaxMinus) {
+				rpc.destroy();
+				ConnectDis = '[ Disconnected ]';
 				var exec = require('child_process').exec;
 
 				exec('rundll32.exe powrprof.dll, SetSuspendState Sleep',
@@ -804,9 +845,13 @@ function getContent() {
 
 		if (buttonOne == true) {
 			if (timeNow == timeMaxMinus) {
-				app.quit();
+				rpc.destroy();
+				ConnectDis = '[ Disconnected ]';
+				if (timeNow == timeMaxMinus) {
+					app.quit();
+				}
+				console.log('QUIT TIME');
 			}
-			console.log('QUIT TIME');
 		}
 
 		let Dash = '';
@@ -828,7 +873,8 @@ function getContent() {
 			document.createElement('textarea');
 		}
 		return resolve({
-			getnameLocal,
+			getNAME,
+			TitleExit,
 			username,
 			buttonOne,
 			buttonTwo,
@@ -1155,9 +1201,9 @@ function setActivity() {
 		// SECTION FOR ALL WRITE-OUT DATA WITH THE TERMINAL -- CHECK HERE
 		process.stdout.write('\x1Bc');
 		console.log('-- Here\'s Some Info Lovely --\n');
-		console.log(' ');
-		// console.log('--', searchAbout, 'is Forming --\n');
-		console.log('-- Love is Forming --');
+		// console.log(' ');
+		// // console.log('--', searchAbout, 'is Forming --\n');
+		// console.log('-- Love Is Forming --');
 		console.log(songInfo);
 		detailsTwo = details;
 		stateTwo = state;
@@ -1401,15 +1447,11 @@ async function updateSongInfo() {
 	}
 }
 
-// var setTitleVar = `𝕎𝕖𝕝𝕔𝕠𝕞𝕖 𝕓𝕒𝕔𝕜 𝔽𝕖𝕟𝕟𝕖𝕔 ` + `[ ${titleTwo} - ${stateTwo} ] [ ${ConnectionTitle} ]`;
-
 rpc.once('disconnected', title => {
 	rpc.destroy();
 	// reconnectTimer = setInterval(reconnect, 5e3);
-	ConnectDis = '| Disconnected |';
-	// win.setTitle(`${titleTwo} - v${require('../package.json').version} ${ConnectDis} ${TitleExit} [ ${ConnectionTitle} ]`); // Added 'ConnectDis' var
-	// win.setTitle(`${titleTwo} - ${stateTwo} - ${PlaylistCounter} ${TitleExit} [ ${ConnectionTitle} ]`); // Added 'PageTitleReload' function for onload, connect
-	win.setTitle(`𝕎𝕖𝕝𝕔𝕠𝕞𝕖 𝕓𝕒𝕔𝕜 𝔽𝕖𝕟𝕟 ` + `[ ${titleTwo} - ${stateTwo} ] [ ${ConnectionTitle} ]`); // Added 'PageTitleReload' function for constant reload
+	ConnectDis = '[ Disconnected ]';
+	win.setTitle(`dWelcome back ${getNAME} ${ConnectDis} ` + `[ ${titleTwo} -${stateTwo} ]${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}`); // Added 'PageTitleReload' function for constant reload
 });
 
 function reconnect() {
@@ -1421,16 +1463,14 @@ function reconnect() {
 		clientId
 	}).then(() => {
 		clearInterval(reconnectTimer);
-		ConnectDis = '| Connected |';
+		ConnectDis = '[ Connected ]';
 		console.log('-- Connected --');
-		// win.setTitle(`${titleTwo} - ${stateTwo} - ${PlaylistCounter} ${TitleExit} [ ${ConnectionTitle} ]`); // Added 'PageTitleReload' function for onload, connect
-		win.setTitle(`𝕎𝕖𝕝𝕔𝕠𝕞𝕖 𝕓𝕒𝕔𝕜 𝔽𝕖𝕟𝕟𝕖𝕔 ` + `[ ${titleTwo} - ${stateTwo} ] [ ${ConnectionTitle} ]`); // Added 'PageTitleReload' function for constant reload
+		win.setTitle(`cWelcome back ${getNAME} ${ConnectDis} ` + `[ ${titleTwo} -${stateTwo} ]${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}`); // Added 'PageTitleReload' function for constant reload
 	}).catch(err => {
 		rpc = null;
 		console.error(err);
-		ConnectDis = '| Disconnected |';
-		// win.setTitle(`${titleTwo} - ${stateTwo} - ${PlaylistCounter} ${TitleExit} [ ${ConnectionTitle} ]`); // Added 'PageTitleReload' function for failsafe
-		win.setTitle(`𝕎𝕖𝕝𝕔𝕠𝕞𝕖 𝕓𝕒𝕔𝕜 𝔽𝕖𝕟𝕟𝕖𝕔 ` + `[ ${titleTwo} - ${stateTwo} ] [ ${ConnectionTitle} ]`); // Added 'PageTitleReload' function for constant reload
+		ConnectDis = '[ Disconnected ]';
+		win.setTitle(`bWelcome back ${getNAME} ${ConnectDis} ` + `[ ${titleTwo} -${stateTwo} ]${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}`); // Added 'PageTitleReload' function for constant reload
 	});
 }
 
@@ -1439,7 +1479,7 @@ function getNativeImage(filePath) {
 }
 
 function setPageName() {
-	win.setTitle(`𝕎𝕖𝕝𝕔𝕠𝕞𝕖 𝕓𝕒𝕔𝕜 𝔽𝕖𝕟𝕟𝕖𝕔 ` + `[ ${titleTwo} - ${stateTwo} ] [ ${ConnectionTitle} ]`); // Added 'PageTitleReload' function for constant reload
+	win.setTitle(`aWelcome back ${getNAME} ${ConnectDis} ` + `[ ${titleTwo} -${stateTwo} ]${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}`); // Added 'PageTitleReload' function for constant reload
 }
 
 function fullSync() { // ======== A FUNCTION TO SEND DATA TO A WEB-SERVER ========
@@ -1614,7 +1654,7 @@ rpc.on('ready', title => {
 	//setInterval(fullSync, 1e3);
 	setInterval(updateSongInfo, 1e3);
 	setInterval(setPageName, 1e3);
-	ConnectDis = '| Connected |';
+	ConnectDis = '[ Connected ]';
 });
 
 rpc.login({

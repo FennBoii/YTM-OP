@@ -11,7 +11,7 @@
 - Add Releases so you can just get a distribution player instead of a whole package you need to compile yourself everytime
 - Make everything look neater with a better menu and cleaner look
 - Allow the titlebar to be customized through text in textfiles for untimate customization
-    - If you've got any ideas, leave them somewhere maybe in issued idk I'll *most-likely* add them
+    - If you've got any ideas, leave them somewhere maybe in issues idk I'll *definitely* add them
 
 
 </center>

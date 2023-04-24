@@ -1,4 +1,5 @@
 <center>
+<b>THERE MAY BE ERRORS WHEN CLOSING AND MAYBE SOME DURING, I AM WORKING ON THESE JUST RESTART THE CLIENT OR ADD THE ISSUES TO "ISSUES" TAB</b>
 
 # YTM-OP
 ## This project is a self project meaning this is mostly just for me but your allowed to do whatever you wish with this project if you come across it.</center>
@@ -14,6 +15,7 @@
     - If you've got any ideas, leave them somewhere maybe in issues idk I'll *definitely* add them
 - Try to add releases for Mac and Linux in the future when I get the time
 - Add SENDING and RECIEVING for when you want to remotely play music through clients (the basics are already in the client just doesn't do anything yet)
+- Add a function to be able to add your own discord activity through a text file for the clientID and also maybe images
 
 </center>
 </br>

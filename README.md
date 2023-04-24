@@ -12,7 +12,8 @@
 - Make everything look neater with a better menu and cleaner look
 - Allow the titlebar to be customized through text in textfiles for untimate customization
     - If you've got any ideas, leave them somewhere maybe in issues idk I'll *definitely* add them
-
+- Try to add releases for Mac and Linux in the future when I get the time
+- Add SENDING and RECIEVING for when you want to remotely play music through clients (the basics are already in the client just doesn't do anything yet)
 
 </center>
 </br>

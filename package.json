@@ -1,7 +1,7 @@
 {
 	"name": "ytm_op",
 	"version": "1.0.5",
-	"description": "Youtube music ",
+	"description": "Youtube music Client",
 	"repository": "uwu",
 	"main": "./src/main.js",
 	"scripts": {
@@ -36,10 +36,10 @@
 		"node": ">=14.0.0"
 	},
 	"build": {
-		"productName": "YouTube-Music-Client",
-		"appId": "youtube.music.client",
+		"productName": "YTM-OP",
+		"appId": "ytm_op",
 		"mac": {
-			"category": "youtube.music.client",
+			"category": "ytm_op",
 			"icon": "resources/assets/build/osx/icon.icns",
 			"target": [
 				"zip",
@@ -56,7 +56,7 @@
 		"linux": {
 			"target": "AppImage",
 			"icon": "resources/assets/build/linux/icon_2048x2048.png",
-			"synopsis": "Youtube Music App",
+			"synopsis": "ytm_op",
 			"description": "A small Electron app for YouTube Music which also integrates with Discord",
 			"maintainer": "Fennec_",
 			"category": "Music"

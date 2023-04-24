@@ -56,7 +56,7 @@
 		"linux": {
 			"target": "AppImage",
 			"icon": "resources/assets/build/linux/icon_2048x2048.png",
-			"synopsis": "ytm_op",
+			"synopsis": "Youtube Music App",
 			"description": "A small Electron app for YouTube Music which also integrates with Discord",
 			"maintainer": "Fennec_",
 			"category": "Music"

@@ -43,9 +43,6 @@ const generalConfigPath = path.join(dataPath, 'conf.json');
 const getnameLocal = path.dirname("src/username.txt")
 // const winAudio = require('win-audio');
 const fsLibrary = require('fs');
-const {
-	Console
-} = require('console');
 var ToggleButtons = true;
 var ChannelToggle = true;
 var TogglePlaylist = true;
@@ -412,10 +409,10 @@ const menuTemplate = [{
 				label: '-- Connect --',
 				click() {
 					if (connectCounter == 0) {
-					reconnect();
-					ConnectDis = '| Connected |';
-					error_bool = false;
-					connectCounter += 1;
+						reconnect();
+						ConnectDis = '| Connected |';
+						error_bool = false;
+						connectCounter += 1;
 					}
 					if (connectCounter == 1) {
 						console.log('NO!')

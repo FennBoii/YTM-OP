@@ -14,8 +14,8 @@ const {
 } = require('electron');
 const path = require('path');
 const fs = require('fs');
-var express = require("express");
-var storeValues = express();
+// var express = require("express");
+// var storeValues = express();
 var children = require('child_process');
 var electron = require('electron/main');
 const {
@@ -364,19 +364,18 @@ const menuTemplate = [{
 						label: 'Recieving',
 						click() {
 							ConnectionTitle = '[ -- Recieving -- ]'
+							// storeValues.get('/stream', (req, res) => {
+							// 	const ffmpegCommand = "ffmpeg";
+							// 	var ffmpegOptions =
+							// 		"-f s16le -ar 48000 -ac 2 -i udp://127.0.0.1:65535 -f wav -";
 
-							storeValues.get('/stream', (req, res) => {
-								const ffmpegCommand = "ffmpeg";
-								var ffmpegOptions =
-									"-f s16le -ar 48000 -ac 2 -i udp://127.0.0.1:65535 -f wav -";
+							// 	var ffm = children.spawn(ffmpegCommand, ffmpegOptions.split(" "));
 
-								var ffm = children.spawn(ffmpegCommand, ffmpegOptions.split(" "));
-
-								res.writeHead(200, {
-									"Content-Type": "audio/wav; codecs=PCM"
-								});
-								ffm.stdout.pipe(res);
-							});
+							// 	res.writeHead(200, {
+							// 		"Content-Type": "audio/wav; codecs=PCM"
+							// 	});
+							// 	ffm.stdout.pipe(res);
+							// });
 						},
 					}
 				],
@@ -386,10 +385,9 @@ const menuTemplate = [{
 				click() {
 					console.log('Connected');
 					if (ConnectionTitle = 'None') {
-						storeValues.listen(port, host, () => {
-							console.log("Server running at http://" + host + ":" + port + "/");
-						});
-
+						// storeValues.listen(port, host, () => {
+						// 	console.log("Server running at http://" + host + ":" + port + "/");
+						// });
 					}
 					if (ConnectionTitle = '[ -- Sending -- ]') {
 
@@ -583,7 +581,7 @@ function createWindow() {
 		win = null;
 	});
 	win.on('page-title-updated', (e, title) => {
-		win.setTitle(`[ ${titleTwo} -${stateTwo} ] ${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}`); // Added 'PageTitleReload' function for constant reload
+		win.setTitle(`${titleTwo}  -${stateTwo} ${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}`); // Added 'PageTitleReload' function for constant reload
 		BrowserWindow.title = "owo";
 		e.preventDefault();
 	});
@@ -1155,8 +1153,7 @@ function setActivity() {
 		details = `${ThirdEntry} ${NewTitle}`;
 		detailsThree = `${NewTitle}`;
 		state = `${NewerTitle} ${artist[0] || 'Unknown'} • ${artist[1] || 'Unknown'} • ${artist[2] || 'Unknown'}`;
-		// state = `${artist[0] || 'Unknown'} • ${artist[1] || 'Unknown'} • ${artist[2] || 'Unknown'}`;
-
+	
 		let fennecc = imageicon.replace('w60', 'w2080');
 		fennec = fennecc.replace('h60', 'h2080');
 		let largeImagePresent = VersionNumber; // ----------------------------- //
@@ -1406,7 +1403,7 @@ async function updateSongInfo() {
 		});
 
 		if (isFirst) {
-			// toolTipButtons[1].flags = ['enabled'];
+			toolTipButtons[1].flags = ['enabled'];
 		}
 
 		// var playingImage = 'https://i.postimg.cc/3NMxTsy0/Playing.png';
@@ -1420,44 +1417,44 @@ async function updateSongInfo() {
 		var RepeatAll = 'https://i.postimg.cc/VLmzWBXw/Repeat-all.png';
 		var RepeatOne = 'https://i.postimg.cc/sxcdNq5r/Repeat-one.png';
 
-		// if (repeat.includes('one')) {
-		// 	win.setOverlayIcon(getNativeImage(RepeatOne), 'Repeat One');
-		// 	win.setThumbarButtons(toolTipButtons);
-		// }
-		// if (repeat.includes('one') && paused) {
-		// 	win.setOverlayIcon(getNativeImage(playingImage), 'Playing');
-		// 	win.setThumbarButtons(toolTipButtons);
-		// }
+		if (repeat.includes('one')) {
+			win.setOverlayIcon(getNativeImage(RepeatOne, 'Repeat One'));
+			win.setThumbarButtons(toolTipButtons);
+		}
+		if (repeat.includes('one') && paused) {
+			win.setOverlayIcon(getNativeImage(playingImage, 'Playing'));
+			win.setThumbarButtons(toolTipButtons);
+		}
 
-		// if (repeat.includes('all')) {
-		// 	win.setOverlayIcon(getNativeImage(RepeatAll), 'Repeat All');
-		// 	win.setThumbarButtons(toolTipButtons);
-		// }
-		// if (repeat.includes('all') && paused) {
-		// 	win.setOverlayIcon(getNativeImage(PausedImage), 'Playing');
-		// 	win.setThumbarButtons(toolTipButtons);
-		// }
+		if (repeat.includes('all')) {
+			win.setOverlayIcon(getNativeImage(RepeatAll, 'Repeat All'));
+			win.setThumbarButtons(toolTipButtons);
+		}
+		if (repeat.includes('all') && paused) {
+			win.setOverlayIcon(getNativeImage(PausedImage, 'Playing'));
+			win.setThumbarButtons(toolTipButtons);
+		}
 
-		// if (repeat.includes('off')) {
-		// 	win.setOverlayIcon(getNativeImage(playingImage), 'Playing');
-		// 	win.setThumbarButtons(toolTipButtons);
-		// }
-		// if (paused) {
-		// 	win.setOverlayIcon(getNativeImage(PausedImage), 'Paused');
-		// }
+		if (repeat.includes('off')) {
+			win.setOverlayIcon(getNativeImage(playingImage, 'Playing'));
+			win.setThumbarButtons(toolTipButtons);
+		}
+		if (paused) {
+			win.setOverlayIcon(getNativeImage(PausedImage, 'Paused'));
+		}
 	}
-	// else {
-	// 	win.setProgressBar(time[0] / time[1]);
-	// 	win.setOverlayIcon(getNativeImage(StoppedImage), 'Stopped');
-	// 	win.setThumbarButtons(toolTipButtons);
-	// }
+	else {
+		win.setProgressBar(time[0] / time[1]);
+		// win.setOverlayIcon(getNativeImage(StoppedImage), 'Stopped');
+		// win.setThumbarButtons(toolTipButtons);
+	}
 }
 
 rpc.once('disconnected', title => {
 	rpc.destroy();
 	// reconnectTimer = setInterval(reconnect, 5e3);
 	ConnectDis = '[ Disconnected ]';
-	win.setTitle(`[ ${titleTwo} -${stateTwo} ] ${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}`); // Added 'PageTitleReload' function for constant reload
+	win.setTitle(`${titleTwo}  -${stateTwo} ${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}`); // Added 'PageTitleReload' function for constant reload
 });
 
 function reconnect() {
@@ -1471,12 +1468,12 @@ function reconnect() {
 		clearInterval(reconnectTimer);
 		ConnectDis = '[ Connected ]';
 		console.log('-- Connected --');
-		win.setTitle(`[ ${titleTwo} -${stateTwo} ] ${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}`); // Added 'PageTitleReload' function for constant reload
+		win.setTitle(`${titleTwo}  -${stateTwo} ${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}`); // Added 'PageTitleReload' function for constant reload
 	}).catch(err => {
 		rpc = null;
 		console.error(err);
 		ConnectDis = '[ Disconnected ]';
-		win.setTitle(`[ ${titleTwo} -${stateTwo} ] ${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}`); // Added 'PageTitleReload' function for constant reload
+		win.setTitle(`${titleTwo}  -${stateTwo} ${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}`); // Added 'PageTitleReload' function for constant reload
 	});
 }
 
@@ -1485,174 +1482,174 @@ function getNativeImage(filePath) {
 }
 
 function setPageName() {
-	win.setTitle(`[ ${titleTwo} -${stateTwo} ] ${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}`); // Added 'PageTitleReload' function for constant reload
+	win.setTitle(`${titleTwo}  -${stateTwo} ${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}`); // Added 'PageTitleReload' function for constant reload
 }
 
-function fullSync() { // ======== A FUNCTION TO SEND DATA TO A WEB-SERVER ========
-	if (volume === 0) {
-		console.log('Waiting for load...');
-	} else {
-		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\PlaylistCounter.txt', PlaylistCounter, error => {
-			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\PlaylistCounter.txt', 'Error: SecondTitleErrored'); // -- PlaylistCounter --
-		});
-		// ============
-		if (secondTitle === true) {
-			var SecondTitleErrored = 'true';
-		} else {
-			SecondTitleErrored = 'false';
-		}
-		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\secondTitle.txt', SecondTitleErrored, error => {
-			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\secondTitle.txt', 'Error: secondTitle'); // -- SecondTitle --
-			// testToImage.generateSync('owo', path('X:\\Webserver\\Images'));
-		});
-		// ============
-		if (thirdTitle === true) {
-			var thirdTitleErrored = 'true';
-		} else {
-			thirdTitleErrored = 'false';
-		}
-		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\thirdTitle.txt', thirdTitleErrored, error => {
-			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\thirdTitle.txt', 'Error: thirdTitle'); // -- thirdTitle --
-		});
-		// ============
-		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\stateTwo.txt', stateTwo, error => {
-			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\stateTwo.txt', 'Error: stateTwo'); // -- stateTwo --
-		});
-		// ============
-		if (error_bool === true) {
-			var error_boolErrored = 'true';
-		} else {
-			error_boolErrored = 'false';
-		}
-		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\error_bool.txt', error_boolErrored, error => {
-			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\error_bool.txt', 'Error: error_bool'); // -- error_bool --
-		});
-		// ============
-		var detailsTwoTwo = detailsTwo;
-		var detailsTwoTwoErrored = JSON.stringify(detailsTwoTwo);
-		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\detailsTwo.txt', detailsTwoTwoErrored, error => {
-			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\detailsTwo.txt', 'Error: detailsTwo'); // -- detailsTwo --
-		});
-		// ============
-		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\detailsThree.txt', detailsThree, error => {
-			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\detailsThree.txt', 'Error: detailsThree'); // -- detailsThree --
-		});
-		// ============
-		fs.writeFile('c:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\titleTwo.txt', titleTwo, error => {
-			if (error) fsLibrary.writeFile('c:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\titleTwo.txt', 'Error: titleTwo'); // -- titleTwo --
-		});
-		// ============
-		if (ToggleButtons === true) {
-			var ToggleButtonsErrored = 'true';
-		} else {
-			ToggleButtonsErrored = 'false';
-		}
-		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\ToggleButtons.txt', ToggleButtonsErrored, error => {
-			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\ToggleButtons.txt', 'Error: ToggleButtons'); // -- ToggleButtons --
-		});
-		// ============
-		if (TogglePlaylist === true) {
-			var TogglePlaylistErrored = 'true';
-		} else {
-			TogglePlaylistErrored = 'false';
-		}
-		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\TogglePlaylist.txt', TogglePlaylistErrored, error => {
-			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\TogglePlaylist.txt', 'Error: TogglePlaylist'); // -- TogglePlaylist --
-		});
-		// ============
-		if (ToggleArtist === true) {
-			var ToggleArtistErrored = 'true';
-		} else {
-			ToggleArtistErrored = 'false';
-		}
-		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\ToggleArtist.txt', ToggleArtistErrored, error => {
-			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\ToggleArtist.txt', 'Error: ToggleArtist'); // -- ToggleArtist --
-		});
-		// ============
-		var artistTwo = artist;
-		var artistErrored = JSON.stringify(artistTwo);
-		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\artist.txt', artistErrored, error => {
-			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\artist.txt', 'Error: artist'); // -- artist --
-		});
-		// ============
-		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\timeNow.txt', timeNow, error => {
-			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\timeNow.txt', 'Error: timeNow'); // -- timeNow --
-		});
-		// ============
-		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\timeMax.txt', timeMax, error => {
-			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\timeMax.txt', 'Error: timeMax'); // -- timeMax --
-		});
-		// ============
-		if (paused === true) {
-			var pausedErrored = 'true';
-		} else {
-			pausedErrored = 'false';
-		}
-		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\paused.txt', pausedErrored, error => {
-			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\paused.txt', 'Error: paused'); // -- paused --
-		});
-		// ============
-		if (isFirst === true) {
-			var isFirstErrored = 'true';
-		} else {
-			isFirstErrored = 'false';
-		}
-		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\isFirst.txt', SecondTitleErrored, error => {
-			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\', 'Error: isFirst'); // -- isFirst --
-		});
-		// ============
-		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\imageicon.txt', imageicon, error => {
-			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\imageicon.txt', 'Error: imageicon'); // -- imageicon --
-		});
-		// ============
-		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\repeat.txt', repeat, error => {
-			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\repeat.txt', 'Error: repeat'); // -- repeat --
-		});
-		// ============
-		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\channel.txt', channel, error => {
-			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\channel.txt', 'Error: channel'); // -- channel --
-		});
-		// ============
-		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\playlist.txt', playlist, error => {
-			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\playlist.txt', 'Error: playlist'); // -- playlist --
-		});
-		// ============
-		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\fennec.txt', fennec, error => {
-			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\fennec.txt', 'Error: fennec'); // -- fennec --
-		});
-		// ============
-		var ExplicitErrored = JSON.stringify(Explicit);
-		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\Explicit.txt', ExplicitErrored, error => {
-			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\Explicit.txt', 'Error: Explicit'); // -- Explicit --
-		});
-		// ============
-		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\channelname.txt', channelname, error => {
-			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\channelname.txt', 'Error: channelname'); // -- channelname --
-		});
-		// ============
-		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\join1.txt', join1, error => {
-			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\join1.txt', 'Error: join1'); // -- join1 --
-		});
-		// ============
-		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\join2.txt', join2, error => {
-			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\join2.txt', 'Error: join2'); // -- join2 --
-		});
-		// ============
-		var volumeErrored = JSON.stringify(volume);
-		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\volume.txt', volumeErrored, error => {
-			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\volume.txt', 'Error: volume'); // -- volume --
-		});
-		// ============
-		var SystemVolumeErrored = JSON.stringify(SystemVolume);
-		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\SystemVolume.txt', SystemVolumeErrored, error => {
-			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\SystemVolume.txt', 'Error: SystemVolume'); // -- SystemVolume --
-		});
-		// ============
-		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\ConnectDis.txt', ConnectDis, error => {
-			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\ConnectDis.txt', 'Error: ConnectDis'); // -- ConnectDis --
-		});
-	}
-}
+// function fullSync() { // ======== A FUNCTION TO SEND DATA TO A WEB-SERVER ========
+// 	if (volume === 0) {
+// 		console.log('Waiting for load...');
+// 	} else {
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\PlaylistCounter.txt', PlaylistCounter, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\PlaylistCounter.txt', 'Error: SecondTitleErrored'); // -- PlaylistCounter --
+// 		});
+// 		// ============
+// 		if (secondTitle === true) {
+// 			var SecondTitleErrored = 'true';
+// 		} else {
+// 			SecondTitleErrored = 'false';
+// 		}
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\secondTitle.txt', SecondTitleErrored, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\secondTitle.txt', 'Error: secondTitle'); // -- SecondTitle --
+// 			// testToImage.generateSync('owo', path('X:\\Webserver\\Images'));
+// 		});
+// 		// ============
+// 		if (thirdTitle === true) {
+// 			var thirdTitleErrored = 'true';
+// 		} else {
+// 			thirdTitleErrored = 'false';
+// 		}
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\thirdTitle.txt', thirdTitleErrored, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\thirdTitle.txt', 'Error: thirdTitle'); // -- thirdTitle --
+// 		});
+// 		// ============
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\stateTwo.txt', stateTwo, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\stateTwo.txt', 'Error: stateTwo'); // -- stateTwo --
+// 		});
+// 		// ============
+// 		if (error_bool === true) {
+// 			var error_boolErrored = 'true';
+// 		} else {
+// 			error_boolErrored = 'false';
+// 		}
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\error_bool.txt', error_boolErrored, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\error_bool.txt', 'Error: error_bool'); // -- error_bool --
+// 		});
+// 		// ============
+// 		var detailsTwoTwo = detailsTwo;
+// 		var detailsTwoTwoErrored = JSON.stringify(detailsTwoTwo);
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\detailsTwo.txt', detailsTwoTwoErrored, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\detailsTwo.txt', 'Error: detailsTwo'); // -- detailsTwo --
+// 		});
+// 		// ============
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\detailsThree.txt', detailsThree, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\detailsThree.txt', 'Error: detailsThree'); // -- detailsThree --
+// 		});
+// 		// ============
+// 		fs.writeFile('c:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\titleTwo.txt', titleTwo, error => {
+// 			if (error) fsLibrary.writeFile('c:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\titleTwo.txt', 'Error: titleTwo'); // -- titleTwo --
+// 		});
+// 		// ============
+// 		if (ToggleButtons === true) {
+// 			var ToggleButtonsErrored = 'true';
+// 		} else {
+// 			ToggleButtonsErrored = 'false';
+// 		}
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\ToggleButtons.txt', ToggleButtonsErrored, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\ToggleButtons.txt', 'Error: ToggleButtons'); // -- ToggleButtons --
+// 		});
+// 		// ============
+// 		if (TogglePlaylist === true) {
+// 			var TogglePlaylistErrored = 'true';
+// 		} else {
+// 			TogglePlaylistErrored = 'false';
+// 		}
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\TogglePlaylist.txt', TogglePlaylistErrored, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\TogglePlaylist.txt', 'Error: TogglePlaylist'); // -- TogglePlaylist --
+// 		});
+// 		// ============
+// 		if (ToggleArtist === true) {
+// 			var ToggleArtistErrored = 'true';
+// 		} else {
+// 			ToggleArtistErrored = 'false';
+// 		}
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\ToggleArtist.txt', ToggleArtistErrored, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\ToggleArtist.txt', 'Error: ToggleArtist'); // -- ToggleArtist --
+// 		});
+// 		// ============
+// 		var artistTwo = artist;
+// 		var artistErrored = JSON.stringify(artistTwo);
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\artist.txt', artistErrored, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\artist.txt', 'Error: artist'); // -- artist --
+// 		});
+// 		// ============
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\timeNow.txt', timeNow, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\timeNow.txt', 'Error: timeNow'); // -- timeNow --
+// 		});
+// 		// ============
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\timeMax.txt', timeMax, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\timeMax.txt', 'Error: timeMax'); // -- timeMax --
+// 		});
+// 		// ============
+// 		if (paused === true) {
+// 			var pausedErrored = 'true';
+// 		} else {
+// 			pausedErrored = 'false';
+// 		}
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\paused.txt', pausedErrored, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\paused.txt', 'Error: paused'); // -- paused --
+// 		});
+// 		// ============
+// 		if (isFirst === true) {
+// 			var isFirstErrored = 'true';
+// 		} else {
+// 			isFirstErrored = 'false';
+// 		}
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\isFirst.txt', SecondTitleErrored, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\', 'Error: isFirst'); // -- isFirst --
+// 		});
+// 		// ============
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\imageicon.txt', imageicon, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\imageicon.txt', 'Error: imageicon'); // -- imageicon --
+// 		});
+// 		// ============
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\repeat.txt', repeat, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\repeat.txt', 'Error: repeat'); // -- repeat --
+// 		});
+// 		// ============
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\channel.txt', channel, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\channel.txt', 'Error: channel'); // -- channel --
+// 		});
+// 		// ============
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\playlist.txt', playlist, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\playlist.txt', 'Error: playlist'); // -- playlist --
+// 		});
+// 		// ============
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\fennec.txt', fennec, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\fennec.txt', 'Error: fennec'); // -- fennec --
+// 		});
+// 		// ============
+// 		var ExplicitErrored = JSON.stringify(Explicit);
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\Explicit.txt', ExplicitErrored, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\Explicit.txt', 'Error: Explicit'); // -- Explicit --
+// 		});
+// 		// ============
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\channelname.txt', channelname, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\channelname.txt', 'Error: channelname'); // -- channelname --
+// 		});
+// 		// ============
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\join1.txt', join1, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\join1.txt', 'Error: join1'); // -- join1 --
+// 		});
+// 		// ============
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\join2.txt', join2, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\join2.txt', 'Error: join2'); // -- join2 --
+// 		});
+// 		// ============
+// 		var volumeErrored = JSON.stringify(volume);
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\volume.txt', volumeErrored, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\volume.txt', 'Error: volume'); // -- volume --
+// 		});
+// 		// ============
+// 		var SystemVolumeErrored = JSON.stringify(SystemVolume);
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\SystemVolume.txt', SystemVolumeErrored, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\SystemVolume.txt', 'Error: SystemVolume'); // -- SystemVolume --
+// 		});
+// 		// ============
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\ConnectDis.txt', ConnectDis, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\ConnectDis.txt', 'Error: ConnectDis'); // -- ConnectDis --
+// 		});
+// 	}
+// }
 
 rpc.on('ready', title => {
 	setActivity();

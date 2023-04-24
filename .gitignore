@@ -1,2 +1,4 @@
 node_modules
 SSHKEYGEN
+.vscode
+dist

@@ -1,7 +1,7 @@
 {
-	"name": "youtube_music_client",
-	"version": "6.2.1",
-	"description": "YouTube Music Client",
+	"name": "ytm_op",
+	"version": "1.0.5",
+	"description": "Youtube music ",
 	"repository": "uwu",
 	"main": "./src/main.js",
 	"scripts": {
@@ -79,7 +79,6 @@
 		"builder-util-runtime": "^9.0.2",
 		"discord-rpc": "^4.0.1",
 		"discord.js": "^13.8.1",
-		"electron-builder": "^5.5.0",
 		"electron-context-menu": "^3.3.0",
 		"node": "^18.4.0",
 		"prettier": "^2.7.1",
@@ -87,6 +86,7 @@
 		"win-audio": "^2.0.2"
 	},
 	"devDependencies": {
+		"electron-builder": "^5.5.0",
 		"electron": "^19.0.6"
 	}
 }

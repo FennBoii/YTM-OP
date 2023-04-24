@@ -27,7 +27,7 @@
 		"rich",
 		"presence"
 	],
-	"author": "Nate",
+	"author": "Fennec",
 	"contributors": [
 		""
 	],
@@ -56,7 +56,7 @@
 		"linux": {
 			"target": "AppImage",
 			"icon": "resources/assets/build/linux/icon_2048x2048.png",
-			"synopsis": "Youtube Music App",
+			"synopsis": "ytm_op",
 			"description": "A small Electron app for YouTube Music which also integrates with Discord",
 			"maintainer": "Fennec_",
 			"category": "Music"

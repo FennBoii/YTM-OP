@@ -14,8 +14,8 @@ const {
 } = require('electron');
 const path = require('path');
 const fs = require('fs');
-var express = require("express");
-var storeValues = express();
+// var express = require("express");
+// var storeValues = express();
 var children = require('child_process');
 var electron = require('electron/main');
 const {
@@ -364,19 +364,18 @@ const menuTemplate = [{
 						label: 'Recieving',
 						click() {
 							ConnectionTitle = '[ -- Recieving -- ]'
+							// storeValues.get('/stream', (req, res) => {
+							// 	const ffmpegCommand = "ffmpeg";
+							// 	var ffmpegOptions =
+							// 		"-f s16le -ar 48000 -ac 2 -i udp://127.0.0.1:65535 -f wav -";
 
-							storeValues.get('/stream', (req, res) => {
-								const ffmpegCommand = "ffmpeg";
-								var ffmpegOptions =
-									"-f s16le -ar 48000 -ac 2 -i udp://127.0.0.1:65535 -f wav -";
+							// 	var ffm = children.spawn(ffmpegCommand, ffmpegOptions.split(" "));
 
-								var ffm = children.spawn(ffmpegCommand, ffmpegOptions.split(" "));
-
-								res.writeHead(200, {
-									"Content-Type": "audio/wav; codecs=PCM"
-								});
-								ffm.stdout.pipe(res);
-							});
+							// 	res.writeHead(200, {
+							// 		"Content-Type": "audio/wav; codecs=PCM"
+							// 	});
+							// 	ffm.stdout.pipe(res);
+							// });
 						},
 					}
 				],
@@ -386,10 +385,9 @@ const menuTemplate = [{
 				click() {
 					console.log('Connected');
 					if (ConnectionTitle = 'None') {
-						storeValues.listen(port, host, () => {
-							console.log("Server running at http://" + host + ":" + port + "/");
-						});
-
+						// storeValues.listen(port, host, () => {
+						// 	console.log("Server running at http://" + host + ":" + port + "/");
+						// });
 					}
 					if (ConnectionTitle = '[ -- Sending -- ]') {
 

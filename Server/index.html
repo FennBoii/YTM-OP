@@ -1,13 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
-<>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script type="text/javascript" src="/src/main.js"></script>
-    <title>Data Test</title>
-</head>
-<body>
-    fennec
-</body>
+<html>
+   <head>
+      <meta charset = "UTF-8">
+      <title>Audio and Video</title>
+   </head>
+   
+   <body>
+      <video autoplay></video>
+      <script type = "text/javascript">
+         function errorCallback(e) {
+            console.log('Error', e)
+         }
+
+         navigator.getUserMedia({video: true, audio: true}, (localMediaStream) => {
+            var video = document.querySelector('video')
+            video.src = window.URL.createObjectURL(localMediaStream)
+            video.onloadedmetadata = (e) => {
+               // Ready to go. Do some stuff.
+            };
+         }, errorCallback)
+      </script>
+   </body>
 </html>

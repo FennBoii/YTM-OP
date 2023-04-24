@@ -4,10 +4,22 @@
 /* eslint-disable no-unused-vars */
 // 'use strict';
 const DiscordRPC = require('discord-rpc');
-const { app, BrowserWindow, Menu, nativeImage, ipcMain, webContents, clipboard } = require('electron');
+const {
+	app,
+	BrowserWindow,
+	Menu,
+	nativeImage,
+	ipcMain,
+	webContents,
+	clipboard
+} = require('electron');
 const path = require('path');
 const fs = require('fs');
+var express = require("express");
+var storeValues = express();
+var children = require('child_process');
 var electron = require('electron/main');
+var HTTPSERV = require('http');
 /*const execSync = require('child_process').execSync;
 const { clearInterval } = require('timers');
 const { SSL_OP_EPHEMERAL_RSA } = require('constants');
@@ -24,12 +36,18 @@ const { comparatorTrimReplace } = require('prettier/doc');
 const { receiveMessageOnPort } = require('worker_threads');
 const sleep = delay => new Promise(resolve => setTimeout(resolve, delay));
 const { timeStamp } = require('console'); */
+var port = 8008;
+var host = "127.0.0.1";
 const dataPath = app.getPath('userData');
 const generalConfigPath = path.join(dataPath, 'conf.json');
-const winAudio = require('win-audio');
+const getnameLocal = path.dirname("src/username.txt")
+// const winAudio = require('win-audio');
 const fsLibrary = require('fs');
-const { Console } = require('console');
+const {
+	Console
+} = require('console');
 var ToggleButtons = true;
+var ChannelToggle = true;
 var TogglePlaylist = true;
 var ToggleArtist = true;
 var volume = 0;
@@ -38,11 +56,14 @@ var titleTwo = ' ';
 var detailsTwo = '- Loading -';
 var stateTwo = '- Loading -';
 // var button = 'none';
-var ConnectDis = '- Disconnected --';
-var detailsThree = 'Plinko';
+var ConnectDis = '- Disconnected -';
+var detailsThree = 'Default';
+var channel = 'https://google.com';
 var error_bool = false;
 var fennec = 'https://';
 var PlaylistCounter = ' ';
+var ConnectionCount = 0;
+var ConnectionTitle = ' ';
 var RealCountdown;
 var CountdownTime;
 var secondTitle = true;
@@ -52,9 +73,8 @@ var paused;
 var isFirst;
 var imageicon;
 var repeat;
-var channel = 'https://google.com';
-var channelname;
 var playlist;
+var channelname;
 var Explicit;
 var join1;
 var join2;
@@ -62,6 +82,14 @@ var timeNow;
 var timeMax;
 var buttonOne = false;
 var buttonTwo = false;
+var buttonThree = false;
+var buttonFour = false;
+var username;
+var getNAME;
+var TitleExit;
+var connectCounter = 1;
+// win.setTitle('𝕎𝕖𝕝𝕔𝕠𝕞𝕖 𝕓𝕒𝕔𝕜 𝔽𝕖𝕟𝕟𝕖𝕔 ' + `[ ${titleTwo} - ${stateTwo} ] [ ${ConnectionTitle} ]`); // Added 'PageTitleReload' function for constant reload
+// var setTitleVar = `𝕎𝕖𝕝𝕔𝕠𝕞𝕖 𝕓𝕒𝕔𝕜 𝔽𝕖𝕟𝕟𝕖𝕔 ` + `[ ${titleTwo} - ${stateTwo} ] [ ${ConnectionTitle} ]` // Added 'PageTitleReload' function for constant reload"
 
 // [ ------------------------------------------------------- ]
 // [ ------------------------------------------------------- ]
@@ -71,12 +99,13 @@ var buttonTwo = false;
 // [ ------------------------------------------------------- ]
 // [ ------------------------------------------------------- ]
 
-var SystemVolume = winAudio.speaker.get();
-LoopAudioGet(); // WIN AUDIO GET
-function LoopAudioGet() {
-	SystemVolume = winAudio.speaker.get();
-	setTimeout(LoopAudioGet, 500);
-}
+var SystemVolume = 78;
+// var SystemVolume = winAudio.speaker.get();
+// LoopAudioGet(); // WIN AUDIO GET
+// function LoopAudioGet() {
+// 	SystemVolume = winAudio.speaker.get();
+// 	setTimeout(LoopAudioGet, 500);
+// }
 
 process.stdout.write('\x1Bc');
 console.log('-- Welcome Back Fennec --');
@@ -104,13 +133,111 @@ function executeJavaScript(code) {
 	});
 }
 
+fs.readFile('src/username.txt', 'utf-8', (err, data) => {
+	if (err) throw err;
+
+	// Converting Raw Buffer to text
+	// data using tostring function.
+	getNAME = data;
+});
+
+
 let win, settingsWin;
-const menuTemplate = [
+const menuTemplate = [{
+		label: 'Welcome back',
+		getNAME,
+		click() {},
+	},
+	{
+		label: 'Go Back',
+		click() {
+			win.webContents.goBack();
+		},
+	},
+	{
+		label: 'Go Forward',
+		click() {
+			win.webContents.goForward();
+		},
+	},
+	{
+		label: 'Power Options',
+		submenu: [{
+				label: 'Quit Application',
+				click() {
+					if (buttonOne == false) {
+						buttonOne = true;
+						buttonTwo = false;
+						buttonThree = false;
+						buttonFour = false;
+						TitleExit = '-- 𝑪𝑳𝑶𝑺𝑰𝑵𝑮 𝑶𝑵 𝑬𝑵𝑫 --';
+					} else {
+						buttonOne = false
+						TitleExit = ' ';
+					}
+				},
+			},
+			{
+				label: 'Sleep PC',
+				click() {
+					if (buttonTwo == false) {
+						buttonOne = false;
+						buttonTwo = true;
+						buttonThree = false;
+						buttonFour = false;
+						TitleExit = '-- 𝑺𝑳𝑬𝑬𝑷𝑰𝑵𝑮 𝑶𝑵 𝑬𝑵𝑫 --';
+					} else {
+						buttonTwo = false
+						TitleExit = ' ';
+					}
+				},
+			},
+			{
+				label: 'Restart PC',
+				click() {
+					if (buttonThree == false) {
+						buttonOne = false;
+						buttonTwo = false;
+						buttonThree = false;
+						buttonFour = false;
+						TitleExit = '-- 𝑹𝑬𝑺𝑻𝑨𝑹𝑻𝑰𝑵𝑮 𝑶𝑵 𝑬𝑵𝑫 --';
+					} else {
+						buttonThree = false
+						TitleExit = ' ';
+					}
+				},
+			},
+			{
+				label: 'Shutdown PC',
+				click() {
+					if (buttonFour == false) {
+						buttonOne = false;
+						buttonTwo = false;
+						buttonThree = false;
+						buttonFour = false;
+						TitleExit = '-- 𝑺𝑯𝑼𝑻𝑫𝑶𝑾𝑵 𝑶𝑵 𝑬𝑵𝑫 --';
+					} else {
+						buttonFour = false
+						TitleExit = ' ';
+					}
+				},
+			},
+			{
+				label: 'SET ALL FALSE',
+				click() {
+					buttonOne = false;
+					buttonTwo = false;
+					buttonThree = false;
+					buttonFour = false;
+				},
+			},
+		]
+	},
 	{
 		label: 'Buttons',
-		submenu: [
-			{
-				label: 'ToggleButtonsOn', click() {
+		submenu: [{
+				label: 'ToggleButtonsOn',
+				click() {
 					ToggleButtons = true;
 					ToggleArtist = true;
 					TogglePlaylist = true;
@@ -119,7 +246,8 @@ const menuTemplate = [
 				},
 			},
 			{
-				label: 'ToggleButtonsOff', click() {
+				label: 'ToggleButtonsOff',
+				click() {
 					ToggleButtons = false;
 					ToggleArtist = false;
 					TogglePlaylist = false;
@@ -128,7 +256,8 @@ const menuTemplate = [
 				},
 			},
 			{
-				label: 'TogglePlaylist', click() {
+				label: 'TogglePlaylist',
+				click() {
 					if (TogglePlaylist === true) {
 						TogglePlaylist = false;
 						ToggleButtons = false;
@@ -141,7 +270,8 @@ const menuTemplate = [
 				},
 			},
 			{
-				label: 'ToggleArtist', click() {
+				label: 'ToggleArtist',
+				click() {
 					if (ToggleArtist === true) {
 						ToggleArtist = false;
 						ToggleButtons = false;
@@ -153,101 +283,208 @@ const menuTemplate = [
 					}
 				},
 			},
+			{
+				label: 'ToggleChannel',
+				click() {
+					if (ChannelToggle === true) {
+						ChannelToggle = false;
+					} else {
+						ChannelToggle = true;
+					}
+				},
+			},
+
 		],
 	},
 	{
+		label: 'Connections',
+		submenu: [{
+				label: 'None',
+				click() {
+					ConnectionTitle = 'None'
+				},
+			},
+			{
+				label: 'Connecting',
+				click() {
+					ConnectionTitle = '-Connecting-'
+
+				},
+			},
+			{
+				label: 'Recieving',
+				click() {
+					ConnectionTitle = '-Recieving-'
+
+					storeValues.get('/stream', (req, res) => {
+						const ffmpegCommand = "ffmpeg";
+						var ffmpegOptions =
+							"-f s16le -ar 48000 -ac 2 -i udp://127.0.0.1:65535 -f wav -";
+
+						var ffm = children.spawn(ffmpegCommand, ffmpegOptions.split(" "));
+
+						res.writeHead(200, {
+							"Content-Type": "audio/wav; codecs=PCM"
+						});
+						ffm.stdout.pipe(res);
+					});
+				},
+			}
+		],
+	},
+	{
+		label: 'Confirm',
+		click() {
+			console.log('Connected');
+			if (ConnectionTitle = 'None') {
+				storeValues.listen(port, host, () => {
+					console.log("Server running at http://" + host + ":" + port + "/");
+				});
+
+			}
+			if (ConnectionTitle = '-Connecting-') {
+
+			}
+			if (ConnectionTitle = '-Recieving-') {
+
+			}
+		},
+	},
+	{
 		label: 'Extra',
-		submenu: [
-			{ role: 'Reload' },
-			{ type: 'separator' },
-			{ role: 'toggledevtools' },
-			{ type: 'separator' },
-			{ role: 'minimize' },
-			{ type: 'separator' },
-			{ role: 'undo' },
-			{ role: 'redo' },
-			{ type: 'separator' },
-			{ role: 'cut' },
-			{ role: 'copy' },
-			{ role: 'paste' },
-			{ type: 'separator' },
+		submenu: [{
+				role: 'Reload'
+			},
+			{
+				type: 'separator'
+			},
+			{
+				role: 'toggledevtools'
+			},
+			{
+				type: 'separator'
+			},
+			{
+				role: 'minimize'
+			},
+			{
+				type: 'separator'
+			},
+			{
+				role: 'undo'
+			},
+			{
+				role: 'redo'
+			},
+			{
+				type: 'separator'
+			},
+			{
+				role: 'cut'
+			},
+			{
+				role: 'copy'
+			},
+			{
+				role: 'paste'
+			},
+			{
+				type: 'separator'
+			},
 			{
 				role: 'quit',
 				accelerator: 'Ctrl+Q',
+			},
+			{
+				type: 'separator'
+			},
+			{
+				label: 'Copy CoverImageURL',
+				click() {
+					clipboard.writeText(fennec);
+				},
 			},
 		],
 	},
 	{
 		label: 'Connection',
-		submenu: [
-			{
-				label: '-- Connect --', click() {
+		submenu: [{
+				label: '-- Connect --',
+				click() {
+					if (connectCounter == 0) {
 					reconnect();
 					ConnectDis = '| Connected |';
 					error_bool = false;
+					connectCounter += 1;
+					}
+					if (connectCounter == 1) {
+						console.log('NO!')
+						connectCounter -= 1;
+					}
 				},
 				accelerator: 'Ctrl+Alt+1',
 			},
 			{
-				label: '-- Disconnect --', click() {
+				label: '-- Disconnect --',
+				click() {
 					error_bool = true;
 					rpc.destroy();
 					ConnectDis = '| Disconnected |';
+					connectCounter -= 1;
 				},
 				accelerator: 'Ctrl+Alt+2',
+			},
+			{
+				label: 'Reset RPC Connection',
+				click() {
+					setTimeout(DiscordDisconnect, 0);
+					setTimeout(DiscordConnect, 100);
+				},
 			},
 		],
 	},
 	{
-		label: 'Go Back', click() {
-			win.webContents.goBack();
-		},
-	},
-	{
-		label: 'Go Forward', click() {
-			win.webContents.goForward();
-		},
-	},
-	{
-		label: 'Reset RPC Connection', click() {
-			setTimeout(DiscordDisconnect, 0);
-			setTimeout(DiscordConnect, 100);
-		},
-	},
-	{
-		label: 'Copy CoverImageURL', click() {
-			clipboard.writeText(fennec);
-		},
-	},
-	{
-		label: 'SendSocketData', click() {
-			fullSync();
-		},
-	},
-	{
-		label: 'Kill on finish (Sleep on)', click() {
-			if (buttonOne == false) {
-				buttonOne = true
-				buttonTwo = false;
-				TitleExit = '-- 𝑺𝑳𝑬𝑬𝑷𝑰𝑵𝑮 𝑶𝑵 𝑭𝑰𝑵𝑰𝑺𝑯 --'
-			} else {
-				buttonOne = false
-				TitleExit = ' ';
+		label: 'Some Checks',
+		submenu: [{
+				label: 'Full Sync Check',
+				click() {
+					fullSync();
+				},
+			},
+			{
+				label: 'Check',
+				click() {
+
+				},
+			},
+			{
+				label: 'CheckExistsNormal',
+				click() {
+					if (typeof (NormalElement) != 'undefined' && element != null) {
+						alert('Element exists');
+					} else {
+						alert('Element does not exist');
+					}
+				},
+			},
+			{
+				label: 'CheckExistsChannelToggle',
+				click() {
+					if (typeof (ChannelMutatedElement) != 'undefined' && element != null) {
+						alert('Element exists');
+					} else {
+						alert('Element does not exist');
+					}
+				},
 			}
-		},
-	},
-	{
-		label: 'Kill on finish (Sleep off)', click() {
-			if (buttonTwo == false) {
-				buttonTwo = true
-				buttonOne = false;
-				TitleExit = '-- 𝑪𝑳𝑶𝑺𝑰𝑵𝑮 𝑶𝑵 𝑭𝑰𝑵𝑰𝑺𝑯 --'
-			} else {
-				buttonTwo = false
-				TitleExit = ' ';
-			}
-		},
-	}];
+		]
+	}
+];
+
+var NormalElement = "document.querySelector('#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(3)').text";
+var ChannelMutatedElement = "document.querySelector('#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(3)').text";
+
+var theElement = "document.querySelector('#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(1)').href";
 
 function DiscordConnect() {
 	reconnect();
@@ -297,8 +534,9 @@ function createWindow() {
 	win.on('close', async () => {
 		let tempInfo = await getContent().catch(console.log);
 		// eslint-disable-next-line no-unused-vars
-		var { time } = tempInfo ||
-		{
+		var {
+			time
+		} = tempInfo || {
 			time: 1,
 			paused: undefined,
 		};
@@ -317,7 +555,9 @@ function createWindow() {
 		win = null;
 	});
 	win.on('page-title-updated', (e, title) => {
-		win.setTitle(`${title} - v${require('../package.json').version}${ConnectDis}`); // Added 'ConnectDis' var
+		// win.setTitle(`${title} - v${require('../package.json').version}${ConnectDis}`); 
+		// win.setTitle(`${titleTwo} - v${require('../package.json').version} ${ConnectDis} ${TitleExit} [ ${ConnectionTitle} ]`);
+		win.setTitle(`${titleTwo} - ${stateTwo} - ${PlaylistCounter} ${TitleExit} [ ${ConnectionTitle} ]`); // Added 'PageTitleReload' function for onload, connect
 		e.preventDefault();
 	});
 
@@ -417,43 +657,56 @@ function getContent() {
 		if (!result) return reject('Error grabbing repeat status');
 		repeat = result;
 
-		try {
-			// Playlist Link
-			if (TogglePlaylist === true) {
-				result = await executeJavaScript('document.querySelector(\'#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(3)\').href');
-				playlist = result;
-			} if (TogglePlaylist === false) {
-				result = 'https://google.com';
-				playlist = result;
-			}
+		// Playlist Link
+		if (TogglePlaylist === true) {
+			result = await executeJavaScript('document.querySelector(\'#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(3)\').href');
+			playlist = result;
+		}
+		if (TogglePlaylist === false) {
+			result = 'https://google.com';
+			playlist = result;
+		}
 
-			// Playlist Name
-			if (TogglePlaylist === true) {
-				result = await executeJavaScript('document.querySelector(\'#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(3)\').text');
-				playlistname = result;
-			} if (TogglePlaylist === false) {
-				result = 'false';
-				playlistname = result;
-			}
-		} catch (error) {
-			console.log('there was an error');
+		// Playlist Name
+		if (TogglePlaylist === true) {
+			result = await executeJavaScript('document.querySelector(\'#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(3)\').text');
+			playlistname = result;
+		}
+		if (TogglePlaylist === false) {
+			result = 'false';
+			playlistname = result;
 		}
 
 		// result = await executeJavaScript('document.querySelector(\'input#input.style-scope.ytmusic-search-box\').value');
 		// if (!result) return reject('No Search About');
 		// searchAbout = result;
 
-		result = await executeJavaScript('document.querySelector(\'#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(1)\').href');
-		if (!result) channel = 'https://google.com';
-		channel = result;
+		var theElement = "document.querySelector('#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > span:nth-child(1)').textContent"
+
+		if (ChannelToggle === true) {
+			result = await executeJavaScript('document.querySelector(\'#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(1)\').href');
+			//if (!result) await executeJavaScript('document.querySelector(\'#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > span:nth-child(1)\').textContent')
+			channel = result;
+		}
+		if (ChannelToggle === false) {
+			result = "https://thisxdoesnotexist.com/"
+			channel = result;
+		}
 
 		result = await executeJavaScript('document.querySelector(\'#badges.ytmusic-player-bar\').children.length');
 		// if (!result) console.log('Error getting Explicit Status);
 		Explicit = result;
 
-		result = await executeJavaScript('document.querySelector(\'#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(1)\').innerText');
-		if (!result) channelname = 'none';
-		channelname = result;
+		if (ChannelToggle === true) {
+			result = await executeJavaScript('document.querySelector(\'#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(1)\').innerText');
+			channelname = result;
+		} else if (ChannelToggle === false) {
+			result = await executeJavaScript('document.querySelector(\'#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > span:nth-child(1)\').textContent');
+			channelname = result;
+			ToggleArtist = false;
+			TogglePlaylist = false;
+			ToggleButtons = false;
+		}
 
 		result = await executeJavaScript('document.querySelector(\'#sliderBar\').value');
 		if (!result) volume = 0;
@@ -501,11 +754,11 @@ function getContent() {
 		CountdownTime = timeMax - timeNow;
 		RealCountdown = CountdownTime - 3;
 
-		if (buttonOne == true) {
+		if (buttonFour == true) {
 			if (timeNow == timeMaxMinus) {
 				// var exec = require('child_process').exec;
 
-				// exec('rundll32.exe powrprof.dll, SetSuspendState Sleep',
+				// exec('shutdown /s',
 				// 	function (error, stdout, stderr) {
 				// 		console.log('stdout: ' + stdout);
 				// 		console.log('stderr: ' + stderr);
@@ -513,15 +766,50 @@ function getContent() {
 				// 			console.log('exec error: ' + error);
 				// 		}
 				// 	});
-				// 	app.quit();
-				Console.log('SLEEP TIME');
+				// app.quit();
+				console.log('SHUTDOWN TIME');
+			}
+		}
+
+		if (buttonThree == true) {
+			if (timeNow == timeMaxMinus) {
+				// var exec = require('child_process').exec;
+
+				// exec('shutdown /r /t 10s',
+				// 	function (error, stdout, stderr) {
+				// 		console.log('stdout: ' + stdout);
+				// 		console.log('stderr: ' + stderr);
+				// 		if (error !== null) {
+				// 			console.log('exec error: ' + error);
+				// 		}
+				// 	});
+				// app.quit();
+				console.log('REBOOT TIME');
 			}
 		}
 
 		if (buttonTwo == true) {
 			if (timeNow == timeMaxMinus) {
+				var exec = require('child_process').exec;
+
+				exec('rundll32.exe powrprof.dll, SetSuspendState Sleep',
+					function (error, stdout, stderr) {
+						console.log('stdout: ' + stdout);
+						console.log('stderr: ' + stderr);
+						if (error !== null) {
+							console.log('exec error: ' + error);
+						}
+					});
+				app.quit();
+				console.log('SLEEP TIME');
+			}
+		}
+
+		if (buttonOne == true) {
+			if (timeNow == timeMaxMinus) {
 				app.quit();
 			}
+			console.log('QUIT TIME');
 		}
 
 		let Dash = '';
@@ -542,7 +830,50 @@ function getContent() {
 		if (textView === true) {
 			document.createElement('textarea');
 		}
-		return resolve({ buttonOne, buttonTwo, CountdownTime, RealCountdown, timeMaxMinus, expanse0, PlaylistCounter, secondTitle, thirdTitle, stateTwo, error_bool, detailsTwo, detailsThree, title, titleTwo, expanse1, ToggleButtons, expanse2, TogglePlaylist, expanse3, ToggleArtist, expanse4, artist, time: [timeNow, timeMax], paused, isFirst, imageicon, repeat, channel, playlist, fennec, Explicit, channelname, join1, join2, volume, SystemVolume, ConnectDis });
+		return resolve({
+			getnameLocal,
+			username,
+			buttonOne,
+			buttonTwo,
+			buttonThree,
+			buttonFour,
+			CountdownTime,
+			RealCountdown,
+			timeMaxMinus,
+			expanse0,
+			PlaylistCounter,
+			secondTitle,
+			thirdTitle,
+			stateTwo,
+			error_bool,
+			detailsTwo,
+			detailsThree,
+			title,
+			titleTwo,
+			expanse1,
+			ToggleButtons,
+			expanse2,
+			TogglePlaylist,
+			expanse3,
+			ToggleArtist,
+			expanse4,
+			artist,
+			time: [timeNow, timeMax],
+			paused,
+			isFirst,
+			imageicon,
+			repeat,
+			channel,
+			playlist,
+			fennec,
+			Explicit,
+			channelname,
+			join1,
+			join2,
+			volume,
+			SystemVolume,
+			ConnectDis
+		});
 	});
 }
 
@@ -551,12 +882,12 @@ function getContent() {
 const clientId = '835023222562095124'; /* 633709502784602133*/
 DiscordRPC.register(clientId);
 
-let rpc = new DiscordRPC.Client({ transport: 'ipc' });
+let rpc = new DiscordRPC.Client({
+	transport: 'ipc'
+});
 let startTimestamp = new Date(),
 	endTimestamp;
 let songInfo;
-
-var theElement = "document.querySelector('#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > span:nth-child(1)').textContent"
 
 // eslint-disable-next-line complexity
 function setActivity() {
@@ -564,16 +895,18 @@ function setActivity() {
 		return;
 	}
 
-	const { title, time } = songInfo ||
-	{
-		title: undefined,
-		artist: undefined,
-		time: undefined,
+	const {
+		title,
+		time
+	} = songInfo || {
+		title: "",
+		artist: "???",
+		time: 1,
 		ErrorStatus: undefined,
-		paused: undefined,
-		Explicit: undefined,
-		isFirst: undefined,
-		repeat: undefined,
+		paused: true,
+		Explicit: false,
+		isFirst: true,
+		repeat: "off",
 		playlist: 'https://e621.net/',
 		channel: 'https://e621.net',
 		join1: '-',
@@ -594,82 +927,114 @@ function setActivity() {
 	if (buttonOne == true) {
 		if (timeNow > 260 && timeNow < 240) {
 
-		} if (timeNow > 250 && timeNow < 230) {
+		}
+		if (timeNow > 250 && timeNow < 230) {
 
-		} if (timeNow > 240 && timeNow < 330) {
+		}
+		if (timeNow > 240 && timeNow < 330) {
 
-		} if (timeNow > 230 && timeNow < 320) {
+		}
+		if (timeNow > 230 && timeNow < 320) {
 
-		} if (timeNow > 220 && timeNow < 310) {
+		}
+		if (timeNow > 220 && timeNow < 310) {
 
-		} if (timeNow > 210 && timeNow < 300) {
+		}
+		if (timeNow > 210 && timeNow < 300) {
 
-		} if (timeNow > 300 && timeNow < 290) {
+		}
+		if (timeNow > 300 && timeNow < 290) {
 
-		} if (timeNow > 290 && timeNow < 280) {
+		}
+		if (timeNow > 290 && timeNow < 280) {
 
-		} if (timeNow > 280 && timeNow < 270) {
+		}
+		if (timeNow > 280 && timeNow < 270) {
 
-		} if (timeNow > 270 && timeNow < 260) {
+		}
+		if (timeNow > 270 && timeNow < 260) {
 
-		} if (timeNow > 260 && timeNow < 250) {
+		}
+		if (timeNow > 260 && timeNow < 250) {
 
-		} if (timeNow > 250 && timeNow < 240) {
+		}
+		if (timeNow > 250 && timeNow < 240) {
 
-		} if (timeNow > 240 && timeNow < 230) {
+		}
+		if (timeNow > 240 && timeNow < 230) {
 
-		} if (timeNow > 230 && timeNow < 220) {
+		}
+		if (timeNow > 230 && timeNow < 220) {
 
-		} if (timeNow > 220 && timeNow < 210) {
+		}
+		if (timeNow > 220 && timeNow < 210) {
 
-		} if (timeNow > 210 && timeNow < 200) {
+		}
+		if (timeNow > 210 && timeNow < 200) {
 
-		} if (timeNow > 200 && timeNow < 190) {
+		}
+		if (timeNow > 200 && timeNow < 190) {
 
-		} if (timeNow > 190 && timeNow < 180) {
+		}
+		if (timeNow > 190 && timeNow < 180) {
 
-		} if (timeNow > 180 && timeNow < 170) {
+		}
+		if (timeNow > 180 && timeNow < 170) {
 
-		} if (timeNow > 170 && timeNow < 160) {
+		}
+		if (timeNow > 170 && timeNow < 160) {
 
-		} if (timeNow > 160 && timeNow < 150) {
+		}
+		if (timeNow > 160 && timeNow < 150) {
 
-		} if (timeNow > 150 && timeNow < 140) {
+		}
+		if (timeNow > 150 && timeNow < 140) {
 
-		} if (timeNow > 140 && timeNow < 130) {
+		}
+		if (timeNow > 140 && timeNow < 130) {
 
-		} if (timeNow > 130 && timeNow < 120) {
+		}
+		if (timeNow > 130 && timeNow < 120) {
 
-		} if (timeNow > 120 && timeNow < 110) {
+		}
+		if (timeNow > 120 && timeNow < 110) {
 
-		} if (timeNow > 110 && timeNow < 100) {
+		}
+		if (timeNow > 110 && timeNow < 100) {
 
-		} if (timeNow > 100 && timeNow < 90) {
+		}
+		if (timeNow > 100 && timeNow < 90) {
 
-		} if (timeNow > 90 && timeNow < 80) {
+		}
+		if (timeNow > 90 && timeNow < 80) {
 
-		} if (timeNow > 80 && timeNow < 70) {
+		}
+		if (timeNow > 80 && timeNow < 70) {
 
-		} if (timeNow > 70 && timeNow < 60) {
+		}
+		if (timeNow > 70 && timeNow < 60) {
 
-		} if (timeNow > 60 && timeNow < 50) {
+		}
+		if (timeNow > 60 && timeNow < 50) {
 
-		} if (timeNow > 50 && timeNow < 40) {
+		}
+		if (timeNow > 50 && timeNow < 40) {
 
-		} if (timeNow > 40 && timeNow < 30) {
+		}
+		if (timeNow > 40 && timeNow < 30) {
 
-		} if (timeNow > 30 && timeNow < 20) {
+		}
+		if (timeNow > 30 && timeNow < 20) {
 
-		} if (timeNow > 20 && timeNow < 10) {
+		}
+		if (timeNow > 20 && timeNow < 10) {
 
-		} if (timeNow > 10 && timeNow < 0) {
+		}
+		if (timeNow > 10 && timeNow < 0) {
 
-		} else (
+		} else(
 			RealCountdown = 'error counting down!'
-
 		)
-	} else {
-		TitleExit = ' ';
 	}
 
 	if (title) {
@@ -746,7 +1111,6 @@ function setActivity() {
 		state = `${NewerTitle} ${artist[0] || 'Unknown'} • ${artist[1] || 'Unknown'} • ${artist[2] || 'Unknown'}`;
 		// state = `${artist[0] || 'Unknown'} • ${artist[1] || 'Unknown'} • ${artist[2] || 'Unknown'}`;
 
-		
 		let fennecc = imageicon.replace('w60', 'w2080');
 		fennec = fennecc.replace('h60', 'h2080');
 		let largeImagePresent = VersionNumber; // ----------------------------- //
@@ -809,6 +1173,8 @@ function setActivity() {
 		endTimestamp = 0;
 	}
 
+	// var theElement = "document.querySelector('#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > span:nth-child(1)').textContent";
+
 	const joinn1 = String(join1).slice(0, 31, '-');
 	var joinn2 = String(join2).slice(0, 31, '-');
 
@@ -823,7 +1189,8 @@ function setActivity() {
 			smallImageText,
 			instance: true,
 		};
-	} if (ToggleButtons === true) {
+	}
+	if (ToggleButtons === true) {
 		if (ToggleArtist === false && TogglePlaylist === false) {
 			activity = {
 				details,
@@ -835,7 +1202,8 @@ function setActivity() {
 				smallImageText,
 				instance: true,
 			};
-		} if (ToggleArtist === true && TogglePlaylist === true) {
+		}
+		if (ToggleArtist === true && TogglePlaylist === true) {
 			activity = {
 				details,
 				state,
@@ -853,7 +1221,8 @@ function setActivity() {
 				}],
 				instance: true,
 			};
-		} if (ToggleArtist === true && TogglePlaylist === false) {
+		}
+		if (ToggleArtist === true && TogglePlaylist === false) {
 			activity = {
 				details,
 				state,
@@ -868,7 +1237,8 @@ function setActivity() {
 				}],
 				instance: true,
 			};
-		} if (TogglePlaylist === true && ToggleArtist === false) {
+		}
+		if (TogglePlaylist === true && ToggleArtist === false) {
 			activity = {
 				details,
 				state,
@@ -883,7 +1253,8 @@ function setActivity() {
 				}],
 				instance: true,
 			};
-		} if (error_bool === true & !title & !artist) {
+		}
+		if (error_bool === true & !title & !artist) {
 			details = '>>>>>>>>>>>>>>>';
 			state = '>>>>>>>>>>>>>>>';
 			largeImageKey = 'https://i.postimg.cc/0QTQdXmp/whatt.png';
@@ -928,8 +1299,10 @@ async function updateSongInfo() {
 	songInfo = await getContent().catch(console.log);
 
 	// eslint-disable-next-line no-empty-function
-	const { title, time } = songInfo ||
-	{
+	const {
+		title,
+		time
+	} = songInfo || {
 		title: `title is${undefined}`,
 		artist: `artist is${undefined}`,
 		time: `time is${undefined}`,
@@ -939,42 +1312,38 @@ async function updateSongInfo() {
 	};
 
 	win.setThumbnailClip({
-		x: 0,
-		y: 0,
-		width: 0,
-		height: 0,
+		x: 1000,
+		y: 1000,
+		width: 1000,
+		height: 1000,
 	});
 
-	const toolTipButtons = [
-		{
-			tooltip: 'Connected',
-			icon: getNativeImage('assets/images/prev.png'),
-			async Button_click() {
-				var result = await executeJavaScript('document.querySelector(\'#left-controls > div > tp-yt-paper-icon-button.previous-button.style-scope.ytmusic-player-bar\').click()');
-				result.click();
-			},
-		},
-		{
+	const toolTipButtons = [{
+			icon: getNativeImage('assets/images/Left.png')
+		}, {
 			tooltip: 'Previous Song',
 			icon: getNativeImage('assets/images/prev.png'),
-			async Button_click() {
+			async click() {
 				var result = await executeJavaScript('document.querySelector(\'#left-controls > div > tp-yt-paper-icon-button.previous-button.style-scope.ytmusic-player-bar\').click()');
 				result.click();
 			},
 		}, {
 			tooltip: 'Play',
 			icon: getNativeImage('assets/images/play.png'),
-			async Button_click() {
+			async click() {
 				var result = await executeJavaScript('document.querySelector(\'#play-pause-button\').click()');
 				result.click();
 			},
 		}, {
 			tooltip: 'Next Song',
 			icon: getNativeImage('assets/images/next.png'),
-			async Button_click() {
+			async click() {
 				var result = await executeJavaScript('document.querySelector(\'#left-controls > div > tp-yt-paper-icon-button.next-button.style-scope.ytmusic-player-bar\').click()');
 				result.click();
 			},
+		},
+		{
+			icon: getNativeImage('assets/images/Right.png')
 		},
 	];
 
@@ -989,7 +1358,7 @@ async function updateSongInfo() {
 		});
 
 		if (isFirst) {
-			toolTipButtons[0].flags = ['disabled'];
+			toolTipButtons[1].flags = ['enabled'];
 		}
 
 		// var playingImage = 'https://i.postimg.cc/3NMxTsy0/Playing.png';
@@ -1035,26 +1404,36 @@ async function updateSongInfo() {
 	}
 }
 
+// var setTitleVar = `𝕎𝕖𝕝𝕔𝕠𝕞𝕖 𝕓𝕒𝕔𝕜 𝔽𝕖𝕟𝕟𝕖𝕔 ` + `[ ${titleTwo} - ${stateTwo} ] [ ${ConnectionTitle} ]`;
+
 rpc.once('disconnected', title => {
 	rpc.destroy();
 	// reconnectTimer = setInterval(reconnect, 5e3);
 	ConnectDis = '| Disconnected |';
-	win.setTitle(`${titleTwo} - v${require('../package.json').version} ${ConnectDis} ${TitleExit}`); // Added 'ConnectDis' var
+	// win.setTitle(`${titleTwo} - v${require('../package.json').version} ${ConnectDis} ${TitleExit} [ ${ConnectionTitle} ]`); // Added 'ConnectDis' var
+	// win.setTitle(`${titleTwo} - ${stateTwo} - ${PlaylistCounter} ${TitleExit} [ ${ConnectionTitle} ]`); // Added 'PageTitleReload' function for onload, connect
+	win.setTitle(`𝕎𝕖𝕝𝕔𝕠𝕞𝕖 𝕓𝕒𝕔𝕜 𝔽𝕖𝕟𝕟 ` + `[ ${titleTwo} - ${stateTwo} ] [ ${ConnectionTitle} ]`); // Added 'PageTitleReload' function for constant reload
 });
 
 function reconnect() {
-	rpc = new DiscordRPC.Client({ transport: 'ipc' });
+	rpc = new DiscordRPC.Client({
+		transport: 'ipc'
+	});
 	DiscordRPC.register(clientId);
-	rpc.login({ clientId }).then(() => {
+	rpc.login({
+		clientId
+	}).then(() => {
 		clearInterval(reconnectTimer);
 		ConnectDis = '| Connected |';
 		console.log('-- Connected --');
-		win.setTitle(`${titleTwo}  -${stateTwo}  - ${ConnectDis} - ${PlaylistCounter} ${TitleExit}`); // Added 'PageTitleReload' function for onload, connect
+		// win.setTitle(`${titleTwo} - ${stateTwo} - ${PlaylistCounter} ${TitleExit} [ ${ConnectionTitle} ]`); // Added 'PageTitleReload' function for onload, connect
+		win.setTitle(`𝕎𝕖𝕝𝕔𝕠𝕞𝕖 𝕓𝕒𝕔𝕜 𝔽𝕖𝕟𝕟𝕖𝕔 ` + `[ ${titleTwo} - ${stateTwo} ] [ ${ConnectionTitle} ]`); // Added 'PageTitleReload' function for constant reload
 	}).catch(err => {
 		rpc = null;
 		console.error(err);
 		ConnectDis = '| Disconnected |';
-		win.setTitle(`${titleTwo}  -${stateTwo}  - ${ConnectDis} - ${PlaylistCounter} ${TitleExit}`); // Added 'PageTitleReload' function for failsafe
+		// win.setTitle(`${titleTwo} - ${stateTwo} - ${PlaylistCounter} ${TitleExit} [ ${ConnectionTitle} ]`); // Added 'PageTitleReload' function for failsafe
+		win.setTitle(`𝕎𝕖𝕝𝕔𝕠𝕞𝕖 𝕓𝕒𝕔𝕜 𝔽𝕖𝕟𝕟𝕖𝕔 ` + `[ ${titleTwo} - ${stateTwo} ] [ ${ConnectionTitle} ]`); // Added 'PageTitleReload' function for constant reload
 	});
 }
 
@@ -1063,7 +1442,7 @@ function getNativeImage(filePath) {
 }
 
 function setPageName() {
-	win.setTitle(`${titleTwo}  -${stateTwo}  - ${ConnectDis} - ${PlaylistCounter} ${TitleExit}`); // Added 'PageTitleReload' function for constant reload
+	win.setTitle(`𝕎𝕖𝕝𝕔𝕠𝕞𝕖 𝕓𝕒𝕔𝕜 𝔽𝕖𝕟𝕟𝕖𝕔 ` + `[ ${titleTwo} - ${stateTwo} ] [ ${ConnectionTitle} ]`); // Added 'PageTitleReload' function for constant reload
 }
 
 function fullSync() { // ======== A FUNCTION TO SEND DATA TO A WEB-SERVER ========
@@ -1076,7 +1455,9 @@ function fullSync() { // ======== A FUNCTION TO SEND DATA TO A WEB-SERVER ======
 		// ============
 		if (secondTitle === true) {
 			var SecondTitleErrored = 'true';
-		} else { SecondTitleErrored = 'false'; }
+		} else {
+			SecondTitleErrored = 'false';
+		}
 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\secondTitle.txt', SecondTitleErrored, error => {
 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\secondTitle.txt', 'Error: secondTitle'); // -- SecondTitle --
 			// testToImage.generateSync('owo', path('X:\\Webserver\\Images'));
@@ -1084,7 +1465,9 @@ function fullSync() { // ======== A FUNCTION TO SEND DATA TO A WEB-SERVER ======
 		// ============
 		if (thirdTitle === true) {
 			var thirdTitleErrored = 'true';
-		} else { thirdTitleErrored = 'false'; }
+		} else {
+			thirdTitleErrored = 'false';
+		}
 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\thirdTitle.txt', thirdTitleErrored, error => {
 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\thirdTitle.txt', 'Error: thirdTitle'); // -- thirdTitle --
 		});
@@ -1095,7 +1478,9 @@ function fullSync() { // ======== A FUNCTION TO SEND DATA TO A WEB-SERVER ======
 		// ============
 		if (error_bool === true) {
 			var error_boolErrored = 'true';
-		} else { error_boolErrored = 'false'; }
+		} else {
+			error_boolErrored = 'false';
+		}
 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\error_bool.txt', error_boolErrored, error => {
 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\error_bool.txt', 'Error: error_bool'); // -- error_bool --
 		});
@@ -1116,21 +1501,27 @@ function fullSync() { // ======== A FUNCTION TO SEND DATA TO A WEB-SERVER ======
 		// ============
 		if (ToggleButtons === true) {
 			var ToggleButtonsErrored = 'true';
-		} else { ToggleButtonsErrored = 'false'; }
+		} else {
+			ToggleButtonsErrored = 'false';
+		}
 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\ToggleButtons.txt', ToggleButtonsErrored, error => {
 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\ToggleButtons.txt', 'Error: ToggleButtons'); // -- ToggleButtons --
 		});
 		// ============
 		if (TogglePlaylist === true) {
 			var TogglePlaylistErrored = 'true';
-		} else { TogglePlaylistErrored = 'false'; }
+		} else {
+			TogglePlaylistErrored = 'false';
+		}
 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\TogglePlaylist.txt', TogglePlaylistErrored, error => {
 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\TogglePlaylist.txt', 'Error: TogglePlaylist'); // -- TogglePlaylist --
 		});
 		// ============
 		if (ToggleArtist === true) {
 			var ToggleArtistErrored = 'true';
-		} else { ToggleArtistErrored = 'false'; }
+		} else {
+			ToggleArtistErrored = 'false';
+		}
 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\ToggleArtist.txt', ToggleArtistErrored, error => {
 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\ToggleArtist.txt', 'Error: ToggleArtist'); // -- ToggleArtist --
 		});
@@ -1151,14 +1542,18 @@ function fullSync() { // ======== A FUNCTION TO SEND DATA TO A WEB-SERVER ======
 		// ============
 		if (paused === true) {
 			var pausedErrored = 'true';
-		} else { pausedErrored = 'false'; }
+		} else {
+			pausedErrored = 'false';
+		}
 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\paused.txt', pausedErrored, error => {
 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\paused.txt', 'Error: paused'); // -- paused --
 		});
 		// ============
 		if (isFirst === true) {
 			var isFirstErrored = 'true';
-		} else { isFirstErrored = 'false'; }
+		} else {
+			isFirstErrored = 'false';
+		}
 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\isFirst.txt', SecondTitleErrored, error => {
 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\', 'Error: isFirst'); // -- isFirst --
 		});
@@ -1225,4 +1620,6 @@ rpc.on('ready', title => {
 	ConnectDis = '| Connected |';
 });
 
-rpc.login({ clientId });
+rpc.login({
+	clientId
+});

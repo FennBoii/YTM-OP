@@ -1,0 +1,21 @@
+{
+  "name": "osc",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "add-text-to-image": "^1.0.1",
+    "canvas": "^2.11.2",
+    "electron": "^24.1.2",
+    "encoding": "^0.1.13",
+    "express": "^4.18.2",
+    "libxmljs": "^1.0.8",
+    "node-osc": "^8.0.11",
+    "wrtc": "^0.4.7"
+  }
+}

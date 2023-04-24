@@ -5,7 +5,6 @@
 // 'use strict';
 const DiscordRPC = require('discord-rpc');
 const {
-	app,
 	BrowserWindow,
 	Menu,
 	nativeImage,
@@ -19,6 +18,9 @@ var express = require("express");
 var storeValues = express();
 var children = require('child_process');
 var electron = require('electron/main');
+const {
+	app
+} = require('electron')
 var HTTPSERV = require('http');
 /*const execSync = require('child_process').execSync;
 const { clearInterval } = require('timers');
@@ -581,7 +583,8 @@ function createWindow() {
 		win = null;
 	});
 	win.on('page-title-updated', (e, title) => {
-		win.setTitle(`Welcome back ${getNAME} ${ConnectDis} ` + `${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}`); // Added 'PageTitleReload' function for constant reload
+		win.setTitle(`[ ${titleTwo} -${stateTwo} ] ${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}`); // Added 'PageTitleReload' function for constant reload
+		BrowserWindow.title = "owo";
 		e.preventDefault();
 	});
 
@@ -1355,53 +1358,55 @@ async function updateSongInfo() {
 	};
 
 	win.setThumbnailClip({
-		x: 1000,
-		y: 1000,
-		width: 1000,
-		height: 1000,
+		x: 0,
+		y: 0,
+		width: 0,
+		height: 0,
 	});
 
-	const toolTipButtons = [{
-			icon: getNativeImage('assets/images/Left.png')
-		}, {
+	win.setThumbarButtons([
+		// {
+		// 	icon: getNativeImage('resources/assets/images/Left.png')
+		// },
+		{
 			tooltip: 'Previous Song',
 			icon: getNativeImage('assets/images/prev.png'),
 			async click() {
 				var result = await executeJavaScript('document.querySelector(\'#left-controls > div > tp-yt-paper-icon-button.previous-button.style-scope.ytmusic-player-bar\').click()');
-				result.click();
+				// result.click();
 			},
 		}, {
 			tooltip: 'Play',
 			icon: getNativeImage('assets/images/play.png'),
 			async click() {
 				var result = await executeJavaScript('document.querySelector(\'#play-pause-button\').click()');
-				result.click();
+				// result.click();
 			},
 		}, {
 			tooltip: 'Next Song',
 			icon: getNativeImage('assets/images/next.png'),
 			async click() {
 				var result = await executeJavaScript('document.querySelector(\'#left-controls > div > tp-yt-paper-icon-button.next-button.style-scope.ytmusic-player-bar\').click()');
-				result.click();
+				// result.click();
 			},
 		},
-		{
-			icon: getNativeImage('assets/images/Right.png')
-		},
-	];
+		// {
+		// 	icon: getNativeImage('resources/assets/images/Right.png')
+		// },
+	]);
 
 	if (!title && !artist) {
 		if (process.platform === 'win32') {
 			win.setProgressBar(1 + 1e-10);
 		}
 		win.setOverlayIcon(null, 'Browsing');
-	} else if (process.platform === 'win32') {
+	} else if (process.platform === 'win64') {
 		win.setProgressBar(time[0] / time[1], {
 			mode: paused ? 'paused' : 'normal',
 		});
 
 		if (isFirst) {
-			toolTipButtons[1].flags = ['enabled'];
+			// toolTipButtons[1].flags = ['enabled'];
 		}
 
 		// var playingImage = 'https://i.postimg.cc/3NMxTsy0/Playing.png';
@@ -1415,43 +1420,44 @@ async function updateSongInfo() {
 		var RepeatAll = 'https://i.postimg.cc/VLmzWBXw/Repeat-all.png';
 		var RepeatOne = 'https://i.postimg.cc/sxcdNq5r/Repeat-one.png';
 
-		if (repeat.includes('one')) {
-			win.setOverlayIcon(getNativeImage(RepeatOne), 'Repeat One');
-			win.setThumbarButtons(toolTipButtons);
-		}
-		if (repeat.includes('one') && paused) {
-			win.setOverlayIcon(getNativeImage(playingImage), 'Playing');
-			win.setThumbarButtons(toolTipButtons);
-		}
+		// if (repeat.includes('one')) {
+		// 	win.setOverlayIcon(getNativeImage(RepeatOne), 'Repeat One');
+		// 	win.setThumbarButtons(toolTipButtons);
+		// }
+		// if (repeat.includes('one') && paused) {
+		// 	win.setOverlayIcon(getNativeImage(playingImage), 'Playing');
+		// 	win.setThumbarButtons(toolTipButtons);
+		// }
 
-		if (repeat.includes('all')) {
-			win.setOverlayIcon(getNativeImage(RepeatAll), 'Repeat All');
-			win.setThumbarButtons(toolTipButtons);
-		}
-		if (repeat.includes('all') && paused) {
-			win.setOverlayIcon(getNativeImage(PausedImage), 'Playing');
-			win.setThumbarButtons(toolTipButtons);
-		}
+		// if (repeat.includes('all')) {
+		// 	win.setOverlayIcon(getNativeImage(RepeatAll), 'Repeat All');
+		// 	win.setThumbarButtons(toolTipButtons);
+		// }
+		// if (repeat.includes('all') && paused) {
+		// 	win.setOverlayIcon(getNativeImage(PausedImage), 'Playing');
+		// 	win.setThumbarButtons(toolTipButtons);
+		// }
 
-		if (repeat.includes('off')) {
-			win.setOverlayIcon(getNativeImage(playingImage), 'Playing');
-			win.setThumbarButtons(toolTipButtons);
-		}
-		if (paused) {
-			win.setOverlayIcon(getNativeImage(PausedImage), 'Paused');
-		}
-	} else {
-		win.setProgressBar(time[0] / time[1]);
-		win.setOverlayIcon(getNativeImage(StoppedImage), 'Stopped');
-		win.setThumbarButtons(toolTipButtons);
+		// if (repeat.includes('off')) {
+		// 	win.setOverlayIcon(getNativeImage(playingImage), 'Playing');
+		// 	win.setThumbarButtons(toolTipButtons);
+		// }
+		// if (paused) {
+		// 	win.setOverlayIcon(getNativeImage(PausedImage), 'Paused');
+		// }
 	}
+	// else {
+	// 	win.setProgressBar(time[0] / time[1]);
+	// 	win.setOverlayIcon(getNativeImage(StoppedImage), 'Stopped');
+	// 	win.setThumbarButtons(toolTipButtons);
+	// }
 }
 
 rpc.once('disconnected', title => {
 	rpc.destroy();
 	// reconnectTimer = setInterval(reconnect, 5e3);
 	ConnectDis = '[ Disconnected ]';
-	win.setTitle(`dWelcome back ${getNAME} ${ConnectDis} ` + `[ ${titleTwo} -${stateTwo} ]${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}`); // Added 'PageTitleReload' function for constant reload
+	win.setTitle(`[ ${titleTwo} -${stateTwo} ] ${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}`); // Added 'PageTitleReload' function for constant reload
 });
 
 function reconnect() {
@@ -1465,12 +1471,12 @@ function reconnect() {
 		clearInterval(reconnectTimer);
 		ConnectDis = '[ Connected ]';
 		console.log('-- Connected --');
-		win.setTitle(`cWelcome back ${getNAME} ${ConnectDis} ` + `[ ${titleTwo} -${stateTwo} ]${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}`); // Added 'PageTitleReload' function for constant reload
+		win.setTitle(`[ ${titleTwo} -${stateTwo} ] ${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}`); // Added 'PageTitleReload' function for constant reload
 	}).catch(err => {
 		rpc = null;
 		console.error(err);
 		ConnectDis = '[ Disconnected ]';
-		win.setTitle(`bWelcome back ${getNAME} ${ConnectDis} ` + `[ ${titleTwo} -${stateTwo} ]${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}`); // Added 'PageTitleReload' function for constant reload
+		win.setTitle(`[ ${titleTwo} -${stateTwo} ] ${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}`); // Added 'PageTitleReload' function for constant reload
 	});
 }
 
@@ -1479,7 +1485,7 @@ function getNativeImage(filePath) {
 }
 
 function setPageName() {
-	win.setTitle(`aWelcome back ${getNAME} ${ConnectDis} ` + `[ ${titleTwo} -${stateTwo} ]${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}`); // Added 'PageTitleReload' function for constant reload
+	win.setTitle(`[ ${titleTwo} -${stateTwo} ] ${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}`); // Added 'PageTitleReload' function for constant reload
 }
 
 function fullSync() { // ======== A FUNCTION TO SEND DATA TO A WEB-SERVER ========

@@ -25,7 +25,7 @@
 - **In the works** Youll be able to Send and recieve functionality between clients
 - 100% safe and free! No extras are added that weren't made for the client
 - Uses very little Resources (Less than 7% of cpu) (reccomended use on localdisk C:// because read/write)
-- No self promotion anywhere (I like to let the consumer use the product howevery they please ad-free)
+- No self promotion anywhere (I like to let the consumer use the product however the please, ad-free!)
 
 </center>
 </br>

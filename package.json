@@ -5,7 +5,8 @@
 	"repository": "uwu",
 	"main": "./src/main.js",
 	"scripts": {
-		"test": "yarn lint",
+		"test": "electron .",
+		"testTwo": "yarn lint",
 		"lint": "eslint **/*.js",
 		"lint:fix": "eslint --fix **/*.js",
 		"start": "electron .",

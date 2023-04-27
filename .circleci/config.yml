@@ -2,19 +2,16 @@ version: 2.1
 orbs:
   node: circleci/node@5.1.0
 jobs:
-  build_and_test: # this can be any name you choose
-    executor: node/default # use the default executor defined within the orb
+  example-job:
+    docker:
+      # replace with your preferred image
+      - image: cimg/base:stable
     steps:
-      - checkout
-      - node/install-packages:
-          pkg-manager: npm
-      - run:
-          command: npm run start
-          name: Run tests
-      - run:
-          command: npm run build
-          name: Build app
-      - persist_to_workspace:
-          root: ~/project
-          paths:
-            - .
+      - node/install:
+          install-yarn: false 
+          node-version: '20.0.0' 
+
+workflows:
+  example-workflow:
+    jobs:
+      - example-job

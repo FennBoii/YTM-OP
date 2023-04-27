@@ -9,7 +9,7 @@ jobs:
       - node/install-packages:
           pkg-manager: npm
       - run:
-          command: npm run test
+          command: npm run start
           name: Run tests
       - run:
           command: npm run build

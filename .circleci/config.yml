@@ -6,7 +6,7 @@ jobs:
     docker:
       - image: cimg/base:stable
     steps:
-      - run: apt-get update && apt-get upgrade
+      - run: apt-get update
 
 workflows:
   example-workflow:

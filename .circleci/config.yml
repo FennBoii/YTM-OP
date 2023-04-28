@@ -7,7 +7,12 @@ jobs:
       # replace with your preferred image
       - image: cimg/base:stable
     steps:
-      - run: npm install electron-nightly
+      - node/install:
+          install-yarn: false 
+          node-version: '20.0.0'
+      - run: npm install
+      - run: npm install --save-dev electron
+      - run: npm run start
 
 workflows:
   example-workflow:

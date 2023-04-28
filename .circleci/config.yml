@@ -4,12 +4,12 @@ orbs:
 jobs:
   example-job:
     docker:
-      # replace with your preferred image
       - image: cimg/base:stable
     steps:
       - node/install:
           install-yarn: false 
           node-version: '20.0.0' 
+      - run: npm run start
 
 workflows:
   example-workflow:

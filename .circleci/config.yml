@@ -6,8 +6,8 @@ executors:
         auth:
           # ensure you have first added these secrets
           # visit app.circleci.com/settings/project/github/FennBoii/YTM-OP/environment-variables
-          username: MY_ENV_RAR_ytmop$
-          password: dollarz\\$
+          username: $MY_ENV_RAR_ytmop
+          password: $dollarz\\$
 jobs:
   electron:
 

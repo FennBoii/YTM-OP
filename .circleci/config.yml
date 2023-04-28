@@ -4,10 +4,12 @@ orbs:
 jobs:
   example-job:
     docker:
+      # replace with your preferred image
       - image: cimg/base:stable
     steps:
-      - run: npm install --save-dev electron
-
+      - node/install:
+          install-yarn: false 
+          node-version: '20.0.0' 
 
 workflows:
   example-workflow:

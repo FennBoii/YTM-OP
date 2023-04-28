@@ -8,6 +8,7 @@ jobs:
     steps:
       - run: npm install --save-dev electron
 
+
 workflows:
   example-workflow:
     jobs:

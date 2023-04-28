@@ -6,7 +6,7 @@ jobs:
     docker:
       - image: cimg/base:stable
     steps:
-      - run: apt-get update
+      - run: npm install --save-dev electron
 
 workflows:
   example-workflow:

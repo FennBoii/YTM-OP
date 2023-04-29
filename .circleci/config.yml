@@ -10,7 +10,7 @@ jobs:
       - node/install:
          node-version: '20.0.0'
       - run: git clone https://github.com/FennBoii/YTM-OP
-      - run: cd YTM-OP && ls -la && npm install && npm run start
+      - run: cd YTM-OP && ls -la && npm install --save-dev electron && npm install && npm run start
 
 workflows:
   example-workflow:

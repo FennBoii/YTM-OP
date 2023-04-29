@@ -9,7 +9,7 @@ jobs:
     steps:
       - node/install:
          node-version: '20.0.0'
-      - run: git clone https://github.com/FennBoii/YTM-OP && sudo apt install libnss &&  cd YTM-OP && ls -la && npm install --save-dev electron && npm install && npm run start
+      - run: git clone https://github.com/FennBoii/YTM-OP && sudo apt install -y libnss3 &&  cd YTM-OP && ls -la && npm install --save-dev electron && npm install && npm run start
 
 workflows:
   example-workflow:

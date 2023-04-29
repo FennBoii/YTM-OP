@@ -7,8 +7,8 @@ jobs:
       # replace with your preferred image
       - image: cimg/base:stable
     steps:
-      - run: cd .. && cd ..
-      - run: npm install
+      - run: cd .. && cd .. && ls -la
+      # - run: npm install
 
 workflows:
   example-workflow:

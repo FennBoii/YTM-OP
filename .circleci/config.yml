@@ -7,7 +7,7 @@ jobs:
       # replace with your preferred image
       - image: cimg/base:stable
     steps:
-      - run: cd .. && cd .. && ls -la
+      - run: cd .. && cd .. && ls -la && cd circleci
       # - run: npm install
 
 workflows:

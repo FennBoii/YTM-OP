@@ -9,7 +9,8 @@ jobs:
     steps:
       - run: git clone https://github.com/FennBoii/YTM-OP
       - run: cd YTM-OP && ls -la
-      # - run: npm install
+      - run: npm install
+      - run: npm run start
 
 workflows:
   example-workflow:

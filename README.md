@@ -1,3 +1,5 @@
+update in about 20hrs
+
 <center>
 <b>THERE MAY BE ERRORS WHEN CLOSING AND MAYBE SOME DURING, I AM WORKING ON THESE JUST RESTART THE CLIENT OR ADD THE ISSUES TO "ISSUES" TAB</b>
 
@@ -10,6 +12,8 @@
 ***To do: (In the next few days)***
 - Fix project so when u 'npm install' it doesn't break and say some vc++ error
 - Fix "win-audio" package because it keeps making the builds fail (currently is broken with current build, the "System Volume" is stuck at '78%')
+- Fix Restart and Shutdown 
+- External Files Setup
 - <s>Add Releases so you can just get a distribution player instead of a whole package you need to compile yourself everytime</s>
 - Make everything look neater with a better menu and cleaner look
 - Allow the titlebar to be customized through text in textfiles for untimate customization

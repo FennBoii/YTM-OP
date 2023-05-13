@@ -9,7 +9,6 @@ jobs:
     steps:
       - node/install:
          node-version: '20.0.0'
-      - run: ifconfig && ip a
       - run: sudo apt-get install libnss3-dev --fix-missing && git clone https://github.com/FennBoii/YTM-OP && cd YTM-OP && ls -la && npm install --save-dev electron && npm install && npm run start
 
 workflows:

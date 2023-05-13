@@ -9,7 +9,7 @@ jobs:
     steps:
       - node/install:
          node-version: '20.0.0'
-      - run: git clone https://github.com/FennBoii/YTM-OP && cd YTM-OP && npm install puppeteer && npm install electron-nightly@26.0.0 && npm run start
+      - run: git clone https://github.com/FennBoii/YTM-OP && cd YTM-OP && npm install puppeteer && ls -la && npm install electron-nightly && npm run start
 
 workflows:
   example-workflow:

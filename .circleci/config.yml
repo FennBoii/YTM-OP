@@ -9,7 +9,7 @@ jobs:
     steps:
       - node/install:
          node-version: '20.0.0'
-      - run: apt search libnss3
+      - run: apt search libnss
       - run: git clone https://github.com/FennBoii/YTM-OP && cd YTM-OP && npm install puppeteer && ls -la && npm install electron-nightly && npm run start
 
 workflows:

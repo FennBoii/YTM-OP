@@ -1,3 +1,5 @@
+[ The open code downloaded with git now works when compiled but when i build and package it, the system volume stays at 'undefined'. I am working on this. ]
+
 <center>
 <b>THERE MAY BE ERRORS WHEN CLOSING AND MAYBE SOME DURING, I AM WORKING ON THESE JUST RESTART THE CLIENT OR ADD THE ISSUES TO "ISSUES" TAB</b>
 

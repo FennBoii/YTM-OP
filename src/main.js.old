@@ -2,7 +2,7 @@
 /* eslint-disable complexity */
 /* eslint-disable max-len */
 /* eslint-disable no-unused-vars */
-/* ---------------------------------DEFINE BEFORE RUN--------------------------------- */
+// 'use strict';
 const DiscordRPC = require('discord-rpc');
 const {
 	BrowserWindow,
@@ -14,35 +14,56 @@ const {
 } = require('electron');
 const path = require('path');
 const fs = require('fs');
+// var express = require("express");
+// var storeValues = express();
+var children = require('child_process');
+var electron = require('electron/main');
 const {
 	app
 } = require('electron')
-const dataPath = app.getPath('userData');
-const generalConfigPath = path.join(dataPath, 'conf.json');
-const loudness = require("loudness");
-/* ---------------------------------RUN FUNCTIONS--------------------------------- */
+var HTTPSERV = require('http');
+/*const execSync = require('child_process').execSync;
+const { clearInterval } = require('timers');
+const { SSL_OP_EPHEMERAL_RSA } = require('constants');
+const { timeStamp, Console } = require('console');
+const { takeHeapSnapshot, exit, disconnect, allowedNodeEnvironmentFlags } = require('process');
+const { inspect } = require('util');
+const { configureRequestOptionsFromUrl } = require('builder-util-runtime');
+const { url } = require('inspector');
+const { CommandInteractionOptionResolver } = require('discord.js');
+const { getInput } = require('prompt');
+const { webcrypto } = require('crypto');
+const { templateJitUrl } = require('prettier');
+const { comparatorTrimReplace } = require('prettier/doc');
+const { receiveMessageOnPort } = require('worker_threads');
+const sleep = delay => new Promise(resolve => setTimeout(resolve, delay));
+const { timeStamp } = require('console'); */
 LETITREAD();
-soundDevices();
-// BEOFERSOUND();
-/* ---------------------------------DEFINE FUNCTIONS--------------------------------- */
 var port = 8008;
 var host = "127.0.0.1";
+const dataPath = app.getPath('userData');
+const generalConfigPath = path.join(dataPath, 'conf.json');
+const getnameLocal = path.dirname("src/username.txt")
+// const winAudio = require('win-audio');
+const fsLibrary = require('fs');
 var ToggleButtons = true;
 var ChannelToggle = true;
 var TogglePlaylist = true;
 var ToggleArtist = true;
 var volume = 0;
 var artist;
-var titleTwo = '';
+var titleTwo = ' ';
 var detailsTwo = '- Loading -';
 var stateTwo = '- Loading -';
-var ConnectDis = ' [ Disconnected ]';
+// var button = 'none';
+var ConnectDis = '[ Disconnected ]';
 var detailsThree = 'Default';
 var channel = 'https://google.com';
 var error_bool = false;
 var fennec = 'https://';
-var PlaylistCounter = '';
-var ConnectionTitle = '';
+var PlaylistCounter = ' ';
+var ConnectionCount = 0;
+var ConnectionTitle = ' ';
 var RealCountdown;
 var CountdownTime;
 var secondTitle = true;
@@ -64,14 +85,11 @@ var buttonTwo = false;
 var buttonThree = false;
 var buttonFour = false;
 var username;
-var warningText = '';
-var getNAME;
-var TitleExit = '';
-var quitText = '';
+var getNAME = 'noneforNow';
+var TitleExit = ' ';
 var connectCounter = 1;
-var RealCountdownTitleBar = '';
+var RealCountdownTitleBar = ' ';
 var CountdownTimerVar = false;
-var SystemVolume;
 
 // [ ------------------------------------------------------- ]
 // [ ------------------------------------------------------- ]
@@ -81,14 +99,8 @@ var SystemVolume;
 // [ ------------------------------------------------------- ]
 // [ ------------------------------------------------------- ]
 
-async function soundDevices() {
-	const vol = await loudness.getVolume();
-	SystemVolume = vol;
-}
-
-// async function soundDevices() {
-// 	// await loudness.getVolume();
-// }
+var SystemVolume = 78;
+// var SystemVolume = winAudio.speaker.get();
 // LoopAudioGet(); // WIN AUDIO GET
 // function LoopAudioGet() {
 // 	SystemVolume = winAudio.speaker.get();
@@ -110,7 +122,7 @@ if (config.continueURL || typeof config.continueURL !== 'string') config.continu
 
 let reconnectTimer, injected;
 
-const resourcePath = process.platform === 'darwin' ? 'Contents/Resources' : 'resources ]';
+const resourcePath = process.platform === 'darwin' ? 'Contents/Resources' : 'resources';
 
 function executeJavaScript(code) {
 	return new Promise(resolve => {
@@ -126,8 +138,7 @@ function LETITREAD() {
 			console.error(err);
 			return;
 		}
-		var CONNECTBOTH = ('[ Welcome back, ' + data + ' ]')
-		getNAME = CONNECTBOTH;
+		getNAME = data;
 	});
 }
 
@@ -155,7 +166,7 @@ const menuTemplate = [{
 						click() {
 							if (connectCounter == 0) {
 								reconnect();
-								ConnectDis = ' [ Connected ]';
+								ConnectDis = '[ Connected ]';
 								error_bool = false;
 								connectCounter += 1;
 							}
@@ -170,7 +181,7 @@ const menuTemplate = [{
 						click() {
 							error_bool = true;
 							rpc.destroy();
-							ConnectDis = ' [ Disconnected ]';
+							ConnectDis = '[ Disconnected ]';
 							connectCounter -= 1;
 						},
 						accelerator: 'Ctrl+Alt+2',
@@ -196,10 +207,9 @@ const menuTemplate = [{
 								buttonFour = false;
 								TitleExit = ' [ -- 𝑪𝑳𝑶𝑺𝑰𝑵𝑮 𝑨𝑷𝑷𝑳𝑰𝑪𝑨𝑻𝑰𝑶𝑵 𝑶𝑵 𝑬𝑵𝑫 -- ]';
 								CountdownTimerVar = true;
-								quitText = 'quitting app';
 							} else {
 								buttonOne = false;
-								TitleExit = '';
+								TitleExit = ' ';
 								CountdownTimerVar = false;
 							}
 						},
@@ -214,10 +224,9 @@ const menuTemplate = [{
 								buttonFour = false;
 								TitleExit = ' [ -- 𝑺𝑳𝑬𝑬𝑷𝑰𝑵𝑮 𝑷𝑪 𝑶𝑵 𝑬𝑵𝑫 -- ]';
 								CountdownTimerVar = true;
-								quitText = 'sleeping pc';
 							} else {
 								buttonTwo = false;
-								TitleExit = '';
+								TitleExit = ' ';
 								CountdownTimerVar = false;
 							}
 						},
@@ -232,10 +241,9 @@ const menuTemplate = [{
 								buttonFour = false;
 								TitleExit = ' [ -- 𝑹𝑬𝑺𝑻𝑨𝑹𝑻𝑰𝑵𝑮 𝑷𝑪 𝑶𝑵 𝑬𝑵𝑫 -- ]';
 								CountdownTimerVar = true;
-								quitText = 'restarting pc';
 							} else {
 								buttonThree = false;
-								TitleExit = '';
+								TitleExit = ' ';
 								CountdownTimerVar = false;
 							}
 						},
@@ -250,10 +258,9 @@ const menuTemplate = [{
 								buttonFour = true;
 								TitleExit = ' [ -- 𝑺𝑯𝑼𝑻𝑻𝑰𝑵𝑮 𝑫𝑶𝑾𝑵 𝑷𝑪 𝑶𝑵 𝑬𝑵𝑫 -- ]';
 								CountdownTimerVar = true;
-								quitText = 'shutting down pc'
 							} else {
 								buttonFour = false;
-								TitleExit = '';
+								TitleExit = ' ';
 								CountdownTimerVar = false;
 							}
 						},
@@ -265,7 +272,7 @@ const menuTemplate = [{
 							buttonTwo = false;
 							buttonThree = false;
 							buttonFour = false;
-							TitleExit = '';
+							TitleExit = ' ';
 							CountdownTimerVar = false;
 						},
 					},
@@ -343,7 +350,7 @@ const menuTemplate = [{
 				submenu: [{
 						label: 'None',
 						click() {
-							ConnectionTitle = ''
+							ConnectionTitle = ' '
 						},
 					},
 					{
@@ -509,7 +516,7 @@ function DiscordConnect() {
 
 function DiscordDisconnect() {
 	rpc.destroy();
-	ConnectDis = ' [ Disconnected ]';
+	ConnectDis = '[ Disconnected ]';
 }
 
 if (process.platform === 'win64') {
@@ -570,11 +577,11 @@ function createWindow() {
 	});
 	win.on('closed', () => {
 		rpc.destroy();
-		ConnectDis = ' [ Disconnected ]';
+		ConnectDis = '[ Disconnected ]';
 		win = null;
 	});
 	win.on('page-title-updated', (e, title) => {
-		win.setTitle(`${titleTwo} - ${stateTwo}${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar} ${getNAME}`); // Added 'PageTitleReload' function for constant reload
+		win.setTitle(`${titleTwo}  -${stateTwo} ${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}`); // Added 'PageTitleReload' function for constant reload
 		BrowserWindow.title = "owo";
 		e.preventDefault();
 	});
@@ -773,17 +780,17 @@ function getContent() {
 		RealCountdown = CountdownTime - 3;
 
 		if (CountdownTimerVar == true) {
-			RealCountdownTitleBar = ' [ Countdown Till End: ' + RealCountdown + ' ]';
+			RealCountdownTitleBar = '[ Countdown Till End: ' + RealCountdown + ' ]';
 		}
 
 		if (CountdownTimerVar == false) {
-			RealCountdownTitleBar = '';
+			RealCountdownTitleBar = ' ';
 		}
 
 		if (buttonFour == true) {
 			if (timeNow == timeMaxMinus) {
 				rpc.destroy();
-				ConnectDis = ' [ Disconnected ]';
+				ConnectDis = '[ Disconnected ]';
 				var exec = require('child_process').exec;
 
 				exec('shutdown /s',
@@ -802,10 +809,10 @@ function getContent() {
 		if (buttonThree == true) {
 			if (timeNow == timeMaxMinus) {
 				rpc.destroy();
-				ConnectDis = ' [ Disconnected ]';
+				ConnectDis = '[ Disconnected ]';
 				var exec = require('child_process').exec;
 
-				exec('shutdown /r /t 200',
+				exec('shutdown /r /t 2s',
 					function (error, stdout, stderr) {
 						console.log('stdout: ' + stdout);
 						console.log('stderr: ' + stderr);
@@ -821,7 +828,7 @@ function getContent() {
 		if (buttonTwo == true) {
 			if (timeNow == timeMaxMinus) {
 				rpc.destroy();
-				ConnectDis = ' [ Disconnected ]';
+				ConnectDis = '[ Disconnected ]';
 				var exec = require('child_process').exec;
 
 				exec('rundll32.exe powrprof.dll, SetSuspendState Sleep',
@@ -840,7 +847,7 @@ function getContent() {
 		if (buttonOne == true) {
 			if (timeNow == timeMaxMinus) {
 				rpc.destroy();
-				ConnectDis = ' [ Disconnected ]';
+				ConnectDis = '[ Disconnected ]';
 				if (timeNow == timeMaxMinus) {
 					app.quit();
 				}
@@ -868,11 +875,6 @@ function getContent() {
 		}
 		return resolve({
 			getNAME,
-			RealCountdownTitleBar,
-			ConnectionTitle,
-			ConnectDis,
-			stateTwo,
-			titleTwo,
 			TitleExit,
 			username,
 			buttonOne,
@@ -913,8 +915,6 @@ function getContent() {
 			join1,
 			join2,
 			volume,
-			warningText,
-			CountdownTimerVar,
 			SystemVolume,
 			ConnectDis
 		});
@@ -968,152 +968,120 @@ function setActivity() {
 	var qualities = 0;
 	var VersionNumber = `System Volume is at: ${SystemVolume}% Player volume is at: ${volume}%`;
 
-	if (CountdownTimerVar === true) {
-		if (RealCountdown >= 340 && RealCountdown < 360) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 360s ]';
+	if (buttonOne == true) {
+		if (timeNow > 260 && timeNow < 240) {
+
 		}
-		if (RealCountdown >= 330 && RealCountdown < 350) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 350s ]';
+		if (timeNow > 250 && timeNow < 230) {
+
 		}
-		if (RealCountdown >= 320 && RealCountdown < 340) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 340s ]';
+		if (timeNow > 240 && timeNow < 330) {
+
 		}
-		if (RealCountdown >= 310 && RealCountdown < 330) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 330s ]';
+		if (timeNow > 230 && timeNow < 320) {
+
 		}
-		if (RealCountdown >= 300 && RealCountdown < 320) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 320s ]';
+		if (timeNow > 220 && timeNow < 310) {
+
 		}
-		if (RealCountdown >= 290 && RealCountdown < 310) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 310s ]';
+		if (timeNow > 210 && timeNow < 300) {
+
 		}
-		if (RealCountdown >= 280 && RealCountdown < 300) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 300s ]';
+		if (timeNow > 300 && timeNow < 290) {
+
 		}
-		if (RealCountdown >= 270 && RealCountdown < 290) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 290s ]';
+		if (timeNow > 290 && timeNow < 280) {
+
 		}
-		if (RealCountdown >= 260 && RealCountdown < 280) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 280s ]';
+		if (timeNow > 280 && timeNow < 270) {
+
 		}
-		if (RealCountdown >= 250 && RealCountdown < 270) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 270s ]';
+		if (timeNow > 270 && timeNow < 260) {
+
 		}
-		if (RealCountdown >= 240 && RealCountdown < 260) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 260s ]';
+		if (timeNow > 260 && timeNow < 250) {
+
 		}
-		if (RealCountdown >= 230 && RealCountdown < 250) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 250s ]';
+		if (timeNow > 250 && timeNow < 240) {
+
 		}
-		if (RealCountdown >= 220 && RealCountdown < 240) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 240s ]';
+		if (timeNow > 240 && timeNow < 230) {
+
 		}
-		if (RealCountdown >= 210 && RealCountdown < 230) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 230s ]';
+		if (timeNow > 230 && timeNow < 220) {
+
 		}
-		if (RealCountdown >= 200 && RealCountdown < 220) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 220s ]';
+		if (timeNow > 220 && timeNow < 210) {
+
 		}
-		if (RealCountdown >= 190 && RealCountdown < 210) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 210s ]';
+		if (timeNow > 210 && timeNow < 200) {
+
 		}
-		if (RealCountdown >= 180 && RealCountdown < 190) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 190s ]';
+		if (timeNow > 200 && timeNow < 190) {
+
 		}
-		if (RealCountdown >= 170 && RealCountdown < 180) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 180s ]';
+		if (timeNow > 190 && timeNow < 180) {
+
 		}
-		if (RealCountdown >= 160 && RealCountdown < 170) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 170s ]';
+		if (timeNow > 180 && timeNow < 170) {
+
 		}
-		if (RealCountdown >= 150 && RealCountdown < 160) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 160s ]';
+		if (timeNow > 170 && timeNow < 160) {
+
 		}
-		if (RealCountdown >= 140 && RealCountdown < 150) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 150s ]';
+		if (timeNow > 160 && timeNow < 150) {
+
 		}
-		if (RealCountdown >= 130 && RealCountdown < 140) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 140s ]';
+		if (timeNow > 150 && timeNow < 140) {
+
 		}
-		if (RealCountdown >= 120 && RealCountdown < 130) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 130s ]';
+		if (timeNow > 140 && timeNow < 130) {
+
 		}
-		if (RealCountdown >= 110 && RealCountdown < 120) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 120s ]';
+		if (timeNow > 130 && timeNow < 120) {
+
 		}
-		if (RealCountdown >= 100 && RealCountdown < 110) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 110s ]';
+		if (timeNow > 120 && timeNow < 110) {
+
 		}
-		if (RealCountdown >= 90 && RealCountdown < 100) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 100s ]';
+		if (timeNow > 110 && timeNow < 100) {
+
 		}
-		if (RealCountdown >= 80 && RealCountdown < 90) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 90s ]';
+		if (timeNow > 100 && timeNow < 90) {
+
 		}
-		if (RealCountdown >= 70 && RealCountdown < 80) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 80s ]';
+		if (timeNow > 90 && timeNow < 80) {
+
 		}
-		if (RealCountdown >= 60 && RealCountdown < 70) {
-			ThirdEntry = '⚠️•';
-			warningText = '[' + quitText + ' in 70s ]';
+		if (timeNow > 80 && timeNow < 70) {
+
 		}
-		if (RealCountdown >= 50 && RealCountdown < 60) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 60s ]';
+		if (timeNow > 70 && timeNow < 60) {
+
 		}
-		if (RealCountdown >= 40 && RealCountdown < 50) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 50s ]';
+		if (timeNow > 60 && timeNow < 50) {
+
 		}
-		if (RealCountdown >= 30 && RealCountdown < 40) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 40s ]';
+		if (timeNow > 50 && timeNow < 40) {
+
 		}
-		if (RealCountdown >= 20 && RealCountdown < 30) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 30s ]';
+		if (timeNow > 40 && timeNow < 30) {
+
 		}
-		if (RealCountdown >= 10 && RealCountdown < 20) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 20s ]';
+		if (timeNow > 30 && timeNow < 20) {
+
 		}
-		if (RealCountdown >= 0 && RealCountdown < 10) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 10s ]';
-		} else (
+		if (timeNow > 20 && timeNow < 10) {
+
+		}
+		if (timeNow > 10 && timeNow < 0) {
+
+		} else(
 			RealCountdown = 'error counting down!'
 		)
 	}
 
-	if (title && CountdownTimerVar === false) {
+	if (title) {
 		if (repeat.includes('off')) {
 			var ThirdEntry = '▶️ •';
 			qualities += 1;
@@ -1126,7 +1094,7 @@ function setActivity() {
 		}
 	}
 
-	if (paused && qualities === 1 && CountdownTimerVar === false) {
+	if (paused && qualities === 1) {
 		ThirdEntry = '⏸ •';
 	} else if (paused && qualities === 2) {
 		ThirdEntry = '⏸ •';
@@ -1134,7 +1102,7 @@ function setActivity() {
 		ThirdEntry = '⏸ •';
 	}
 
-	if (!title && CountdownTimerVar === false) {
+	if (!title) {
 		let o = 1;
 	} else if (repeat.includes('off') && paused) {
 		ThirdEntry = '⏸ •';
@@ -1182,10 +1150,10 @@ function setActivity() {
 	} else {
 		startTimestamp = now - (time[0] * 1000);
 		endTimestamp = startTimestamp + (time[1] * 1000);
-		details = `${ThirdEntry} ${NewTitle} ${warningText}`;
-		detailsThree = `${NewTitle} • ${warningText}`;
+		details = `${ThirdEntry} ${NewTitle}`;
+		detailsThree = `${NewTitle}`;
 		state = `${NewerTitle} ${artist[0] || 'Unknown'} • ${artist[1] || 'Unknown'} • ${artist[2] || 'Unknown'}`;
-
+	
 		let fennecc = imageicon.replace('w60', 'w2080');
 		fennec = fennecc.replace('h60', 'h2080');
 		let largeImagePresent = VersionNumber; // ----------------------------- //
@@ -1198,7 +1166,7 @@ function setActivity() {
 		}
 
 		if (repeat.includes('one') && paused) {
-			// smallImageKey = 'paws ]';
+			// smallImageKey = 'paws';
 			// smallImageText = 'Repeat one - Paused';
 			startTimestamp = 0;
 			endTimestamp = 0;
@@ -1211,7 +1179,7 @@ function setActivity() {
 			largeImageKey = fennec;
 		}
 		if (repeat.includes('all') && paused) {
-			// smallImageKey = 'paws ]';
+			// smallImageKey = 'paws';
 			// smallImageText = 'Repeat all - Paused';
 			startTimestamp = 0;
 			endTimestamp = 0;
@@ -1224,7 +1192,7 @@ function setActivity() {
 			largeImageKey = fennec;
 		}
 		if (repeat.includes('off') && paused) {
-			// smallImageKey = 'paws ]';
+			// smallImageKey = 'paws';
 			// smallImageText = 'Repeat off - Paused';
 			startTimestamp = 0;
 			endTimestamp = 0;
@@ -1233,7 +1201,7 @@ function setActivity() {
 		// SECTION FOR ALL WRITE-OUT DATA WITH THE TERMINAL -- CHECK HERE
 		process.stdout.write('\x1Bc');
 		console.log('-- Here\'s Some Info Lovely --\n');
-		// console.log('');
+		// console.log(' ');
 		// // console.log('--', searchAbout, 'is Forming --\n');
 		// console.log('-- Love Is Forming --');
 		console.log(songInfo);
@@ -1474,7 +1442,8 @@ async function updateSongInfo() {
 		if (paused) {
 			win.setOverlayIcon(getNativeImage(PausedImage, 'Paused'));
 		}
-	} else {
+	}
+	else {
 		win.setProgressBar(time[0] / time[1]);
 		// win.setOverlayIcon(getNativeImage(StoppedImage), 'Stopped');
 		// win.setThumbarButtons(toolTipButtons);
@@ -1484,8 +1453,8 @@ async function updateSongInfo() {
 rpc.once('disconnected', title => {
 	rpc.destroy();
 	// reconnectTimer = setInterval(reconnect, 5e3);
-	ConnectDis = ' [ Disconnected ]';
-	win.setTitle(`${titleTwo} - ${stateTwo}${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}  ${getNAME}`); // Added 'PageTitleReload' function for constant reload
+	ConnectDis = '[ Disconnected ]';
+	win.setTitle(`${titleTwo}  -${stateTwo} ${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}`); // Added 'PageTitleReload' function for constant reload
 });
 
 function reconnect() {
@@ -1497,14 +1466,14 @@ function reconnect() {
 		clientId
 	}).then(() => {
 		clearInterval(reconnectTimer);
-		ConnectDis = ' [ Connected ]';
+		ConnectDis = '[ Connected ]';
 		console.log('-- Connected --');
-		win.setTitle(`${titleTwo} - ${stateTwo}${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}  ${getNAME}`); // Added 'PageTitleReload' function for constant reload
+		win.setTitle(`${titleTwo}  -${stateTwo} ${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}`); // Added 'PageTitleReload' function for constant reload
 	}).catch(err => {
 		rpc = null;
 		console.error(err);
-		ConnectDis = ' [ Disconnected ]';
-		win.setTitle(`${titleTwo} - ${stateTwo}${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar} ${getNAME}`); // Added 'PageTitleReload' function for constant reload
+		ConnectDis = '[ Disconnected ]';
+		win.setTitle(`${titleTwo}  -${stateTwo} ${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}`); // Added 'PageTitleReload' function for constant reload
 	});
 }
 
@@ -1513,7 +1482,7 @@ function getNativeImage(filePath) {
 }
 
 function setPageName() {
-	win.setTitle(`${titleTwo} - ${stateTwo}${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar} ${getNAME}`); // Added 'PageTitleReload' function for constant reload
+	win.setTitle(`${titleTwo}  -${stateTwo} ${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}`); // Added 'PageTitleReload' function for constant reload
 }
 
 // function fullSync() { // ======== A FUNCTION TO SEND DATA TO A WEB-SERVER ========
@@ -1685,11 +1654,10 @@ function setPageName() {
 rpc.on('ready', title => {
 	setActivity();
 	setInterval(setActivity, 1e3);
-	setInterval(soundDevices, 1e3);
 	//setInterval(fullSync, 1e3);
 	setInterval(updateSongInfo, 1e3);
 	setInterval(setPageName, 1e3);
-	ConnectDis = ' [ Connected ]';
+	ConnectDis = '[ Connected ]';
 });
 
 rpc.login({

@@ -12,6 +12,10 @@
 		"rich",
 		"presence"
 	],
+	"directories": {
+		"buildResources": "resources/assets/*",
+		"output": "dist"
+	},
 	"dependencies": {
 		"add-text-to-image": "^1.0.1",
 		"builder-util-runtime": "^9.0.2",

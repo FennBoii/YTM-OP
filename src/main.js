@@ -1114,6 +1114,7 @@ function setActivity() {
 	}
 
 	if (title && CountdownTimerVar === false) {
+		warningText = '';
 		if (repeat.includes('off')) {
 			var ThirdEntry = '▶️ •';
 			qualities += 1;

@@ -12,11 +12,12 @@
 ***To do: (In the next few days)***
 - ~~Fix project so when u 'npm install' it doesn't break and say some vc++ error~~
 - ~~Fix "win-audio" package because it keeps making the builds fail (currently is broken with current build, the "System Volume" is stuck at '78%')~~
-- ~~Fix Restart and Shutdown~~ 
+- ~~Fix Restart and Shutdown~~
+- Update all the old packages
 - External Files Setup
 - <s>Add Releases so you can just get a distribution player instead of a whole package you need to compile yourself everytime</s>
 - Make everything look neater with a better menu and cleaner look
-- Allow the titlebar to be customized through text in textfiles for untimate customization
+- Allow the titlebar to be customized through text in textfiles for ultimate customization
     - If you've got any ideas, leave them somewhere maybe in issues idk I'll *definitely* add them
 - Try to add releases for Mac and Linux in the future when I get the time
 - Add SENDING and RECIEVING for when you want to remotely play music through clients (the basics are already in the client just doesn't do anything yet)

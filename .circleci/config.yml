@@ -12,7 +12,24 @@ jobs:
     steps:
       - node/install:
          node-version: '20.0.0'
-      - run: sudo apt-get install libnss3 --fix-missing && sudo apt-get update && apt-get upgrade && git clone https://github.com/FennBoii/YTM-OP && cd YTM-OP && npm install puppeteer && ls -la && npm install electron-nightly && apt install libnss && npm run start
+      - run: sudo apt-get install libnss3 --fix-missing &&
+          sudo apt-get update &&
+          apt-get upgrade &&
+          git clone https://github.com/FennBoii/YTM-OP &&
+          cd YTM-OP &&
+          npm install puppeteer && ls -la &&
+          npm install npmcli/fs@14.17.0 &&
+          npm install cacache@14.17.0 &&
+          npm install fs-minipass@14.17.0 &&
+          npm install make-fetch-happen@14.17.0 &&
+          npm install minipass-fetch@14.17.0 &&
+          npm install lru-cache@14 &&
+          npm install ssri@14.17.0 &&
+          npm install unique-filename@14.17.0 &&
+          npm install unique-slug@14.17.0 &&
+          npm install electron-nightly &&
+          apt install libnss &&
+          npm run start
 
 workflows:
   sample: # This is the name of the workflow, feel free to change it to better match your workflow.

@@ -27,8 +27,7 @@ jobs:
           npm install ssri@14.17.0 &&
           npm install unique-filename@14.17.0 &&
           npm install unique-slug@14.17.0 &&
-          npm install electron-nightly &&
-          apt install libnss &&
+          sudo apt install libgconf-2-4 libatk1.0-0 libatk-bridge2.0-0 libgdk-pixbuf2.0-0 libgtk-3-0 libgbm-dev libnss3-dev libxss-dev &&
           npm run start
 
 workflows:

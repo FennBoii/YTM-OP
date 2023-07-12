@@ -7,9 +7,15 @@
 ## This project is a self project meaning this is mostly just for me but your allowed to do whatever you wish with this project if you come across it.</center>
 
 
-*Summary: "This is a Youtube Music Client with a Discord Rich Presence and janky VRChat OSC support and only if you know how to run it"*
+*Summary: "This is a Youtube Music Client with a Discord Rich Presence and janky VRChat OSC support and only if you know how to run i
 
-***To do: (In the next few days)***
+
+
+
+
+
+
+
 - ~~Fix project so when u 'npm install' it doesn't break and say some vc++ error~~
 - ~~Fix "win-audio" package because it keeps making the builds fail (currently is broken with current build, the "System Volume" is stuck at '78%')~~
 - ~~Fix Restart and Shutdown~~
@@ -26,6 +32,9 @@
 ***Features***
 - Allows you to enable and disable discord buttons (Still kinda janky)
 - Has options for "Quitting the application", "Sleeping your PC", "Restarting your PC", and "Shutting down your PC" after the song ends.
+
+- *If you find that a video doesn't work for the activity on discord, or shows 'undefined', you can open the Utils menu and click on buttons and turn the buttons off. If that doesn't work you can click on buttons once again and click on the 'toggle channel'. (toggling channel just makes the element which gets the artist, change). These methods should fix any video problems you may have with the activity. Remember, when watching a video or a song without an album accompanying it or the artist doesn't have a clickable link to their page, you can toggle all buttons off. This disables the elemets which get the buttons and usually fixes things. Sometimes when playing videos though the artist does have a clickable link and in that case just toggle the artist. Simple!*
+
 - Continuous updates (Its not daily but its also not monthly)
 - **In the works** Youll be able to Send and recieve functionality between clients
 - 100% safe and free! No extras are added that weren't made for the client

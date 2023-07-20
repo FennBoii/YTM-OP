@@ -30,6 +30,7 @@
 - Add a function to be able to add your own discord activity through a text file for the clientID and also maybe images
 
 ***Features***
+- Added a feature that allows the client to act a little like spotify in the sense that it disconnects when your song is paused and connects when its playing.. I haven't really tested this fully but it works for now. It's called "Not Playing Disconnect" in the Utils.
 - Allows you to enable and disable discord buttons (Still kinda janky)
 - Has options for "Quitting the application", "Sleeping your PC", "Restarting your PC", and "Shutting down your PC" after the song ends.
 

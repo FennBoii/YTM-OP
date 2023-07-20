@@ -59,6 +59,8 @@ var join1;
 var join2;
 var timeNow;
 var timeMax;
+var notPlayingDisconnect;
+var notPlayingDisconnectText = "";
 var buttonOne = false;
 var buttonTwo = false;
 var buttonThree = false;
@@ -141,14 +143,20 @@ setTimeout(SETITSNAME, 600);
 
 let win, settingsWin;
 const menuTemplate = [{
-		// 	label: 'Welcome back' + getNAME,
-		// 	click() {
-		// 		LETITREAD();
-		// {
-		//
-
-		label: 'Utils',
-		submenu: [{
+			label: 'Utils',
+			submenu: [{
+					label: 'Not Playing Disconnect',
+					click() {
+						if (notPlayingDisconnect == true) {
+							notPlayingDisconnect = false;
+							notPlayingDisconnectText = "";
+						} else {
+							notPlayingDisconnect = true;
+							notPlayingDisconnectText = " [ PausDiscon Enabled ]";
+						}
+					},
+				},
+				{
 				label: 'Connection',
 				submenu: [{
 						label: '-- Connect --',
@@ -489,8 +497,7 @@ const menuTemplate = [{
 		click() {
 			win.webContents.goBack();
 		},
-	},
-	{
+	}, {
 		label: 'Go Forward',
 		click() {
 			win.webContents.goForward();
@@ -916,7 +923,9 @@ function getContent() {
 			warningText,
 			CountdownTimerVar,
 			SystemVolume,
-			ConnectDis
+			ConnectDis,
+			notPlayingDisconnect,
+			connectCounter
 		});
 	});
 }
@@ -1108,7 +1117,7 @@ function setActivity() {
 		if (RealCountdown >= 0 && RealCountdown < 10) {
 			ThirdEntry = '⚠️•';
 			warningText = '[ ' + quitText + ' in 10s ]';
-		} else (
+		} else(
 			RealCountdown = 'error counting down!'
 		)
 	}
@@ -1125,6 +1134,22 @@ function setActivity() {
 			ThirdEntry = '🔂 •';
 			qualities += 3;
 		}
+	}
+
+	if (paused === false && notPlayingDisconnect === true && connectCounter == 0) {
+		reconnect();
+		ConnectDis = ' [ Connected ]';
+		error_bool = false;
+		connectCounter += 1;
+		console.log("ALIVENESS");
+	}
+
+	if (paused === true && notPlayingDisconnect === true && connectCounter == 1) {
+		rpc.destroy();
+		ConnectDis = ' [ Disconnected ]';
+		error_bool = true;
+		connectCounter -= 1;
+		console.log("DEADNESS");
 	}
 
 	if (paused && qualities === 1 && CountdownTimerVar === false) {
@@ -1486,7 +1511,7 @@ rpc.once('disconnected', title => {
 	rpc.destroy();
 	// reconnectTimer = setInterval(reconnect, 5e3);
 	ConnectDis = ' [ Disconnected ]';
-	win.setTitle(`${titleTwo} - ${stateTwo}${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}  ${getNAME}`); // Added 'PageTitleReload' function for constant reload
+	win.setTitle(`${titleTwo} - ${stateTwo}${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}${notPlayingDisconnectText} ${getNAME}`); // Added 'PageTitleReload' function for constant reload
 });
 
 function reconnect() {
@@ -1500,12 +1525,12 @@ function reconnect() {
 		clearInterval(reconnectTimer);
 		ConnectDis = ' [ Connected ]';
 		console.log('-- Connected --');
-		win.setTitle(`${titleTwo} - ${stateTwo}${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}  ${getNAME}`); // Added 'PageTitleReload' function for constant reload
+		win.setTitle(`${titleTwo} - ${stateTwo}${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}${notPlayingDisconnectText} ${getNAME}`); // Added 'PageTitleReload' function for constant reload
 	}).catch(err => {
 		rpc = null;
 		console.error(err);
 		ConnectDis = ' [ Disconnected ]';
-		win.setTitle(`${titleTwo} - ${stateTwo}${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar} ${getNAME}`); // Added 'PageTitleReload' function for constant reload
+		win.setTitle(`${titleTwo} - ${stateTwo}${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}${notPlayingDisconnectText} ${getNAME}`); // Added 'PageTitleReload' function for constant reload
 	});
 }
 
@@ -1514,7 +1539,7 @@ function getNativeImage(filePath) {
 }
 
 function setPageName() {
-	win.setTitle(`${titleTwo} - ${stateTwo}${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar} ${getNAME}`); // Added 'PageTitleReload' function for constant reload
+	win.setTitle(`${titleTwo} - ${stateTwo}${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}${notPlayingDisconnectText} ${getNAME}`); // Added 'PageTitleReload' function for constant reload
 }
 
 // function fullSync() { // ======== A FUNCTION TO SEND DATA TO A WEB-SERVER ========

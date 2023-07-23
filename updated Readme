@@ -7,7 +7,7 @@
 ## This project is a self project meaning this is mostly just for me but your allowed to do whatever you wish with this project if you come across it.</center>
 
 
-*Summary: "This is a Youtube Music Client with a Discord Rich Presence and janky VRChat OSC support and only if you know how to run i
+* Summary: "This is a Youtube Music Client with a Discord Rich Presence and janky VRChat OSC support and only if you know how to run it
 
 
 
@@ -19,6 +19,7 @@
 - ~~Fix project so when u 'npm install' it doesn't break and say some vc++ error~~
 - ~~Fix "win-audio" package because it keeps making the builds fail (currently is broken with current build, the "System Volume" is stuck at '78%')~~
 - ~~Fix Restart and Shutdown~~
+- Update the release dist / exe
 - Update all the old packages
 - External Files Setup
 - <s>Add Releases so you can just get a distribution player instead of a whole package you need to compile yourself everytime</s>

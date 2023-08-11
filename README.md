@@ -1,3 +1,12 @@
+**what iv'e gotta fix before the clients work with eachother:**
+    - add a couple new features before anything else (make buttons show 'album' and 'artist' instead of the actual name) and (automatically detect the *no album link available so ima spit u an error* to automatically disabling buttons for u as an option)
+    - Fix the wifi card problem with my redhat ubuntu server
+    - setup the server's connection to the site so the site can go live
+    - add a config.json that the user can edit for the client's connection to one another outside of the client build as a package
+    - make/fix the send/recieve scripts on the client for when the site is up
+    - allow site connection encrypting for the client's connection with eachother
+    - finally add a 2nd release with all the newest updates
+
 [ The open code downloaded with git now works when compiled but when i build and package it, the system volume stays at 'undefined'. I am working on this. ]
 
 <center>

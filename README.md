@@ -1,4 +1,6 @@
+
 **what iv'e gotta fix before the clients work with eachother:**
+
     - add a couple new features before anything else (make buttons show 'album' and 'artist' instead of the actual name) and (automatically detect the *no album link available so ima spit u an error* to automatically disabling buttons for u as an option)
     - Fix the wifi card problem with my redhat ubuntu server
     - setup the server's connection to the site so the site can go live

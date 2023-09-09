@@ -1,3 +1,4 @@
+**I GOT CLIENT SYNCING TO WORK, JUST GOTTA FIX A FEW THINGS AND ILL RELEASE IT**
 
 **what ive gotta fix before the clients work with eachother:**
 

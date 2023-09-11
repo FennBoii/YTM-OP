@@ -17,21 +17,15 @@ const path = require('path');
 const loudness = require('loudness');
 const fs = require('fs');
 const dataPath = app.getPath('userData');
-const axios = require('axios');
 const {
 	spawn
-} = require('child_process');
+} = require('child_process').exec;
 const generalConfigPath = path.join(dataPath, 'conf.json');
-// const { execDONE } = require('child_process');
 /* ---------------------------------RUN FUNCTIONS--------------------------------- */
 LETITREAD();
 soundDevices();
 /* ---------------------------------DEFINE FUNCTIONS--------------------------------- */
-var thelink;
-var outputURL;
-var thelinkFin;
-var synctimeGET;
-var outputUrlOut;
+var port = 8008;
 var systemVolume = 0;
 var host = "127.0.0.1";
 var ToggleButtons = true;
@@ -40,13 +34,12 @@ var TogglePlaylist = true;
 var ToggleArtist = true;
 var volume = 0;
 var artist;
-var songUrl = "https://google.com/";
 var titleTwo = '';
 var detailsTwo = '- Loading -';
 var stateTwo = '- Loading -';
 var ConnectDis = ' [ Disconnected ]';
 var detailsThree = 'Default';
-var channel = 'https://google.com/';
+var channel = 'https://google.com';
 var error_bool = false;
 var fennec = 'https://';
 var PlaylistCounter = '';
@@ -65,7 +58,7 @@ var channelname;
 var Explicit;
 var join1;
 var join2;
-var timeNow = 1;
+var timeNow;
 var timeMax;
 var notPlayingDisconnect;
 var notPlayingDisconnectText = "";
@@ -84,40 +77,22 @@ var CountdownTimerVar = false;
 var sysVol;
 var mainWindow;
 var LICKCHeck = '';
-// [ ------------------------------------------------------- ]
-// [ ------------------------------------------------------- ]
+	// [ ------------------------------------------------------- ]
+	// [ ------------------------------------------------------- ]
 
-// var VersionNumber = `Volume is: ${volume}`; // 'Updated(v3.3.1 - 18:12 - 03-13-2022);';
+	// var VersionNumber = `Volume is: ${volume}`; // 'Updated(v3.3.1 - 18:12 - 03-13-2022);';
 
-// [ ------------------------------------------------------- ]
-// [ ------------------------------------------------------- ]
+	// [ ------------------------------------------------------- ]
+	// [ ------------------------------------------------------- ]
 
-// function execute("./getCurrentVol.exe", callback){
-//     exec(command, function(error, stdout, stderr){ callback(stdout); });
-// };
+	// function execute("./getCurrentVol.exe", callback){
+	//     exec(command, function(error, stdout, stderr){ callback(stdout); });
+	// };
 
-async function soundDevices() {
-	const exePath = 'svcl.exe';
-	const args = ['/Stdout', '/GetPercent', 'Speakers'];
-
-	const childProcess = spawn(exePath, args);
-
-	childProcess.stdout.on('data', (data) => {
-	  // Parse the data as a floating-point number and round it
-	  sysVol = Math.round(parseFloat(data));
-	});
-	
-	childProcess.stderr.on('data', (data) => {
-	  console.error(`stderr: ${data}`);
-	});
-	
-	// childProcess.on('close', (code) => {
-	//   console.log(`Child process exited with code ${code}`);
-	
-	// Now you can access sysVol with the formatted value
-	//   console.log(`System Volume: ${sysVol}`);
-	// });
-}
+	async function soundDevices() {
+		const vol = await loudness.getVolume();
+		sysVol = vol;
+	}
 
 // LoopAudioGet(); // WIN AUDIO GET
 // function LoopAudioGet() {
@@ -167,126 +142,6 @@ function SETITSNAME() {
 process.stdout.write('\x1Bc');
 setTimeout(SETITSNAME, 600);
 
-function checkSync() {
-	if (ConnectionTitle == "[ -- Sending -- ]") {
-		const baseURL = 'https://getname.ytmopdata.net/changeTheLink.php'; // Replace with your base URL
-
-		// Define the data for updating the "thelink" value
-		const theLinkData = {
-			givenNameToken: '4787bb1adad3530f01f72869356668b294284a83', // Replace with your token values
-			randomToken: 'uzlkGHcIgj', // Replace with your token values
-			siteName: 'FennBoii', // Replace with your siteName
-			thelink: songUrl.toString(), // Modify thelink value as needed
-		};
-
-		// Function to make the HTTP request and update "thelink"
-		async function updateTheLink() {
-			try {
-				const response = await axios.get(`${baseURL}/updateTheLink.php`, {
-					params: theLinkData
-				});
-				console.log('Update "thelink" response:', response.data);
-			} catch (error) {
-				console.error('Error updating "thelink":', error.message);
-			}
-		}
-
-		// Call the function to update "synctime"
-		updateTheLink();
-	} else if (ConnectionTitle == "[ -- Recieving -- ]") {
-		// Define the URL of your PHP script
-		const phpScriptURL = 'https://getname.ytmopdata.net/token_verifier.php';
-
-		// Define the data to send in the request body
-		const queryParameters = {
-			siteName: 'FennBoii', // Replace with the actual site name
-			givenNameToken: '4787bb1adad3530f01f72869356668b294284a83',
-			randomToken: 'uzlkGHcIgj',
-			// newContent: 'updated_content' // Replace with the content you want to update
-		};
-
-		// Send a GET request to retrieve the 'thelink' field
-		axios.get(phpScriptURL, {
-				params: queryParameters
-			})
-			.then((response) => {
-				// Access the 'theLink' field from the response data
-				thelink = response.data.thelink;
-				synctimeGET = response.data.synctime;
-
-				thelinkSave = thelink.indexOf('&t=') + 3;
-				thelinkSaved = thelink.substring(thelinkSave);
-
-				thelinkEdit = thelink.indexOf('&t=');
-				thelinkFin = thelink.slice(0, thelinkEdit + 3);
-
-				// const shortSongUrl = new URL(songUrl);
-				// shortSongUrl.searchParams.set('list', 'LM');
-				// const songUrlAdd = songUrl + "&t=";
-				// timeNow = synctimeGET;
-
-				const linksCombined = thelinkFin + thelinkSaved;
-
-				if (songUrl == linksCombined) {
-					if (synctimeGET - timeNow < 3) {
-						console.log("This doesn't need to be synced again");
-					} else {
-						win.webContents.executeJavaScript("document.getElementsByTagName('video')[0].currentTime =" + synctimeGET);
-						console.log('syncedTime');
-					}
-				} else {
-					win.loadURL(thelink);
-					console.log('Reloaded for some reason');
-				}
-			})
-			.catch((error) => {
-				if (error.response) {
-					// The request was made, but the server responded with an error status code
-					console.error('Server responded with status code:', error.response.status);
-					console.error('Response data:', error.response.data);
-				} else if (error.request) {
-					// The request was made, but no response was received
-					console.error('No response received from the server.');
-				} else {
-					// Something else went wrong
-					console.error('Error:', error.message);
-				}
-			});
-
-	} else {
-		console.log("rawerrrrrr~");
-	}
-}
-
-function syncTimeSync() {
-	if (ConnectionTitle == "[ -- Sending -- ]") {
-		const baseURL = 'https://getname.ytmopdata.net/changeSyncTime.php'; // Replace with your base URL
-
-		// Define the data for updating the "synctime" value
-		const syncTimeData = {
-			givenNameToken: '4787bb1adad3530f01f72869356668b294284a83', // Replace with your token values
-			randomToken: 'uzlkGHcIgj', // Replace with your token values
-			siteName: 'FennBoii', // Replace with your siteName
-			synctime: timeNow, // Modify synctime value as needed
-		};
-
-		// Function to make the HTTP request and update "synctime"
-		async function updateSyncTime() {
-			try {
-				const response = await axios.get(baseURL, {
-					params: syncTimeData
-				});
-				console.log('Update "synctime" response:', response.data);
-			} catch (error) {
-				console.error('Error updating "synctime":', error.message);
-			}
-		}
-
-		// Call the function to update "synctime"
-		updateSyncTime();
-
-	}
-}
 
 let win, settingsWin;
 const menuTemplate = [{
@@ -862,10 +717,6 @@ function getContent() {
 		if (!result) return reject('Error grabbing repeat status');
 		repeat = result;
 
-		result = await executeJavaScript('document.querySelector(\'#movie_player > div.ytp-chrome-top > div.ytp-title > div > a\').href');
-		if (!result) return reject('Error grabbing song url');
-		songUrl = result;
-
 		// Playlist Link
 		if (TogglePlaylist === true) {
 			result = await executeJavaScript('document.querySelector(\'#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(3)\').href');
@@ -1058,15 +909,7 @@ function getContent() {
 			document.createElement('textarea');
 		}
 		return resolve({
-			// outputUrl2,
-			// thelinkOut2,
-			outputUrlOut,
-			songUrl,
-			outputURL,
-			thelinkFin,
-			thelink,
 			LICKCHeck,
-			synctimeGET,
 			systemVolume,
 			getNAME,
 			RealCountdownTitleBar,
@@ -1905,8 +1748,6 @@ rpc.on('ready', title => {
 	setActivity();
 	setInterval(setActivity, 1e3);
 	setInterval(soundDevices, 1e3);
-	setInterval(checkSync, 6000);
-	setInterval(syncTimeSync, 1000)
 	//setInterval(fullSync, 1e3);
 	setInterval(updateSongInfo, 1e3);
 	setInterval(setPageName, 1e3);

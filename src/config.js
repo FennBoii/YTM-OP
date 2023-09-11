@@ -1,8 +1,8 @@
     module.exports = {
-        "username": "[ Welcome Back, Fennec ]",
-        "SiteName": "ccccc",
-        "GivenNameToken": "aed4ef3b90d74390e125f08b74912a65b3760869",
-        "RandomToken": "3Z1Rtvfwir",
+        "username": "",
+        "SiteName": "",
+        "GivenNameToken": "",
+        "RandomToken": "",
         // delays between sends (used for slower connections and better syncing)
         "outOfSyncPlayingSong": 3,
         // (this is for if the song is out of sync by; how much will you want it resync again?

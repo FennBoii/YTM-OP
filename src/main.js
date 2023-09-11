@@ -18,13 +18,13 @@ const loudness = require('loudness');
 const fs = require('fs');
 const dataPath = app.getPath('userData');
 const axios = require('axios');
+const config = require('./config.js');
 const {
 	spawn
 } = require('child_process');
-const generalConfigPath = path.join(dataPath, 'conf.json');
+// const generalConfigPath = path.join(dataPath, 'conf.json');
 // const { execDONE } = require('child_process');
 /* ---------------------------------RUN FUNCTIONS--------------------------------- */
-LETITREAD();
 soundDevices();
 /* ---------------------------------DEFINE FUNCTIONS--------------------------------- */
 var thelink;
@@ -103,17 +103,17 @@ async function soundDevices() {
 	const childProcess = spawn(exePath, args);
 
 	childProcess.stdout.on('data', (data) => {
-	  // Parse the data as a floating-point number and round it
-	  sysVol = Math.round(parseFloat(data));
+		// Parse the data as a floating-point number and round it
+		sysVol = Math.round(parseFloat(data));
 	});
-	
+
 	childProcess.stderr.on('data', (data) => {
-	  console.error(`stderr: ${data}`);
+		console.error(`stderr: ${data}`);
 	});
-	
+
 	// childProcess.on('close', (code) => {
 	//   console.log(`Child process exited with code ${code}`);
-	
+
 	// Now you can access sysVol with the formatted value
 	//   console.log(`System Volume: ${sysVol}`);
 	// });
@@ -125,18 +125,18 @@ async function soundDevices() {
 // 	setTimeout(LoopAudioGet, 500);
 // }
 
-try {
-	JSON.parse(fs.readFileSync(generalConfigPath));
-} catch (ex) {
-	if (fs.existsSync(generalConfigPath)) {
-		fs.unlinkSync(generalConfigPath);
-	}
-	fs.writeFileSync(generalConfigPath, JSON.stringify({}));
-}
+// try {
+// 	JSON.parse(fs.readFileSync(generalConfigPath));
+// } catch (ex) {
+// 	if (fs.existsSync(generalConfigPath)) {
+// 		fs.unlinkSync(generalConfigPath);
+// 	}
+// 	fs.writeFileSync(generalConfigPath, JSON.stringify({}));
+// }
 
-const config = JSON.parse(fs.readFileSync(generalConfigPath));
-if (!config.continueWhereLeftOf || typeof config.continueWhereLeftOf !== 'boolean') config.continueWhereLeftOf = true;
-if (config.continueURL || typeof config.continueURL !== 'string') config.continueURL = 'https://music.youtube.com/';
+// const config = JSON.parse(fs.readFileSync(generalConfigPath));
+// if (!config.continueWhereLeftOf || typeof config.continueWhereLeftOf !== 'boolean') config.continueWhereLeftOf = true;
+// if (config.continueURL || typeof config.continueURL !== 'string') config.continueURL = 'https://music.youtube.com/';
 
 let reconnectTimer, injected;
 
@@ -148,20 +148,9 @@ function executeJavaScript(code) {
 	});
 }
 
-
-function LETITREAD() {
-	fs.readFile('src\\username.txt', 'utf8', (err, data) => {
-		if (err) {
-			console.error(err);
-			return;
-		}
-		var CONNECTBOTH = ('[ Welcome back, ' + data + ' ]')
-		getNAME = CONNECTBOTH;
-	});
-}
-
 function SETITSNAME() {
-	console.log('-- Welcome Back ' + getNAME + ' --');
+	// console.log('-- Welcome Back ' + config.username + ' --');
+	console.log('-- ' + config.username + ' --');
 }
 
 process.stdout.write('\x1Bc');
@@ -173,9 +162,9 @@ function checkSync() {
 
 		// Define the data for updating the "thelink" value
 		const theLinkData = {
-			givenNameToken: '4787bb1adad3530f01f72869356668b294284a83', // Replace with your token values
-			randomToken: 'uzlkGHcIgj', // Replace with your token values
-			siteName: 'FennBoii', // Replace with your siteName
+			givenNameToken: config.GivenNameToken, // Replace with your token values
+			randomToken: config.RandomToken, // Replace with your token values
+			siteName: config.SiteName, // Replace with your siteName
 			thelink: songUrl.toString(), // Modify thelink value as needed
 		};
 
@@ -199,9 +188,9 @@ function checkSync() {
 
 		// Define the data to send in the request body
 		const queryParameters = {
-			siteName: 'FennBoii', // Replace with the actual site name
-			givenNameToken: '4787bb1adad3530f01f72869356668b294284a83',
-			randomToken: 'uzlkGHcIgj',
+			siteName: config.SiteName, // Replace with your siteName
+			givenNameToken: config.GivenNameToken, // Replace with your token values
+			randomToken: config.RandomToken, // Replace with your token values
 			// newContent: 'updated_content' // Replace with the content you want to update
 		};
 
@@ -228,7 +217,7 @@ function checkSync() {
 				const linksCombined = thelinkFin + thelinkSaved;
 
 				if (songUrl == linksCombined) {
-					if (synctimeGET - timeNow < 3) {
+					if (synctimeGET - timeNow < config.outOfSyncPlayingSong) {
 						console.log("This doesn't need to be synced again");
 					} else {
 						win.webContents.executeJavaScript("document.getElementsByTagName('video')[0].currentTime =" + synctimeGET);
@@ -264,9 +253,9 @@ function syncTimeSync() {
 
 		// Define the data for updating the "synctime" value
 		const syncTimeData = {
-			givenNameToken: '4787bb1adad3530f01f72869356668b294284a83', // Replace with your token values
-			randomToken: 'uzlkGHcIgj', // Replace with your token values
-			siteName: 'FennBoii', // Replace with your siteName
+			givenNameToken: config.GivenNameToken, // Replace with your token values
+			randomToken: config.RandomToken, // Replace with your token values
+			siteName: config.SiteName, // Replace with your siteName
 			synctime: timeNow, // Modify synctime value as needed
 		};
 
@@ -528,23 +517,23 @@ const menuTemplate = [{
 					}
 				],
 			},
-			{
-				label: 'Confirm Connection',
-				click() {
-					console.log('Connected');
-					if (ConnectionTitle = 'None') {
-						// storeValues.listen(port, host, () => {
-						// 	console.log("Server running at http://" + host + ":" + port + "/");
-						// });
-					}
-					if (ConnectionTitle = '[ -- Sending -- ]') {
+			// {
+			// 	label: 'Confirm Connection',
+			// 	click() {
+			// 		console.log('Connected');
+			// 		if (ConnectionTitle = 'None') {
+			// 			// storeValues.listen(port, host, () => {
+			// 			// 	console.log("Server running at http://" + host + ":" + port + "/");
+			// 			// });
+			// 		}
+			// 		if (ConnectionTitle = '[ -- Sending -- ]') {
 
-					}
-					if (ConnectionTitle = '[ -- Recieving -- ]') {
+			// 		}
+			// 		if (ConnectionTitle = '[ -- Recieving -- ]') {
 
-					}
-				},
-			},
+			// 		}
+			// 	},
+			// },
 			// {
 			// 	label: 'Some Checks',
 			// 	submenu: [{
@@ -758,7 +747,7 @@ function createWindow() {
 		win = null;
 	});
 	win.on('page-title-updated', (e, title) => {
-		win.setTitle(`${titleTwo} - ${stateTwo}${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}${notPlayingDisconnectText} ${getNAME}`); // Added 'PageTitleReload' function for constant reload
+		win.setTitle(`${titleTwo} - ${stateTwo}${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}${notPlayingDisconnectText} ${config.username}`); // Added 'PageTitleReload' function for constant reload
 		BrowserWindow.title = "owo";
 		e.preventDefault();
 	});
@@ -782,13 +771,13 @@ function createWindow() {
 app.on('ready', createWindow)
 
 
-app.on('window-all-closed', () => {
-	fs.writeFileSync(generalConfigPath, JSON.stringify(config, null, '\t'));
-	app.quit();
-});
-app.on('will-quit', () => {
-	fs.writeFileSync(generalConfigPath, JSON.stringify(config, null, '\t'));
-});
+// app.on('window-all-closed', () => {
+// 	fs.writeFileSync(generalConfigPath, JSON.stringify(config, null, '\t'));
+// 	app.quit();
+// });
+// app.on('will-quit', () => {
+// 	fs.writeFileSync(generalConfigPath, JSON.stringify(config, null, '\t'));
+// });
 
 app.on('activate', () => {
 	if (win === null) {
@@ -1718,12 +1707,12 @@ function reconnect() {
 		clearInterval(reconnectTimer);
 		ConnectDis = ' [ Connected ]';
 		console.log('-- Connected --');
-		win.setTitle(`${titleTwo} - ${stateTwo}${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}${notPlayingDisconnectText} ${getNAME}`); // Added 'PageTitleReload' function for constant reload
+		win.setTitle(`${titleTwo} - ${stateTwo}${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}${notPlayingDisconnectText} ${config.username}`); // Added 'PageTitleReload' function for constant reload
 	}).catch(err => {
 		rpc = null;
 		console.error(err);
 		ConnectDis = ' [ Disconnected ]';
-		win.setTitle(`${titleTwo} - ${stateTwo}${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}${notPlayingDisconnectText} ${getNAME}`); // Added 'PageTitleReload' function for constant reload
+		win.setTitle(`${titleTwo} - ${stateTwo}${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}${notPlayingDisconnectText} ${config.username}`); // Added 'PageTitleReload' function for constant reload
 	});
 }
 
@@ -1732,7 +1721,9 @@ function getNativeImage(filePath) {
 }
 
 function setPageName() {
-	win.setTitle(`${titleTwo} - ${stateTwo}${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}${notPlayingDisconnectText} ${getNAME}`); // Added 'PageTitleReload' function for constant reload
+	if (artist && titleTwo) {
+		win.setTitle(`${titleTwo} - ${stateTwo}${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}${notPlayingDisconnectText} ${config.username}`); // Added 'PageTitleReload' function for constant reload
+	}
 }
 
 // function fullSync() { // ======== A FUNCTION TO SEND DATA TO A WEB-SERVER ========
@@ -1905,7 +1896,7 @@ rpc.on('ready', title => {
 	setActivity();
 	setInterval(setActivity, 1e3);
 	setInterval(soundDevices, 1e3);
-	setInterval(checkSync, 6000);
+	setInterval(checkSync, config.resyncSongUrl);
 	setInterval(syncTimeSync, 1000)
 	//setInterval(fullSync, 1e3);
 	setInterval(updateSongInfo, 1e3);

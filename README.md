@@ -8,9 +8,11 @@
     - allow site connection encrypting for the client's connection with eachother
     - finally add a 2nd release with all the newest updates
 
-[ The open code downloaded with git now works when compiled but when i build and package it, the system volume stays at 'undefined'. I am working on this. ]
+~~[ The open code downloaded with git now works when compiled but when i build and package it, the system volume stays at 'undefined'. I am working on this. ]~~
 
 <center>
+<b>FOR VOLUME TO BE ABLE TO BE TAKEN FROM YOUR PC, PUT THE "SVCL.EXE" INTO THE LOCATION OF YOUR INSTALLED "YTM-OP.EXE".</b>
+
 <b>THERE MAY BE ERRORS WHEN CLOSING AND MAYBE SOME DURING, I AM WORKING ON THESE JUST RESTART THE CLIENT OR ADD THE ISSUES TO "ISSUES" TAB</b>
 
 # YTM-OP
@@ -19,12 +21,13 @@
 
 * Summary: "This is a Youtube Music Client with a Discord Rich Presence and janky VRChat OSC support and only if you know how to run it
 
+<hr />
+<center><h2>How to setup client syncing</h2></center>
 
-
-
-
-
-
+    1. Your going to have to go to this site: https://getname.ytmopdata.net/, put your name in and get the keys, don't touch the go to page site button yet, the site is still under construction.
+    2. Go to your player client location where u installed it, or you can just run it from the dist folder in the release, open the config.js and put your keys in the respective places and edit the name and everything you'd want to use.
+    3. Open the client and go to the **Utils** menu and hover over "Incoming Connections", you can choose what you'd want to do. (Sending makes it so that your client updated the playing url and time so that if another client connects with the name keys from the site u made, they can recieve it.) (Recieving makes your client recieve the data being sent, this means that the timers you set in the config file can be used, the **resyncSongUrl** will be used to load the new song url on a timer (too fast will get you stuck in a reload loop) and **outOfSyncPlayingSong** will be the timer for how fast you want to get the **timeNow** from the other client, this is a quick reload kind of thing so I reccoment 3 as to now OVERLOAD the database... please...)
+    4. Give the site credentials to friends etc.. and play along this works at least I think for everyone at the moment, i've done a lot of trial and error. If there are any errors put them into the Issues tab PLEASE, thankuuu for reading <3
 
 - ~~Fix project so when u 'npm install' it doesn't break and say some vc++ error~~
 - ~~Fix "win-audio" package because it keeps making the builds fail (currently is broken with current build, the "System Volume" is stuck at '78%')~~

@@ -33,11 +33,15 @@
 <hr>
 <center><h2>How to setup client syncing</h2></center>
 
-    1. Your going to have to go to this site: https://getname.ytmopdata.net/, put your name in and get the keys, don't touch the go to page site button yet, the site is still under construction.
-    2. Go to your player client location where u installed it, or you can just run it from the dist folder in the release, open the config.js and put your keys in the respective places and edit the name and everything you'd want to use.
-    3. Open the client and go to the **Utils** menu and hover over "Incoming Connections", you can choose what you'd want to do. (Sending makes it so that your client updated the playing url and time so that if another client connects with the name keys from the site u made, they can receive it.) (Receiving makes your client receive the data being sent, this means that the timers you set in the config file can be used, the **resyncSongUrl** will be used to load the new song url on a timer (too fast will get you stuck in a reload loop) and **outOfSyncPlayingSong** will be the timer for how fast you want to get the **timeNow** from the other client, this is a quick reload kind of thing so I recommend 3 as to not OVERLOAD the database... please...)
-    4. Give the site credentials to friends etc.. and play along this works at least I think for everyone at the moment, i've done a lot of trial and error. If there are any errors put them into the Issues tab PLEASE, thankuuu for reading <3
+- Your going to have to go to this site: https://getname.ytmopdata.net/, put your name in and get the keys, don't touch the go to page site button yet, the site is still under construction.
 
+- Go to your player client location where u installed it, or you can just run it from the dist folder in the release, open the config.js and put your keys in the respective places and edit the name and everything you'd want to use.
+
+-  Open the client and go to the **Utils** menu and hover over "Incoming Connections", you can choose what you'd want to do. (Sending makes it so that your client updated the playing url and time so that if another client connects with the name keys from the site u made, they can receive it.) (Receiving makes your client receive the data being sent, this means that the timers you set in the config file can be used, the **resyncSongUrl** will be used to load the new song url on a timer (too fast will get you stuck in a reload loop) and **outOfSyncPlayingSong** will be the timer for how fast you want to get the **timeNow** from the other client, this is a quick reload kind of thing so I recommend 3 as to not OVERLOAD the database... please...)
+
+-  Give the site credentials to friends etc.. and play along this works at least I think for everyone at the moment, i've done a lot of trial and error. If there are any errors put them into the Issues tab PLEASE, thankuuu for reading <3
+
+***TO DO (not all listed)***
 - ~~Fix project so when u 'npm install' it doesn't break and say some vc++ error~~
 - ~~Fix "win-audio" package because it keeps making the builds fail (currently is broken with current build, the "System Volume" is stuck at '78%')~~
 - ~~Fix Restart and Shutdown~~

@@ -10,8 +10,8 @@
 
 <center>
 <b>CLIENT SYNCING IS POSSIBLE THANKS TO MY SITE!</b> <i>(below are instructions on how)</i>
-<b>FOR VOLUME TO BE ABLE TO BE TAKEN FROM YOUR PC, PUT THE "SVCL.EXE" INTO THE LOCATION OF YOUR INSTALLED "YTM-OP.EXE:".</b>
-<h3>These are some simple command u can put into a ADMINISTRATOR cmd and move the files easily:</h3>
+<br>
+<h3>These are some simple commands u can put into a ADMINISTRATOR cmd to move the files easily:</h3>
 <h3>for the config.js:</h3>
 
     mv "C:\Downloads\dist\dist\win-unpacked\resources\extra\config.js" "C:\Program Files\YTM-OP"

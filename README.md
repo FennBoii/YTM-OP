@@ -10,6 +10,7 @@
 
 <center>
 <b>CLIENT SYNCING IS POSSIBLE THANKS TO MY SITE!</b> <i>(below are instructions on how)</i>
+<i><h3>the song can become out of sync on the recieving side if the one sending pauses or moves the song time around... this is a bug I will fix in the future owo</h3></i>
 <br>
 <h3>These are some simple commands u can put into a ADMINISTRATOR cmd to move the files easily:</h3>
 <h3>for the config.js:</h3>

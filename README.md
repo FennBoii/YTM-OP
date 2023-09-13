@@ -29,7 +29,6 @@
 
 
 * Summary: "This is a Youtube Music Client with a Discord Rich Presence and janky VRChat OSC support and only if you know how to run it
-<br>
 <hr>
 <center><h2>How to setup client syncing</h2></center>
 
@@ -53,7 +52,7 @@
 - Allow the titlebar to be customized through text in textfiles for ultimate customization
     - If you've got any ideas, leave them somewhere maybe in issues idk I'll *definitely* add them
 - Try to add releases for Mac and Linux in the future when I get the time
-- Add SENDING and RECEIVING for when you want to remotely play music through clients (the basics are already in the client just doesn't do anything yet)
+- ~~Add SENDING and RECEIVING for when you want to remotely play music through clients (the basics are already in the client just doesn't do anything yet)~~
 - Add a function to be able to add your own discord activity through a text file for the clientID and also maybe images
 
 ***Features***

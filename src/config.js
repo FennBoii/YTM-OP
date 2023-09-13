@@ -1,8 +1,9 @@
     module.exports = {
-        "username": "",
-        "SiteName": "",
-        "GivenNameToken": "",
-        "RandomToken": "",
+        "SiteName": "FennBoii",
+        "GivenNameToken": "4787bb1adad3530f01f72869356668b294284a83",
+        "RandomToken": "A4ngKTS8A3",
+        "SVLPath": "./svcl.exe",
+        "username": "FennBoiics",
         // delays between sends (used for slower connections and better syncing)
         "outOfSyncPlayingSong": 3,
         // (this is for if the song is out of sync by; how much will you want it resync again?

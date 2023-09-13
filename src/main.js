@@ -13,15 +13,15 @@ const {
 	webContents,
 	clipboard
 } = require('electron');
-const path = require('path');
 const loudness = require('loudness');
 const fs = require('fs');
 const dataPath = app.getPath('userData');
 const axios = require('axios');
-const config = require('./config.js');
+const path = require('path');
 const {
 	spawn
 } = require('child_process');
+var config = "config.js";
 // const generalConfigPath = path.join(dataPath, 'conf.json');
 // const { execDONE } = require('child_process');
 /* ---------------------------------RUN FUNCTIONS--------------------------------- */
@@ -33,7 +33,6 @@ var thelinkFin;
 var synctimeGET;
 var outputUrlOut;
 var systemVolume = 0;
-var host = "127.0.0.1";
 var ToggleButtons = true;
 var ChannelToggle = true;
 var TogglePlaylist = true;
@@ -82,7 +81,6 @@ var connectCounter = 1;
 var RealCountdownTitleBar = '';
 var CountdownTimerVar = false;
 var sysVol;
-var mainWindow;
 var LICKCHeck = '';
 // [ ------------------------------------------------------- ]
 // [ ------------------------------------------------------- ]
@@ -96,8 +94,16 @@ var LICKCHeck = '';
 //     exec(command, function(error, stdout, stderr){ callback(stdout); });
 // };
 
+fs.readFile('config.js', {encoding: 'utf-8'}, function(output,data){
+	if (!output){
+		console.log('recieved data: ' + data);
+	} else {
+		console.log(output);
+	}
+});
+
 async function soundDevices() {
-	const exePath = 'svcl.exe';
+	const exePath = "svcl.exe";
 	const args = ['/Stdout', '/GetPercent', 'Speakers'];
 
 	const childProcess = spawn(exePath, args);
@@ -164,7 +170,7 @@ function checkSync() {
 		const theLinkData = {
 			givenNameToken: config.GivenNameToken, // Replace with your token values
 			randomToken: config.RandomToken, // Replace with your token values
-			siteName: config.SiteName, // Replace with your siteName
+			siteName: config.siteName, // Replace with your siteName
 			thelink: songUrl.toString(), // Modify thelink value as needed
 		};
 
@@ -671,11 +677,6 @@ const menuTemplate = [{
 // 	});
 // }
 
-var NormalElement = "document.querySelector('#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(3)').text";
-var ChannelMutatedElement = "document.querySelector('#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(3)').text";
-
-var theElement = "document.querySelector('#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(1)').href";
-
 function DiscordConnect() {
 	reconnect();
 }
@@ -855,41 +856,76 @@ function getContent() {
 		if (!result) return reject('Error grabbing song url');
 		songUrl = result;
 
-		// Playlist Link
-		if (TogglePlaylist === true) {
-			result = await executeJavaScript('document.querySelector(\'#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(3)\').href');
-			playlist = result;
-		}
-		if (TogglePlaylist === false) {
-			result = 'https://google.com';
-			playlist = result;
-		}
+		// // Playlist Link
+		// if (TogglePlaylist === true) {
+		// 	result = await executeJavaScript('document.querySelector(\'#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(3)\').href');
+		// 	playlist = result;
+		// }
+		// if (TogglePlaylist === false) {
+		// 	result = 'https://google.com';
+		// 	playlist = result;
+		// }
 
-		// Playlist Name
-		if (TogglePlaylist === true) {
+		// // Playlist Name
+		// if (TogglePlaylist === true) {
+		// 	result = await executeJavaScript('document.querySelector(\'#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(3)\').text');
+		// 	playlistname = result;
+		// }
+		// if (TogglePlaylist === false) {
+		// 	result = 'false';
+		// 	playlistname = result;
+		// }
+
+		try {
+			// Attempt to fetch the playlist name
 			result = await executeJavaScript('document.querySelector(\'#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(3)\').text');
 			playlistname = result;
-		}
-		if (TogglePlaylist === false) {
+		} catch (error) {
+			// Handle the error or fallback to a different value
+			console.error('FAILED:', error);
+
+			// Fallback to a default value
 			result = 'false';
 			playlistname = result;
 		}
+
 
 		// result = await executeJavaScript('document.querySelector(\'input#input.style-scope.ytmusic-search-box\').value');
 		// if (!result) return reject('No Search About');
 		// searchAbout = result;
 
-		var theElement = "document.querySelector('#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > span:nth-child(1)').textContent"
+		try {
+			// Attempt to fetch the href using the specified query selector
+			result = await executeJavaScript('document.querySelector(\'#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(3)\').href');
+		} catch (error) {
+			// Handle the error
+			console.error('FAILED:', error);
+			// You can add any additional error handling or fallback logic here
+		}
 
-		if (ChannelToggle === true) {
+
+		// if (ChannelToggle === true) {
+		// 	result = await executeJavaScript('document.querySelector(\'#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(1)\').href');
+		// 	//if (!result) await executeJavaScript('document.querySelector(\'#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > span:nth-child(1)\').textContent')
+		// 	channel = result;
+		// }
+		// if (ChannelToggle === false) {
+		// 	result = "https://thisxdoesnotexist.com/"
+		// 	channel = result;
+		// }
+
+		try {
 			result = await executeJavaScript('document.querySelector(\'#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(1)\').href');
-			//if (!result) await executeJavaScript('document.querySelector(\'#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > span:nth-child(1)\').textContent')
+			channel = result;
+		} catch (error) {
+			// Handle the error or fallback to a different value
+			console.error('An error occurred:', error);
+
+			// Fallback to a default value
+			result = "https://thisxdoesnotexist.com/";
 			channel = result;
 		}
-		if (ChannelToggle === false) {
-			result = "https://thisxdoesnotexist.com/"
-			channel = result;
-		}
+
 
 		result = await executeJavaScript('document.querySelector(\'#badges.ytmusic-player-bar\').children.length');
 		// if (!result) console.log('Error getting Explicit Status);
@@ -1396,7 +1432,9 @@ function setActivity() {
 		state = `${NewerTitle} ${artist[0] || 'Unknown'} • ${artist[1] || 'Unknown'} • ${artist[2] || 'Unknown'}`;
 
 		let fennecc = imageicon.replace('w60', 'w2080');
-		fennec = fennecc.replace('h60', 'h2080');
+		if (titleTwo && artist) {
+			fennec = fennecc.replace('h60', 'h2080');
+		}
 		let largeImagePresent = VersionNumber; // ----------------------------- //
 
 		if (repeat.includes('one')) {

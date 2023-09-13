@@ -15,10 +15,10 @@
 <h3>These are some simple command u can put into a ADMINISTRATOR cmd and move the files easily:</h3>
 <h3>for the config.js:</h3>
 
-    mv "C:\Downloads\YTM-OP\dist\config.js" "C:\Program Files\YTM-OP"
+    mv "C:\Downloads\dist\dist\win-unpacked\resources\extra\config.js" "C:\Program Files\YTM-OP"
 <h3>and for the svcl.exe:****</h3>
 
-    mv "C:\Downloads\YTM-OP\dist\svcl.exe" "C:\Program Files\YTM-OP"
+    mv "C:\Downloads\dist\dist\win-unpacked\resources\extra\svcl.exe" "C:\Program Files\YTM-OP"
 <br />
 <br />
 

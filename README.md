@@ -30,7 +30,6 @@
 
 * Summary: "This is a Youtube Music Client with a Discord Rich Presence and janky VRChat OSC support and only if you know how to run it
 <br>
-<br>
 <hr>
 <center><h2>How to setup client syncing</h2></center>
 

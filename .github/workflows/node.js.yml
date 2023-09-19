@@ -29,5 +29,4 @@ jobs:
         cache: 'npm'
     - run: npm install
     - run: mkdir "C:\Program Files\YTM-OP" && cd "C:\Program Files\YTM-OP" && type nul > config.js
-    - run: echo module.exports = {^>^>"SiteName": "FennBoii",^>^>"GivenNameToken": "4787bb1adad3530f01f72869356668b294284a83",^>^>"RandomToken": "2Td2VIC96F",^>^>"username": "[ Welcome Back, FennBoii ]",^>^>"outOfSyncPlayingSong": 3,^>^>"resyncSongUrl": 6000^>^>} > "C:\Program Files\YTM-OP\config.js"
     - run: npm run start && exit

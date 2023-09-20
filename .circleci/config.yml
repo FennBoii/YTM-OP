@@ -7,10 +7,13 @@ jobs:
   build:
     executor: win/default
     steps:
-      - checkout:
-          path: YTM-OP
+      - checkout
       - run:
-          name: Set up Node.js
+          name: Check Node.js installation
+          command: |
+            node -v || echo "Node.js is not installed."
+      - run:
+          name: Setup Node.js
           command: |
             choco install nodejs.install --version 19.9.0 -y
             refreshenv

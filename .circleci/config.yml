@@ -3,7 +3,7 @@ version: 2.1
 executors:
   win-executor:
     machine:
-      image: 'windows-server-2919-vs2019:stable'
+      image: 'circleci/windows:2019'
 
 jobs:
   build:

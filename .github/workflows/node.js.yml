@@ -17,7 +17,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [19.x]
+        node-version: [19.9.0]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
     steps:
     - uses: actions/checkout@v3
@@ -27,5 +27,4 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm install
-    - run: npm install timeout-cli -g
     - run: npm run start-ci

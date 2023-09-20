@@ -12,13 +12,18 @@ jobs:
           name: Check Node.js installation
           command: |
             node -v
-            if ($LASTEXITCODE -ne 9) {
+            if ($LASTEXITCODE -ne 0) {
               Write-Output "Node.js is not installed."
             }
       - run:
           name: Setup Node.js
           command: |
-            choco install nodejs.install --version 19.9.0 -y
+            Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1
+            choco install nodejs.install --version 19.9.0 -y --install-arguments="'/l*v c:\nodejs.install_msi_install.log'"
+            if ($LASTEXITCODE -ne 0) {
+             Get-Content -Path c:\nodejs.install_msi_install.log -Tail 10
+             exit 1
+            }
             refreshenv
       - run:
           name: Install dependencies

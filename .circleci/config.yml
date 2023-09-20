@@ -1,43 +1,27 @@
 version: 2.1
 
-# Orbs are reusable packages of CircleCI configuration that you may share across projects, enabling you to create encapsulated, parameterized commands, jobs, and executors that can be used across multiple projects.
-# See: https://circleci.com/docs/2.0/orb-intro/
 orbs:
-  node: circleci/node@5.1.0
-jobs:
-  example-job:
-    docker:
-      # replace with your preferred image
-      - image: cimg/base:stable
-    steps:
-      - node/install:
-         node-version: '20.0.0'
-      - run: sudo apt-get install libnss3 --fix-missing &&
-          sudo apt-get update &&
-          apt-get upgrade &&
-          git clone https://github.com/FennBoii/YTM-OP &&
-          cd YTM-OP &&
-          npm install puppeteer && ls -la &&
-          npm install npmcli/fs@14.17.0 &&
-          npm install cacache@14.17.0 &&
-          npm install fs-minipass@14.17.0 &&
-          npm install make-fetch-happen@14.17.0 &&
-          npm install minipass-fetch@14.17.0 &&
-          npm install lru-cache@14 &&
-          npm install ssri@14.17.0 &&
-          npm install unique-filename@14.17.0 &&
-          npm install unique-slug@14.17.0 &&
-          sudo apt install libgconf-2-4 libatk1.0-0 libatk-bridge2.0-0 libgdk-pixbuf2.0-0 libgtk-3-0 libgbm-dev libnss3-dev libxss-dev &&
-          npm run start
+  node: circleci/node@4.7
 
 workflows:
-  sample: # This is the name of the workflow, feel free to change it to better match your workflow.
-    # Inside the workflow, you define the jobs you want to run.
+  version: 2
+  build:
     jobs:
       - node/test:
-          # This is the node version to use for the `cimg/node` tag
-          # Relevant tags can be found on the CircleCI Developer Hub
-          # https://circleci.com/developer/images/image/cimg/node
-          version: '16.10'
-          # If you are using yarn, change the line below from "npm" to "yarn"
-          pkg-manager: npm
+          version: "19.9.0"
+          filters:
+            branches:
+              only:
+                - master
+jobs:
+  node/test:
+    docker:
+      - image: 'cimg/node:19.9.0'
+    steps:
+      - checkout
+      - node/install-packages:
+            pkg-manager: npm
+            cache-key: "npm"
+      - run:
+         name: Start CI
+         command: npm run start-ci

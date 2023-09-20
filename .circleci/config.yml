@@ -1,15 +1,11 @@
 version: 2.1
 
-executors:
-  win-executor:
-    docker:
-      - image: 'circleci/windows:2019'
-
 jobs:
   build:
-    executor: win-executor
+    executor: windows/default
     steps:
-      - checkout
+      - checkout:
+          path: YTM-OP
       - run:
           name: Set up Node.js
           command: |
@@ -18,10 +14,12 @@ jobs:
       - run:
           name: Install dependencies
           command: |
+            cd YTM-OP
             npm install 
       - run:
           name: Run start-ci script
           command: |
+            cd YTM-OP
             npm run start-ci
 
 workflows:

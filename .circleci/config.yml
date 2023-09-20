@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  win: circleci/windows@5.0.0
+
 jobs:
   build:
     executor: win/default

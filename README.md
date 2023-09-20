@@ -1,3 +1,5 @@
+[![Node.js CI](https://github.com/FennBoii/YTM-OP/actions/workflows/node.js.yml/badge.svg)](https://github.com/FennBoii/YTM-OP/actions/workflows/node.js.yml)
+
 **some changes I've got to add**
 
     ✓ Fix the wifi card problem with my redhat ubuntu server

@@ -9,7 +9,7 @@
 		"lint": "eslint **/*.js",
 		"lint:fix": "eslint --fix **/*.js",
 		"start": "electron .",
-		"start-ci": "timeout-cli 300 electron .",
+		"start-ci": "start /b electron . & powershell -command \"Start-Sleep -Seconds 300; Stop-Process -Name electron -Force\"",
 		"pack": "electron-builder --dir",
 		"dist:mac": "electron-builder --mac",
 		"dist:win": "electron-builder --win --x64 --ia32",

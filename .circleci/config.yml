@@ -2,8 +2,8 @@ version: 2.1
 
 executors:
   win-executor:
-    machine:
-      image: 'circleci/windows:2019'
+    docker:
+      - image: 'circleci/windows:2019'
 
 jobs:
   build:

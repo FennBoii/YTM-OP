@@ -1,17 +1,35 @@
 version: 2.1
 
-orbs:
-  node: circleci/windows@5.0
+executors:
+  win-executor:
+    machine:
+      image: 'windows-server-2919-vs2019:stable'
 
 jobs:
   build:
-      executor:
-        name: win/server-2022
-        steps:
-          - run:
-              name: Start CI
-              command: npm run start-ci
+    executor: win-executor
+    steps:
+      - checkout
+      - run:
+          name: Set up Node.js
+          command: |
+            choco install nodejs --version 19.9.0
+            refreshenv
+      - run:
+          name: Install dependencies
+          command: |
+            npm install 
+      - run:
+          name: Run start-ci script
+          command: |
+            npm run start-ci
+
 workflows:
-  my-workflow:
+  version: 2
+  build_and_test:
     jobs:
-      - build
+      - build:
+          filters:
+            branches:
+              only:
+                - master

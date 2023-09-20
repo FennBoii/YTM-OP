@@ -11,7 +11,10 @@ jobs:
       - run:
           name: Check Node.js installation
           command: |
-            node -v || echo "Node.js is not installed."
+            node -v
+            if ($LASTEXITCODE -ne 9) {
+              Write-Output "Node.js is not installed."
+            }
       - run:
           name: Setup Node.js
           command: |
@@ -20,12 +23,10 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            cd YTM-OP
             npm install 
       - run:
           name: Run start-ci script
           command: |
-            cd YTM-OP
             npm run start-ci
 
 workflows:

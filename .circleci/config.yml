@@ -1,27 +1,17 @@
 version: 2.1
 
 orbs:
-  node: circleci/node@4.7
+  node: circleci/windows@5.0
 
-workflows:
-  version: 2
-  build:
-    jobs:
-      - node/test:
-          version: "19.9.0"
-          filters:
-            branches:
-              only:
-                - master
 jobs:
-  node/test:
-    docker:
-      - image: 'cimg/node:19.9.0'
-    steps:
-      - checkout
-      - node/install-packages:
-            pkg-manager: npm
-            cache-key: "npm"
-      - run:
-         name: Start CI
-         command: npm run start-ci
+  build:
+      executor:
+        name: win/server-2022
+        steps:
+          - run:
+              name: Start CI
+              command: npm run start-ci
+workflows:
+  my-workflow:
+    jobs:
+      - build

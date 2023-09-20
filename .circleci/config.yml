@@ -12,7 +12,7 @@ jobs:
       - run:
           name: Set up Node.js
           command: |
-            choco install nodejs --version 19.9.0 -y
+            choco install nodejs.install --version 19.9.0 -y
             refreshenv
       - run:
           name: Install dependencies

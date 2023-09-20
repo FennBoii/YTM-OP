@@ -9,6 +9,7 @@
 		"lint": "eslint **/*.js",
 		"lint:fix": "eslint --fix **/*.js",
 		"start": "electron .",
+		"start-ci": "timeout-cli 300 electron .",
 		"pack": "electron-builder --dir",
 		"dist:mac": "electron-builder --mac",
 		"dist:win": "electron-builder --win --x64 --ia32",

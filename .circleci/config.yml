@@ -1,42 +1,33 @@
 version: 2.1
 
-orbs:
-  win: circleci/windows@5.0.0
-
 jobs:
   build:
-    executor: win/server-2019
+    machine:
+      image: windows-2019
+
     steps:
       - checkout
+
+      # Install Node.js
       - run:
-          name: Check Node.js installation
+          name: Install Node.js
           command: |
-            node -v
-            if ($LASTEXITCODE -ne 0) {
-              Write-Output "Node.js is not installed."
-            }
+            choco install nodejs
+            RefreshEnv
+
+      # Install npm packages
       - run:
-          name: Setup Node.js
-          command: |
-            Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1
-            choco install nodejs.install --version 19.9.0 -y --install-arguments="'/l*v c:\nodejs.install_msi_install.log'"
-            if ($LASTEXITCODE -ne 0) {
-             Get-Content -Path c:\nodejs.install_msi_install.log -Tail 10
-             exit 1
-            }
-            refreshenv
+          name: Install npm packages
+          command: npm install
+
+      # Run your start-ci script
       - run:
-          name: Install dependencies
-          command: |
-            npm install 
-      - run:
-          name: Run start-ci script
-          command: |
-            npm run start-ci
+          name: Start CI
+          command: npm run start-ci
 
 workflows:
   version: 2
-  build_and_test:
+  build:
     jobs:
       - build:
           filters:

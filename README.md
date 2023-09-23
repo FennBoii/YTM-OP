@@ -1,6 +1,6 @@
 [![Node.js CI](https://github.com/FennBoii/YTM-OP/actions/workflows/node.js.yml/badge.svg)](https://github.com/FennBoii/YTM-OP/actions/workflows/node.js.yml)
 ![GitHub release (by tag)](https://img.shields.io/github/downloads/FennBoii/YTM-OP/1.0.5/total)
-![GitHub release (by tag)](https://img.shields.io/github/downloads/FennBoii/YTM-OP/1.0.6/total)
+![GitHub release (by tag)](https://img.shields.io/github/downloads/FennBoii/YTM-OP/1.0.6/total) <br />
 *Token Site -->* ![Website](https://img.shields.io/website?up_message=Site%20UP&down_message=Site%20DOWN&url=https%3A%2F%2Fgetname.ytmopdata.net%2F)
 
 **some changes I've got to add**

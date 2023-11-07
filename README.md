@@ -4,22 +4,12 @@
 ![GitHub release (by tag)](https://img.shields.io/github/downloads/FennBoii/YTM-OP/1.0.7/total)
 ![Website](https://img.shields.io/website?up_message=site%20UP&down_message=site%20DOWN&url=https%3A%2F%2Fgetname.ytmopdata.net%2F&label=Token%20Page%20-&labelColor=%23ff00ff&link=https%3A%2F%2Fgetname.ytmopdata.net%2F)
 
-**some changes I've got to add**
-**what iv'e gotta fix before the clients work with eachother:**
+**there are more changes I've got to add and more I'll add to this README but for now, I'll leave it as is since it's 03:28 so, I'll fill it in tommorow lol**
 
-    ✓ Fix the wifi card problem with my redhat ubuntu server
-    ✓ setup the server's connection to the site so the site can go live
-    ✓ add a config.json that the user can edit for the client's connection to one another outside of the client build as a package
-    ✓ make/fix the send/receive scripts on the client for when the site is up
-    ✓ allow site connection encrypting for the client's connection with eachother
-    ✓ add a couple new features (make buttons show 'album' and 'artist' instead of the actual name) and (automatically detect the *no album link available so ima spit u an error* to automatically disabling buttons for u as an option)
-    ✓ finally add a 2nd release with all the newest updates
 
 <center>
 
 <h2><b>There is no need for these commands anymore! It automatically makes the config.js these files for you and there is also no need for svcl.exe anymore I use a different package that works seamlessly!</b></h2>
-
-**VOLUME HAS BEEN FIXED!!**
 
 <b>THERE MAY BE ERRORS WHEN CLOSING AND MAYBE SOME DURING, I AM WORKING ON THESE JUST RESTART THE CLIENT OR ADD THE ISSUES TO "ISSUES" TAB</b>
 
@@ -42,17 +32,17 @@
 - Try to add releases for Mac and Linux in the future when I get the time
 
 ***Features***
+- Just download the Installer from the download page and thats it! Nothing too it :3
 - Added a feature that allows the client to act a little like spotify in the sense that it disconnects when your song is paused and connects when its playing.. I haven't really tested this fully but it works for now. It's called "Not Playing Disconnect" in the Utils.
-- Allows you to enable and disable discord buttons <s>(Still kinda janky)</s>
+- Allows you to enable and disable discord buttons
+- You can now modify the alternate value of the buttons which are the default "Album" and "Artist"! Toggle it in the *Utils* > *Buttons* > *ChangeButtonsAlb/Art*!
 - Has options for "Quitting the application", "Sleeping your PC", "Restarting your PC", and "Shutting down your PC" after the song ends.
+- Your able to Send and receive functionally between clients (bascially like spotify)!
 - Continuous updates (Its not daily but its also not monthly)
-- Your able to Send and receive functionally between clients!
 - 100% safe and free! No extras are added that weren't made for the client
-- Uses very little Resources (Less than 13% of cpu) (recommended use on localdisk C:// because read/write)
+- Uses very little Resources (Less than 13% of cpu when low disk space) (recommended use on localdisk C:// because read/write)
 - No self promotion anywhere (I like to let the consumer use the product however they please, ad-free!)
 
 </center>
 </br>
 </br>
-++ Make sure you edit the <s>username.txt</s> <b>config.js</b> for a customized experience <s>(there will be a future use for this)</s>
-

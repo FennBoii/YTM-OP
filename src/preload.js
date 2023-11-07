@@ -1,8 +1,8 @@
 // const { ipcRenderer } = require('electron');
 
-const nodeAlsaCtl = require("node-alsa-ctl");
+// const nodeAlsaCtl = require("node-alsa-ctl");
 
-// console.log('The Preload file has been loaded.');
+console.log('The Preload file has been loaded.');
 
 // function init() {
 // 	window.isElectron = true;
@@ -72,11 +72,11 @@ const nodeAlsaCtl = require("node-alsa-ctl");
 // 	console.log(stderr);
 // }
 
-const loudness = require('loudness');
+// const loudness = require('loudness');
 
-async function soundDevices(err) {
-    const vol = await loudness.getVolume();
-    console.log(vol);
-}
+// async function soundDevices(err) {
+//     const vol = await loudness.getVolume();
+//     console.log(vol);
+// }
 
-soundDevices();
+// soundDevices();

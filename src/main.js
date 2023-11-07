@@ -4,6 +4,7 @@
 /* eslint-disable no-unused-vars */
 /* ---------------------------------DEFINE BEFORE RUN--------------------------------- */
 const DiscordRPC = require('discord-rpc');
+const easyVolume = require("easy-volume");
 const {
 	app,
 	BrowserWindow,
@@ -13,7 +14,6 @@ const {
 	webContents,
 	clipboard
 } = require('electron');
-const loudness = require('loudness');
 const fs = require('fs');
 const dataPath = app.getPath('userData');
 const axios = require('axios');
@@ -21,11 +21,10 @@ const path = require('path');
 const {
 	spawn
 } = require('child_process');
-var config = "config.js";
+const config = require('C:\\Program Files\\YTM-OP\\config.js');
+// const config = path.join(dataPath, 'config.js');
 // const generalConfigPath = path.join(dataPath, 'conf.json');
 // const { execDONE } = require('child_process');
-/* ---------------------------------RUN FUNCTIONS--------------------------------- */
-soundDevices();
 /* ---------------------------------DEFINE FUNCTIONS--------------------------------- */
 var thelink;
 var outputURL;
@@ -39,13 +38,13 @@ var TogglePlaylist = true;
 var ToggleArtist = true;
 var volume = 0;
 var artist;
-var songUrl = "https://google.com/";
+var songUrl = "https://google.com/3";
 var titleTwo = '';
 var detailsTwo = '- Loading -';
 var stateTwo = '- Loading -';
 var ConnectDis = ' [ Disconnected ]';
 var detailsThree = 'Default';
-var channel = 'https://google.com/';
+var channel = 'https://google.com/4';
 var error_bool = false;
 var fennec = 'https://';
 var PlaylistCounter = '';
@@ -82,6 +81,8 @@ var RealCountdownTitleBar = '';
 var CountdownTimerVar = false;
 var sysVol;
 var LICKCHeck = '';
+var playlistToggleVisible = true;
+var ToggArtAlb = false;
 // [ ------------------------------------------------------- ]
 // [ ------------------------------------------------------- ]
 
@@ -89,60 +90,6 @@ var LICKCHeck = '';
 
 // [ ------------------------------------------------------- ]
 // [ ------------------------------------------------------- ]
-
-// function execute("./getCurrentVol.exe", callback){
-//     exec(command, function(error, stdout, stderr){ callback(stdout); });
-// };
-
-fs.readFile('config.js', {encoding: 'utf-8'}, function(output,data){
-	if (!output){
-		console.log('recieved data: ' + data);
-	} else {
-		console.log(output);
-	}
-});
-
-async function soundDevices() {
-	const exePath = "svcl.exe";
-	const args = ['/Stdout', '/GetPercent', 'Speakers'];
-
-	const childProcess = spawn(exePath, args);
-
-	childProcess.stdout.on('data', (data) => {
-		// Parse the data as a floating-point number and round it
-		sysVol = Math.round(parseFloat(data));
-	});
-
-	childProcess.stderr.on('data', (data) => {
-		console.error(`stderr: ${data}`);
-	});
-
-	// childProcess.on('close', (code) => {
-	//   console.log(`Child process exited with code ${code}`);
-
-	// Now you can access sysVol with the formatted value
-	//   console.log(`System Volume: ${sysVol}`);
-	// });
-}
-
-// LoopAudioGet(); // WIN AUDIO GET
-// function LoopAudioGet() {
-// 	sysVol = winAudio.speaker.get();
-// 	setTimeout(LoopAudioGet, 500);
-// }
-
-// try {
-// 	JSON.parse(fs.readFileSync(generalConfigPath));
-// } catch (ex) {
-// 	if (fs.existsSync(generalConfigPath)) {
-// 		fs.unlinkSync(generalConfigPath);
-// 	}
-// 	fs.writeFileSync(generalConfigPath, JSON.stringify({}));
-// }
-
-// const config = JSON.parse(fs.readFileSync(generalConfigPath));
-// if (!config.continueWhereLeftOf || typeof config.continueWhereLeftOf !== 'boolean') config.continueWhereLeftOf = true;
-// if (config.continueURL || typeof config.continueURL !== 'string') config.continueURL = 'https://music.youtube.com/';
 
 let reconnectTimer, injected;
 
@@ -170,7 +117,7 @@ function checkSync() {
 		const theLinkData = {
 			givenNameToken: config.GivenNameToken, // Replace with your token values
 			randomToken: config.RandomToken, // Replace with your token values
-			siteName: config.siteName, // Replace with your siteName
+			siteName: config.SiteName, // Replace with your siteName
 			thelink: songUrl.toString(), // Modify thelink value as needed
 		};
 
@@ -202,31 +149,27 @@ function checkSync() {
 
 		// Send a GET request to retrieve the 'thelink' field
 		axios.get(phpScriptURL, {
-				params: queryParameters
-			})
+			params: queryParameters
+		})
 			.then((response) => {
-				// Access the 'theLink' field from the response data
-				thelink = response.data.thelink;
+				// Destructure data from response
+				const { thelink, synctime } = response.data;
 				synctimeGET = response.data.synctime;
 
-				thelinkSave = thelink.indexOf('&t=') + 3;
-				thelinkSaved = thelink.substring(thelinkSave);
+				// Extract the time parameter from the link
+				const timeParamStart = thelink.indexOf('&t=') + 3;
+				const timeParamValue = thelink.substring(timeParamStart);
 
-				thelinkEdit = thelink.indexOf('&t=');
-				thelinkFin = thelink.slice(0, thelinkEdit + 3);
+				// Build the edited link without the time parameter value
+				const linkWithoutTimeParam = thelink.slice(0, thelink.indexOf('&t=') + 3);
+				const linksCombined = linkWithoutTimeParam + timeParamValue;
 
-				// const shortSongUrl = new URL(songUrl);
-				// shortSongUrl.searchParams.set('list', 'LM');
-				// const songUrlAdd = songUrl + "&t=";
-				// timeNow = synctimeGET;
-
-				const linksCombined = thelinkFin + thelinkSaved;
-
-				if (songUrl == linksCombined) {
-					if (synctimeGET - timeNow < config.outOfSyncPlayingSong) {
+				if (songUrl === linksCombined) {
+					// Check the time difference
+					if (Math.abs(synctime - timeNow) < config.outOfSyncPlayingSong) {
 						console.log("This doesn't need to be synced again");
 					} else {
-						win.webContents.executeJavaScript("document.getElementsByTagName('video')[0].currentTime =" + synctimeGET);
+						win.webContents.executeJavaScript(`document.getElementsByTagName('video')[0].currentTime = ${synctime}`);
 						console.log('syncedTime');
 					}
 				} else {
@@ -285,379 +228,352 @@ function syncTimeSync() {
 
 let win, settingsWin;
 const menuTemplate = [{
-		label: 'Utils',
+	label: 'Utils',
+	submenu: [{
+		label: 'Not Playing Disconnect',
+		click() {
+			if (notPlayingDisconnect == true) {
+				notPlayingDisconnect = false;
+				notPlayingDisconnectText = "";
+			} else {
+				notPlayingDisconnect = true;
+				notPlayingDisconnectText = " [ PausDiscon Enabled ]";
+			}
+		},
+	},
+	{
+		label: 'Connection',
 		submenu: [{
-				label: 'Not Playing Disconnect',
+			label: '-- Connect --',
+			click() {
+				if (connectCounter == 0) {
+					reconnect();
+					ConnectDis = ' [ Connected ]';
+					error_bool = false;
+					connectCounter += 1;
+				}
+				if (connectCounter == 1) {
+					console.log('NO!')
+				}
+			},
+			accelerator: 'Ctrl+Alt+1',
+		},
+		{
+			label: '-- Disconnect --',
+			click() {
+				error_bool = true;
+				rpc.destroy();
+				ConnectDis = ' [ Disconnected ]';
+				connectCounter -= 1;
+			},
+			accelerator: 'Ctrl+Alt+2',
+		},
+		{
+			label: 'Reset RPC Connection',
+			click() {
+				setTimeout(DiscordDisconnect, 0);
+				setTimeout(DiscordConnect, 100);
+			},
+		},
+		],
+	},
+	{
+		label: 'On End Power Options',
+		submenu: [{
+			label: 'Quit Application',
+			click() {
+				if (buttonOne == false) {
+					buttonOne = true;
+					buttonTwo = false;
+					buttonThree = false;
+					buttonFour = false;
+					TitleExit = ' [ -- 𝑪𝑳𝑶𝑺𝑰𝑵𝑮 𝑨𝑷𝑷𝑳𝑰𝑪𝑨𝑻𝑰𝑶𝑵 𝑶𝑵 𝑬𝑵𝑫 -- ]';
+					CountdownTimerVar = true;
+					quitText = 'quitting app';
+				} else {
+					buttonOne = false;
+					TitleExit = '';
+					CountdownTimerVar = false;
+				}
+			},
+		},
+		{
+			label: 'Sleep PC',
+			click() {
+				if (buttonTwo == false) {
+					buttonOne = false;
+					buttonTwo = true;
+					buttonThree = false;
+					buttonFour = false;
+					TitleExit = ' [ -- 𝑺𝑳𝑬𝑬𝑷𝑰𝑵𝑮 𝑷𝑪 𝑶𝑵 𝑬𝑵𝑫 -- ]';
+					CountdownTimerVar = true;
+					quitText = 'sleeping pc';
+				} else {
+					buttonTwo = false;
+					TitleExit = '';
+					CountdownTimerVar = false;
+				}
+			},
+		},
+		{
+			label: 'Restart PC',
+			click() {
+				if (buttonThree == false) {
+					buttonOne = false;
+					buttonTwo = false;
+					buttonThree = true;
+					buttonFour = false;
+					TitleExit = ' [ -- 𝑹𝑬𝑺𝑻𝑨𝑹𝑻𝑰𝑵𝑮 𝑷𝑪 𝑶𝑵 𝑬𝑵𝑫 -- ]';
+					CountdownTimerVar = true;
+					quitText = 'restarting pc';
+				} else {
+					buttonThree = false;
+					TitleExit = '';
+					CountdownTimerVar = false;
+				}
+			},
+		},
+		{
+			label: 'Shutdown PC',
+			click() {
+				if (buttonFour == false) {
+					buttonOne = false;
+					buttonTwo = false;
+					buttonThree = false;
+					buttonFour = true;
+					TitleExit = ' [ -- 𝑺𝑯𝑼𝑻𝑻𝑰𝑵𝑮 𝑫𝑶𝑾𝑵 𝑷𝑪 𝑶𝑵 𝑬𝑵𝑫 -- ]';
+					CountdownTimerVar = true;
+					quitText = 'shutting down pc'
+				} else {
+					buttonFour = false;
+					TitleExit = '';
+					CountdownTimerVar = false;
+				}
+			},
+		},
+		{
+			label: 'Toggle Off',
+			click() {
+				buttonOne = false;
+				buttonTwo = false;
+				buttonThree = false;
+				buttonFour = false;
+				TitleExit = '';
+				CountdownTimerVar = false;
+			},
+		},
+		]
+	},
+	{
+		label: 'Buttons',
+		submenu: [
+			// {
+			// 	label: '- Button Stats -',
+			// 	label:	PlaylistCounter,
+			// },
+			{
+				label: 'ToggleButtonsOn',
 				click() {
-					if (notPlayingDisconnect == true) {
-						notPlayingDisconnect = false;
-						notPlayingDisconnectText = "";
+					ToggleButtons = true;
+					ToggleArtist = true;
+					TogglePlaylist = true;
+					secondTitle = true;
+					thirdTitle = true;
+				},
+			},
+			{
+				label: 'ToggleButtonsOff',
+				click() {
+					ToggleButtons = false;
+					ToggleArtist = false;
+					TogglePlaylist = false;
+					secondTitle = false;
+					thirdTitle = false;
+				},
+			},
+			{
+				label: 'TogglePlaylist',
+				click() {
+					if (TogglePlaylist === true) {
+						TogglePlaylist = false;
+						ToggleButtons = false;
+						secondTitle = false;
 					} else {
-						notPlayingDisconnect = true;
-						notPlayingDisconnectText = " [ PausDiscon Enabled ]";
+						TogglePlaylist = true;
+						ToggleButtons = true;
+						secondTitle = true;
 					}
 				},
 			},
 			{
-				label: 'Connection',
-				submenu: [{
-						label: '-- Connect --',
-						click() {
-							if (connectCounter == 0) {
-								reconnect();
-								ConnectDis = ' [ Connected ]';
-								error_bool = false;
-								connectCounter += 1;
-							}
-							if (connectCounter == 1) {
-								console.log('NO!')
-							}
-						},
-						accelerator: 'Ctrl+Alt+1',
-					},
-					{
-						label: '-- Disconnect --',
-						click() {
-							error_bool = true;
-							rpc.destroy();
-							ConnectDis = ' [ Disconnected ]';
-							connectCounter -= 1;
-						},
-						accelerator: 'Ctrl+Alt+2',
-					},
-					{
-						label: 'Reset RPC Connection',
-						click() {
-							setTimeout(DiscordDisconnect, 0);
-							setTimeout(DiscordConnect, 100);
-						},
-					},
-				],
-			},
-			{
-				label: 'On End Power Options',
-				submenu: [{
-						label: 'Quit Application',
-						click() {
-							if (buttonOne == false) {
-								buttonOne = true;
-								buttonTwo = false;
-								buttonThree = false;
-								buttonFour = false;
-								TitleExit = ' [ -- 𝑪𝑳𝑶𝑺𝑰𝑵𝑮 𝑨𝑷𝑷𝑳𝑰𝑪𝑨𝑻𝑰𝑶𝑵 𝑶𝑵 𝑬𝑵𝑫 -- ]';
-								CountdownTimerVar = true;
-								quitText = 'quitting app';
-							} else {
-								buttonOne = false;
-								TitleExit = '';
-								CountdownTimerVar = false;
-							}
-						},
-					},
-					{
-						label: 'Sleep PC',
-						click() {
-							if (buttonTwo == false) {
-								buttonOne = false;
-								buttonTwo = true;
-								buttonThree = false;
-								buttonFour = false;
-								TitleExit = ' [ -- 𝑺𝑳𝑬𝑬𝑷𝑰𝑵𝑮 𝑷𝑪 𝑶𝑵 𝑬𝑵𝑫 -- ]';
-								CountdownTimerVar = true;
-								quitText = 'sleeping pc';
-							} else {
-								buttonTwo = false;
-								TitleExit = '';
-								CountdownTimerVar = false;
-							}
-						},
-					},
-					{
-						label: 'Restart PC',
-						click() {
-							if (buttonThree == false) {
-								buttonOne = false;
-								buttonTwo = false;
-								buttonThree = true;
-								buttonFour = false;
-								TitleExit = ' [ -- 𝑹𝑬𝑺𝑻𝑨𝑹𝑻𝑰𝑵𝑮 𝑷𝑪 𝑶𝑵 𝑬𝑵𝑫 -- ]';
-								CountdownTimerVar = true;
-								quitText = 'restarting pc';
-							} else {
-								buttonThree = false;
-								TitleExit = '';
-								CountdownTimerVar = false;
-							}
-						},
-					},
-					{
-						label: 'Shutdown PC',
-						click() {
-							if (buttonFour == false) {
-								buttonOne = false;
-								buttonTwo = false;
-								buttonThree = false;
-								buttonFour = true;
-								TitleExit = ' [ -- 𝑺𝑯𝑼𝑻𝑻𝑰𝑵𝑮 𝑫𝑶𝑾𝑵 𝑷𝑪 𝑶𝑵 𝑬𝑵𝑫 -- ]';
-								CountdownTimerVar = true;
-								quitText = 'shutting down pc'
-							} else {
-								buttonFour = false;
-								TitleExit = '';
-								CountdownTimerVar = false;
-							}
-						},
-					},
-					{
-						label: 'Toggle Off',
-						click() {
-							buttonOne = false;
-							buttonTwo = false;
-							buttonThree = false;
-							buttonFour = false;
-							TitleExit = '';
-							CountdownTimerVar = false;
-						},
-					},
-				]
-			},
-			{
-				label: 'Buttons',
-				submenu: [
-					// {
-					// 	label: '- Button Stats -',
-					// 	label:	PlaylistCounter,
-					// },
-					{
-						label: 'ToggleButtonsOn',
-						click() {
-							ToggleButtons = true;
-							ToggleArtist = true;
-							TogglePlaylist = true;
-							secondTitle = true;
-							thirdTitle = true;
-						},
-					},
-					{
-						label: 'ToggleButtonsOff',
-						click() {
-							ToggleButtons = false;
-							ToggleArtist = false;
-							TogglePlaylist = false;
-							secondTitle = false;
-							thirdTitle = false;
-						},
-					},
-					{
-						label: 'TogglePlaylist',
-						click() {
-							if (TogglePlaylist === true) {
-								TogglePlaylist = false;
-								ToggleButtons = false;
-								secondTitle = false;
-							} else {
-								TogglePlaylist = true;
-								ToggleButtons = true;
-								secondTitle = true;
-							}
-						},
-					},
-					{
-						label: 'ToggleArtist',
-						click() {
-							if (ToggleArtist === true) {
-								ToggleArtist = false;
-								ToggleButtons = false;
-								thirdTitle = false;
-							} else {
-								ToggleArtist = true;
-								ToggleButtons = true;
-								thirdTitle = true;
-							}
-						},
-					},
-					{
-						label: 'ToggleChannel',
-						click() {
-							if (ChannelToggle === true) {
-								ChannelToggle = false;
-							} else {
-								ChannelToggle = true;
-							}
-						},
-					},
-				]
-			},
-			{
-				label: 'Incoming Connections',
-				submenu: [{
-						label: 'None',
-						click() {
-							ConnectionTitle = ''
-						},
-					},
-					{
-						label: 'Sending',
-						click() {
-							ConnectionTitle = '[ -- Sending -- ]'
-
-						},
-					},
-					{
-						label: 'Recieving',
-						click() {
-							ConnectionTitle = '[ -- Recieving -- ]'
-							// storeValues.get('/stream', (req, res) => {
-							// 	const ffmpegCommand = "ffmpeg";
-							// 	var ffmpegOptions =
-							// 		"-f s16le -ar 48000 -ac 2 -i udp://127.0.0.1:65535 -f wav -";
-
-							// 	var ffm = children.spawn(ffmpegCommand, ffmpegOptions.split(" "));
-
-							// 	res.writeHead(200, {
-							// 		"Content-Type": "audio/wav; codecs=PCM"
-							// 	});
-							// 	ffm.stdout.pipe(res);
-							// });
-						},
+				label: 'ToggleArtist',
+				click() {
+					if (ToggleArtist === true) {
+						ToggleArtist = false;
+						ToggleButtons = false;
+						thirdTitle = false;
+					} else {
+						ToggleArtist = true;
+						ToggleButtons = true;
+						thirdTitle = true;
 					}
-				],
+				},
 			},
-			// {
-			// 	label: 'Confirm Connection',
-			// 	click() {
-			// 		console.log('Connected');
-			// 		if (ConnectionTitle = 'None') {
-			// 			// storeValues.listen(port, host, () => {
-			// 			// 	console.log("Server running at http://" + host + ":" + port + "/");
-			// 			// });
-			// 		}
-			// 		if (ConnectionTitle = '[ -- Sending -- ]') {
-
-			// 		}
-			// 		if (ConnectionTitle = '[ -- Recieving -- ]') {
-
-			// 		}
-			// 	},
-			// },
-			// {
-			// 	label: 'Some Checks',
-			// 	submenu: [{
-			// 			label: 'Full Sync Check',
-			// 			click() {
-			// 				fullSync();
-			// 			},
-			// 		},
-			// 		{
-			// 			label: 'Check',
-			// 			click() {
-
-			// 			},
-			// 		},
-			// 		{
-			// 			label: 'CheckExistsNormal',
-			// 			click() {
-			// 				if (typeof (NormalElement) != 'undefined' && element != null) {
-			// 					alert('Element exists');
-			// 				} else {
-			// 					alert('Element does not exist');
-			// 				}
-			// 			},
-			// 		},
-			// 		{
-			// 			label: 'CheckExistsChannelToggle',
-			// 			click() {
-			// 				if (typeof (ChannelMutatedElement) != 'undefined' && element != null) {
-			// 					alert('Element exists');
-			// 				} else {
-			// 					alert('Element does not exist');
-			// 				}
-			// 			},
-			// 		},
-			// 	],
-			// },
 			{
-				label: 'Extra',
-				submenu: [{
-						role: 'Reload'
-					},
-					{
-						type: 'separator'
-					},
-					{
-						role: 'toggledevtools'
-					},
-					{
-						type: 'separator'
-					},
-					{
-						role: 'minimize'
-					},
-					{
-						type: 'separator'
-					},
-					{
-						role: 'undo'
-					},
-					{
-						role: 'redo'
-					},
-					{
-						type: 'separator'
-					},
-					{
-						role: 'cut'
-					},
-					{
-						role: 'copy'
-					},
-					{
-						role: 'paste'
-					},
-					{
-						type: 'separator'
-					},
-					{
-						role: 'quit',
-						accelerator: 'Ctrl+Q',
-					},
-					{
-						type: 'separator'
-					},
-					{
-						label: 'Copy CoverImageURL',
-						click() {
-							clipboard.writeText(fennec);
-						},
-					},
-				]
+				label: 'ChangeButtonsAlb/Art',
+				click() {
+					if (ToggArtAlb === true) {
+						ToggArtAlb = false;
+					} else {
+						ToggArtAlb = true;
+					}
+				},
 			},
+		]
+	},
+	{
+		label: 'Incoming Connections',
+		submenu: [{
+			label: 'None',
+			click() {
+				ConnectionTitle = ''
+			},
+		},
+		{
+			label: 'Sending',
+			click() {
+				ConnectionTitle = '[ -- Sending -- ]'
+
+			},
+		},
+		{
+			label: 'Recieving',
+			click() {
+				ConnectionTitle = '[ -- Recieving -- ]'
+				// storeValues.get('/stream', (req, res) => {
+				// 	const ffmpegCommand = "ffmpeg";
+				// 	var ffmpegOptions =
+				// 		"-f s16le -ar 48000 -ac 2 -i udp://127.0.0.1:65535 -f wav -";
+
+				// 	var ffm = children.spawn(ffmpegCommand, ffmpegOptions.split(" "));
+
+				// 	res.writeHead(200, {
+				// 		"Content-Type": "audio/wav; codecs=PCM"
+				// 	});
+				// 	ffm.stdout.pipe(res);
+				// });
+			},
+		}
 		],
 	},
 	{
-		label: 'Go Back',
-		click() {
-			win.webContents.goBack();
+		label: 'Extra',
+		submenu: [{
+			role: 'Reload'
 		},
-	}, {
-		label: 'Go Forward',
-		click() {
-			win.webContents.goForward();
+		{
+			type: 'separator'
 		},
+		{
+			role: 'toggledevtools'
+		},
+		{
+			type: 'separator'
+		},
+		{
+			role: 'minimize'
+		},
+		{
+			type: 'separator'
+		},
+		{
+			role: 'undo'
+		},
+		{
+			role: 'redo'
+		},
+		{
+			type: 'separator'
+		},
+		{
+			role: 'cut'
+		},
+		{
+			role: 'copy'
+		},
+		{
+			role: 'paste'
+		},
+		{
+			type: 'separator'
+		},
+		{
+			role: 'quit',
+			accelerator: 'Ctrl+Q',
+		},
+		{
+			type: 'separator'
+		},
+		{
+			label: 'Copy CoverImageURL',
+			click() {
+				clipboard.writeText(fennec);
+			},
+		},
+		]
 	},
-	{
-		label: 'Get Current URL',
-		click() {
-			const TheUrlUwU = win.webContents.getURL();
-			clipboard.writeSync(TheUrlUwU);
-		},
+	],
+},
+{
+	label: 'Go Back',
+	click() {
+		win.webContents.goBack();
 	},
-	{
-		label: 'Go to YTM homepage',
-		click() {
-			win.loadURL("https://music.youtube.com/");
-		},
+}, {
+	label: 'Go Forward',
+	click() {
+		win.webContents.goForward();
 	},
+},
+// {
+// 	label: 'playlistToggleVis TRUE',
+// 	click() {
+// 		playlistToggleVisible = true;
+// 	},
+// },
+// {
+// 	label: 'playlistToggleVis FALSE',
+// 	click() {
+// 		playlistToggleVisible = false;
+// 	},
+// },
+{
+	label: 'Go to YTM homepage',
+	click() {
+		win.loadURL("https://music.youtube.com/");
+	},
+},
+	// {
+	// 	label: 'Set Functions',
+	// 	click() {
+	// 		playlist = "https://google.com/;"
+	// 		playlistname = "None";
+	// 	},
+	// },
+	// {
+	// 	label: 'Throw Error',
+	// 	click() {
+	// 		async function throwErrorAsync() {
+	// 			throw new Error('This is an asynchronous error with specificWord.');
+	// 		}
+
+	// 		throwErrorAsync().catch(error => {
+	// 			if (error.message.includes('specificWord')) {
+	// 				console.log('Caught an asynchronous error with "specificWord" in the message:', error);
+	// 			}
+	// 		});
+	// 	},
+	// },
 ];
 
 // // Get the current volume
@@ -723,15 +639,6 @@ function createWindow() {
 	// win.webContents.openDevTools();
 
 	win.on('close', async () => {
-		let tempInfo = await getContent().catch(console.log);
-		// eslint-disable-next-line no-unused-vars
-		var {
-			time
-		} = tempInfo || {
-			time: 1,
-			paused: undefined,
-		};
-
 		fs.writeFile('src/LINK.txt', win.webContents.getURL().toString(), err => {
 			if (err) {
 				// console.error('Error writing to file:', err);
@@ -741,6 +648,16 @@ function createWindow() {
 				LICKCHeck = 'owo';
 			}
 		});
+
+		let tempInfo = await getContent().catch(console.log);
+		// eslint-disable-next-line no-unused-vars
+		var {
+			time
+		} = tempInfo || {
+			time: 1,
+			paused: undefined,
+		};
+
 	});
 	win.on('closed', () => {
 		rpc.destroy();
@@ -756,7 +673,14 @@ function createWindow() {
 	win.webContents.on('dom-ready', settingsHook);
 	win.webContents.on('will-prevent-unload', e => e.preventDefault());
 
-	win.loadURL("https://music.youtube.com/");
+	fs.readFile('src/LINK.txt', 'utf8', (err, data) => {
+		if (err) {
+			console.error('Error reading file:', err);
+			return;
+		}
+		win.loadURL(data);
+	});
+
 
 	// win.loadURL(config.continueURL, {
 	// 	userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:80.0) Gecko/20100101 Firefox/80.0',
@@ -770,6 +694,15 @@ function createWindow() {
 }
 
 app.on('ready', createWindow)
+// app.on('ready', () => {
+// 	mainWindow = new BrowserWindow();
+
+// 	mainWindow.loadURL("https://music.youtube.com/");
+
+// 	mainWindow.webContents.on('did-finish-load', () => {
+// 		mainWindow.webContents.someMethod();
+// 	})
+// })
 
 
 // app.on('window-all-closed', () => {
@@ -814,7 +747,7 @@ ipcMain.on('settings-clicked', () => {
 	createSettingsWindow();
 });
 
-function getContent() {
+async function getContent() {
 	// eslint-disable-next-line no-async-promise-executor
 	return new Promise(async (resolve, reject) => {
 		var title,
@@ -856,91 +789,196 @@ function getContent() {
 		if (!result) return reject('Error grabbing song url');
 		songUrl = result;
 
-		// // Playlist Link
-		// if (TogglePlaylist === true) {
-		// 	result = await executeJavaScript('document.querySelector(\'#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(3)\').href');
-		// 	playlist = result;
-		// }
-		// if (TogglePlaylist === false) {
-		// 	result = 'https://google.com';
-		// 	playlist = result;
-		// }
 
-		// // Playlist Name
-		// if (TogglePlaylist === true) {
-		// 	result = await executeJavaScript('document.querySelector(\'#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(3)\').text');
-		// 	playlistname = result;
-		// }
-		// if (TogglePlaylist === false) {
-		// 	result = 'false';
-		// 	playlistname = result;
-		// }
+
+
+
 
 		try {
-			// Attempt to fetch the playlist name
-			result = await executeJavaScript('document.querySelector(\'#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(3)\').text');
-			playlistname = result;
-		} catch (error) {
-			// Handle the error or fallback to a different value
-			console.error('FAILED:', error);
+			const javascriptCode = `
+				(function() {
+					return new Promise((resolve) => {
+						const startTime = Date.now();
+						const interval = setInterval(() => {
+							const element = document.querySelector('#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(3)');
+							if (element) {
+								clearInterval(interval);
+								resolve(element.textContent || 'None');
+							} else if (Date.now() - startTime > 1000) { // Timeout after 1 seconds
+								clearInterval(interval);
+								resolve('None'); // Resolve with 'None' instead of rejecting
+							}
+						}, 500); // Check every 500ms
+					});
+				})();
+			`;
 
-			// Fallback to a default value
-			result = 'false';
-			playlistname = result;
+			playlistname = await executeJavaScript(javascriptCode);
+			if (playlistname == 'None') {
+				console.log("Load1-1")
+				TogglePlaylist = false;
+			}
+			if (playlistname != 'None') {
+				console.log("Load1-2")
+				TogglePlaylist = true;
+			}
+		} catch (error) {
+			console.log('Script error:', error); // Log any errors
 		}
 
 
-		// result = await executeJavaScript('document.querySelector(\'input#input.style-scope.ytmusic-search-box\').value');
-		// if (!result) return reject('No Search About');
-		// searchAbout = result;
+
+
+
 
 		try {
-			// Attempt to fetch the href using the specified query selector
-			result = await executeJavaScript('document.querySelector(\'#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(3)\').href');
+			const javascriptCode = `
+				(function() {
+					return new Promise((resolve) => {
+						const startTime = Date.now();
+						const interval = setInterval(() => {
+							const element = document.querySelector('#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(3)');
+							if (element) {
+								clearInterval(interval);
+								resolve(element.href);
+							} else if (Date.now() - startTime > 1000) { // Timeout after 1 seconds
+								clearInterval(interval);
+								resolve('https://google.com'); // Resolve with the default URL instead of rejecting
+							}
+						}, 500); // Check every 500ms
+					});
+				})();
+				`;
+
+			playlist = await executeJavaScript(javascriptCode);
+			// Additional logic here...
+			if (playlist == 'https://google.com') {
+				console.log("Load2-1")
+				TogglePlaylist = false;
+			}
+			if (playlist != 'https://google.com') {
+				console.log("Load2-2")
+				TogglePlaylist = true;
+			}
 		} catch (error) {
-			// Handle the error
-			console.error('FAILED:', error);
-			// You can add any additional error handling or fallback logic here
+			console.log('Script error:', error); // Log any errors
 		}
 
 
-		// if (ChannelToggle === true) {
-		// 	result = await executeJavaScript('document.querySelector(\'#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(1)\').href');
-		// 	//if (!result) await executeJavaScript('document.querySelector(\'#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > span:nth-child(1)\').textContent')
-		// 	channel = result;
-		// }
-		// if (ChannelToggle === false) {
-		// 	result = "https://thisxdoesnotexist.com/"
-		// 	channel = result;
-		// }
+
+
 
 		try {
-			result = await executeJavaScript('document.querySelector(\'#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(1)\').href');
-			channel = result;
+			const javascriptCode = `
+				(function() {
+					console.log('Script started for fetching channel'); // Log start
+					return new Promise((resolve) => {
+						const startTime = Date.now();
+						const interval = setInterval(() => {
+							console.log('Checking for channel element...'); // Log each check
+							const element = document.querySelector('#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(1)');
+							if (element) {
+								console.log('Channel element found:', element); // Log element found
+								clearInterval(interval);
+								resolve(element.href);
+							} else if (Date.now() - startTime > 1000) { // Timeout after 1 seconds
+								console.log('Timeout reached, channel element not found'); // Log timeout
+								clearInterval(interval);
+								resolve('https://google.com'); // Resolve with the default URL instead of rejecting
+							}
+						}, 500); // Check every 500ms
+					});
+				})();
+			`;
+			channel = await executeJavaScript(javascriptCode);
+			if (channel == 'https://google.com') {
+				console.log("Load3-1")
+				ToggleArtist = false;
+			}
+			if (channel != 'https://google.com') {
+				console.log("Load3-2")
+				ToggleArtist = true;
+			}
 		} catch (error) {
-			// Handle the error or fallback to a different value
-			console.error('An error occurred:', error);
-
-			// Fallback to a default value
-			result = "https://thisxdoesnotexist.com/";
-			channel = result;
+			console.error('Script error for fetching channel:', error); // Log any errors
+			channel = "https://google.com/";
 		}
+
+
+
+
+
+		if (ChannelToggle === true) {
+			const javascriptCode = `
+				(function() {
+					console.log('Script started for fetching channel name (ChannelToggle === true)'); // Log start
+					return new Promise((resolve) => {
+						const startTime = Date.now();
+						const interval = setInterval(() => {
+							console.log('Checking for channel name element...'); // Log each check
+							const element = document.querySelector('#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(1)');
+							if (element) {
+								console.log('Channel name element found:', element); // Log element found
+								clearInterval(interval);
+								resolve(element.innerText);
+							} else if (Date.now() - startTime > 1000) { // Timeout after 1 seconds
+								console.log('Timeout reached, channel name element not found'); // Log timeout
+								clearInterval(interval);
+								resolve('Unknown Channel'); // Resolve with a default value instead of rejecting
+							}
+						}, 500); // Check every 500ms
+					});
+				})();
+			`;
+				channelname = await executeJavaScript(javascriptCode);
+			if (channelname == 'Unknown Channel') {
+				console.log("Load4-1")
+				ToggleArtist = false;
+			}
+			if (channelname != 'Unknown Channel') {
+				console.log("Load4-2")
+				ToggleArtist = true;
+			}
+		} else if (ChannelToggle === false) {
+			const javascriptCode = `
+				(function() {
+					console.log('Script started for fetching channel name (ChannelToggle === false)'); // Log start
+					return new Promise((resolve) => {
+						const startTime = Date.now();
+						const interval = setInterval(() => {
+							console.log('Checking for alternative channel name element...'); // Log each check
+							const element = document.querySelector('#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > span:nth-child(1)');
+							if (element) {
+								console.log('Alternative channel name element found:', element); // Log element found
+								clearInterval(interval);
+								resolve(element.textContent);
+							} else if (Date.now() - startTime > 1000) { // Timeout after 1 seconds
+								console.log('Timeout reached, alternative channel name element not found'); // Log timeout
+								clearInterval(interval);
+								resolve('Unknown Channel'); // Resolve with a default value instead of rejecting
+							}
+						}, 500); // Check every 500ms
+					});
+				})();
+			`;
+				channelname = await executeJavaScript(javascriptCode);
+			if (channelname == 'Unknown Channel') {
+				console.log("Load5-1")
+				ToggleArtist = false;
+			}
+			if (channelname != 'Unknown Channel') {
+				console.log("Load5-2")
+				ToggleArtist = true;
+			}
+		}
+
+
+
 
 
 		result = await executeJavaScript('document.querySelector(\'#badges.ytmusic-player-bar\').children.length');
 		// if (!result) console.log('Error getting Explicit Status);
 		Explicit = result;
-
-		if (ChannelToggle === true) {
-			result = await executeJavaScript('document.querySelector(\'#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(1)\').innerText');
-			channelname = result;
-		} else if (ChannelToggle === false) {
-			result = await executeJavaScript('document.querySelector(\'#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > span:nth-child(1)\').textContent');
-			channelname = result;
-			ToggleArtist = false;
-			TogglePlaylist = false;
-			ToggleButtons = false;
-		}
 
 		result = await executeJavaScript('document.querySelector(\'#sliderBar\').value');
 		if (!result) volume = 0;
@@ -1065,18 +1103,29 @@ function getContent() {
 		}
 
 		let Dash = '';
-		join1 = Dash + channelname + Dash;
-		join2 = Dash + playlistname + Dash;
+		if (ToggArtAlb == false) {
+			join1 = Dash + channelname + Dash;
+			join2 = Dash + playlistname + Dash;
+		}
+
+		if (ToggArtAlb == true) {
+			join2 = Dash + config.AlternateTopButtonValue + Dash;
+			join1 = Dash + config.AlternateBottomButtonValue + Dash;
+		}
 
 		// var newPlaylist = playlistname.split('music.')[1];
 		// var playlistnameTwo = `https://music.${newPlaylist}`;
 		// console.log(playlistnameTwo);
 
 		var expanse0 = '-------------------------------------------';
-		var expanse1 = '-------------------------------------------';
-		var expanse2 = '-';
-		var expanse3 = '-';
-		var expanse4 = '-------------------------------------------';
+		// var expanse1 = '-------------------------------------------';
+		// var expanse2 = '-';
+		// var expanse3 = '-';
+		// var expanse4 = '-------------------------------------------';
+
+		easyVolume.getVolume().then((volume) => {
+			systemVolume = volume;
+		});
 
 		// Create Element Section
 		if (textView === true) {
@@ -1085,6 +1134,8 @@ function getContent() {
 		return resolve({
 			// outputUrl2,
 			// thelinkOut2,
+			ToggArtAlb,
+			playlistname,
 			outputUrlOut,
 			songUrl,
 			outputURL,
@@ -1118,13 +1169,13 @@ function getContent() {
 			detailsThree,
 			title,
 			titleTwo,
-			expanse1,
+			expanse0,
 			ToggleButtons,
-			expanse2,
+			expanse0,
 			TogglePlaylist,
-			expanse3,
+			expanse0,
 			ToggleArtist,
-			expanse4,
+			expanse0,
 			artist,
 			time: [timeNow, timeMax],
 			paused,
@@ -1151,7 +1202,7 @@ function getContent() {
 
 
 // eslint-disable-next-line no-inline-comments
-const clientId = '835023222562095124'; /* 633709502784602133*/
+const clientId = config.discordClientID;
 DiscordRPC.register(clientId);
 
 let rpc = new DiscordRPC.Client({
@@ -1194,7 +1245,7 @@ function setActivity() {
 		largeImageKey;
 
 	var qualities = 0;
-	var VersionNumber = `System Volume is at: ${sysVol}% Player volume is at: ${volume}%`;
+	var VersionNumber = `System Volume is at: ${systemVolume}% Player volume is at: ${volume}%`;
 
 	if (CountdownTimerVar === true) {
 		if (RealCountdown >= 340 && RealCountdown < 360) {
@@ -1336,7 +1387,7 @@ function setActivity() {
 		if (RealCountdown >= 0 && RealCountdown < 10) {
 			ThirdEntry = '⚠️•';
 			warningText = '[ ' + quitText + ' in 10s ]';
-		} else(
+		} else (
 			RealCountdown = 'error counting down!'
 		)
 	}
@@ -1393,12 +1444,12 @@ function setActivity() {
 
 	if (TogglePlaylist === true) {
 		if (!playlist) {
-			var plaaylist = 'https://google.com';
+			var plaaylist = 'https://google.com/1';
 		} else if (playlist) {
 			plaaylist = playlist;
 		}
 	} else {
-		plaaylist = 'https://google.com';
+		plaaylist = 'https://google.com/2';
 	}
 
 	// if (Explicit === 1 && !paused) {
@@ -1431,50 +1482,54 @@ function setActivity() {
 		detailsThree = `${NewTitle} • ${warningText}`;
 		state = `${NewerTitle} ${artist[0] || 'Unknown'} • ${artist[1] || 'Unknown'} • ${artist[2] || 'Unknown'}`;
 
-		let fennecc = imageicon.replace('w60', 'w2080');
-		if (titleTwo && artist) {
-			fennec = fennecc.replace('h60', 'h2080');
-		}
-		let largeImagePresent = VersionNumber; // ----------------------------- //
+		if (title) {
+			var fennecc = imageicon.replace('w60', 'w2080');
 
-		if (repeat.includes('one')) {
-			// smallImageKey = 'repeat_one';
-			// smallImageText = 'Repeat one - Playing';
-			largeImageText = largeImagePresent;
-			largeImageKey = fennec;
-		}
 
-		if (repeat.includes('one') && paused) {
-			// smallImageKey = 'paws ]';
-			// smallImageText = 'Repeat one - Paused';
-			startTimestamp = 0;
-			endTimestamp = 0;
-		}
+			if (titleTwo && artist && title) {
+				fennec = fennecc.replace('h60', 'h2080');
+			}
+			let largeImagePresent = VersionNumber; // ----------------------------- //
 
-		if (repeat.includes('all')) {
-			// smallImageKey = 'repeat_all';
-			// smallImageText = 'Repeat all - Playing';
-			largeImageText = largeImagePresent;
-			largeImageKey = fennec;
-		}
-		if (repeat.includes('all') && paused) {
-			// smallImageKey = 'paws ]';
-			// smallImageText = 'Repeat all - Paused';
-			startTimestamp = 0;
-			endTimestamp = 0;
-		}
+			if (repeat.includes('one')) {
+				// smallImageKey = 'repeat_one';
+				// smallImageText = 'Repeat one - Playing';
+				largeImageText = largeImagePresent;
+				largeImageKey = fennec;
+			}
 
-		if (repeat.includes('off')) {
-			// smallImageKey = 'pway';
-			// smallImageText = 'Repeat off - Playing';
-			largeImageText = largeImagePresent;
-			largeImageKey = fennec;
-		}
-		if (repeat.includes('off') && paused) {
-			// smallImageKey = 'paws ]';
-			// smallImageText = 'Repeat off - Paused';
-			startTimestamp = 0;
-			endTimestamp = 0;
+			if (repeat.includes('one') && paused) {
+				// smallImageKey = 'paws ]';
+				// smallImageText = 'Repeat one - Paused';
+				startTimestamp = 0;
+				endTimestamp = 0;
+			}
+
+			if (repeat.includes('all')) {
+				// smallImageKey = 'repeat_all';
+				// smallImageText = 'Repeat all - Playing';
+				largeImageText = largeImagePresent;
+				largeImageKey = fennec;
+			}
+			if (repeat.includes('all') && paused) {
+				// smallImageKey = 'paws ]';
+				// smallImageText = 'Repeat all - Paused';
+				startTimestamp = 0;
+				endTimestamp = 0;
+			}
+
+			if (repeat.includes('off')) {
+				// smallImageKey = 'pway';
+				// smallImageText = 'Repeat off - Playing';
+				largeImageText = largeImagePresent;
+				largeImageKey = fennec;
+			}
+			if (repeat.includes('off') && paused) {
+				// smallImageKey = 'paws ]';
+				// smallImageText = 'Repeat off - Paused';
+				startTimestamp = 0;
+				endTimestamp = 0;
+			}
 		}
 
 		// SECTION FOR ALL WRITE-OUT DATA WITH THE TERMINAL -- CHECK HERE
@@ -1933,7 +1988,6 @@ function setPageName() {
 rpc.on('ready', title => {
 	setActivity();
 	setInterval(setActivity, 1e3);
-	setInterval(soundDevices, 1e3);
 	setInterval(checkSync, config.resyncSongUrl);
 	setInterval(syncTimeSync, 1000)
 	//setInterval(fullSync, 1e3);

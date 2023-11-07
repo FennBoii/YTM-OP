@@ -81,6 +81,20 @@
 				"filter": [
 					"**/*"
 				]
+			},
+			{
+				"from": "VolumeFind.exe",
+				"to": ".",
+				"filter": [
+					"**/*"
+				]
+			},
+			{
+				"from": "NAudio.Wasapi.dll",
+				"to": ".",
+				"filter": [
+					"**/*"
+				]
 			}
 		]
 	},
@@ -93,7 +107,6 @@
 		"easy-volume": "^1.1.0",
 		"electron-context-menu": "^3.3.0",
 		"jpeg-js": "^0.4.4",
-		"loudness": "^0.4.2",
 		"minimist": "^1.2.8",
 		"mkdirp": "^3.0.1",
 		"node": "^21.1.0",

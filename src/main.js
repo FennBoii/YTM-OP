@@ -4,7 +4,6 @@
 /* eslint-disable no-unused-vars */
 /* ---------------------------------DEFINE BEFORE RUN--------------------------------- */
 const DiscordRPC = require('discord-rpc');
-const easyVolume = require("easy-volume");
 const {
 	app,
 	BrowserWindow,
@@ -18,9 +17,7 @@ const fs = require('fs');
 const dataPath = app.getPath('userData');
 const axios = require('axios');
 const path = require('path');
-const {
-	spawn
-} = require('child_process');
+const { spawn } = require('child_process');
 const config = require('C:\\Program Files\\YTM-OP\\config.js');
 // const config = path.join(dataPath, 'config.js');
 // const generalConfigPath = path.join(dataPath, 'conf.json');
@@ -930,7 +927,7 @@ async function getContent() {
 					});
 				})();
 			`;
-				channelname = await executeJavaScript(javascriptCode);
+			channelname = await executeJavaScript(javascriptCode);
 			if (channelname == 'Unknown Channel') {
 				console.log("Load4-1")
 				ToggleArtist = false;
@@ -961,7 +958,7 @@ async function getContent() {
 					});
 				})();
 			`;
-				channelname = await executeJavaScript(javascriptCode);
+			channelname = await executeJavaScript(javascriptCode);
 			if (channelname == 'Unknown Channel') {
 				console.log("Load5-1")
 				ToggleArtist = false;
@@ -1123,9 +1120,36 @@ async function getContent() {
 		// var expanse3 = '-';
 		// var expanse4 = '-------------------------------------------';
 
-		easyVolume.getVolume().then((volume) => {
-			systemVolume = volume;
+
+
+
+
+		const executablePath = "C:/Program Files/YTM-OP/VolumeFind.exe";
+		
+		const child = spawn(executablePath);
+		
+		child.stdout.on('data', (data) => {
+			console.log(`Volume Level: ${data}`);
+			systemVolume = data;
 		});
+		
+		child.stderr.on('data', (data) => {
+		  console.error(`Stderr: ${data}`);
+		});
+		
+		child.on('close', (code) => {
+		  console.log(`Child process exited with code ${code}`);
+		});
+		
+		
+		
+		// systemVolume = config.volumeTaken;
+
+
+
+
+
+
 
 		// Create Element Section
 		if (textView === true) {
@@ -1245,7 +1269,8 @@ function setActivity() {
 		largeImageKey;
 
 	var qualities = 0;
-	var VersionNumber = `System Volume is at: ${systemVolume}% Player volume is at: ${volume}%`;
+	const formattedVolume = systemVolume.toString().replace(/\s+/g, '');
+	var VersionNumber = `System Volume is at: ${formattedVolume}% Player volume is at: ${volume}%`;
 
 	if (CountdownTimerVar === true) {
 		if (RealCountdown >= 340 && RealCountdown < 360) {

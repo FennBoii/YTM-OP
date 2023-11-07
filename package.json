@@ -9,7 +9,7 @@
 		"lint": "eslint **/*.js",
 		"lint:fix": "eslint --fix **/*.js",
 		"start": "electron . --trace-warnings",
-		"start-ci": "timeout-cli 300 electron .",
+		"start-ci": "timeout-cli 30 electron .",
 		"pack": "electron-builder --dir",
 		"package-linux": "electron-packager . YTMOP --platform=linux --arch=x64",
 		"dist:mac": "electron-builder --mac",
@@ -67,15 +67,20 @@
 			"!dist/*",
 			"!dist_old/*"
 		],
-		"extraResources": [{
-			"from": "config.js",
-			"to": "extra/config.js"
-		}],
+		"extraResources": [
+			{
+				"from": "config.js",
+				"to": "extra/config.js"
+			}
+		],
 		"extraFiles": [
-			"resources/assets/images/*.png", {
+			"resources/assets/images/*.png",
+			{
 				"from": "config.js",
 				"to": ".",
-				"filter": ["**/*"]
+				"filter": [
+					"**/*"
+				]
 			}
 		]
 	},
@@ -98,7 +103,8 @@
 		"npm-force-resolutions": "^0.0.10",
 		"prettier": "^3.0.3",
 		"prompt": "^1.3.0",
-		"systeminformation": "^5.18.15"
+		"systeminformation": "^5.18.15",
+		"timeout-cli": "^0.3.2"
 	},
 	"devDependencies": {
 		"electron": "^27.0.2",

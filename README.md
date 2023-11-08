@@ -5,11 +5,11 @@
 ![Website](https://img.shields.io/website?up_message=site%20UP&down_message=site%20DOWN&url=https%3A%2F%2Fgetname.ytmopdata.net%2F&label=Token%20Page%20-&labelColor=%23ff00ff&link=https%3A%2F%2Fgetname.ytmopdata.net%2F)
 
 **more "advanced / future" updates! (difficulty low (top) to hard (bottom)**
--Interaction with the windows audio banner (so when u click it it opens the YTM client)
--I've got to make a custom load settings screen to modify everything in real time (will take time to develop)
--Notifications!
--Setup Chrome cast (somehow, may take some time)
--(maybe) Just a title in the taskbar with the name of the song instead of the whole application's square?
+- Interaction with the windows audio banner (so when u click it it opens the YTM client)
+- I've got to make a custom load settings screen to modify everything in real time (will take time to develop)
+- Notifications!
+- Setup Chrome cast (somehow, may take some time)
+- (maybe) Just a title in the taskbar with the name of the song instead of the whole application's square?
 
 <center>
 

@@ -4,7 +4,7 @@
 ![GitHub release (by tag)](https://img.shields.io/github/downloads/FennBoii/YTM-OP/1.0.7/total)
 ![Website](https://img.shields.io/website?up_message=site%20UP&down_message=site%20DOWN&url=https%3A%2F%2Fgetname.ytmopdata.net%2F&label=Token%20Page%20-&labelColor=%23ff00ff&link=https%3A%2F%2Fgetname.ytmopdata.net%2F)
 
-*The token site is quite unstable, ill start to use ethernet from now on when it next goes online*
+**Token site is now under 24/7 surveilence with text messages and auto-restart processes incase of wifi issues, hardware issues, etc.. we should be good for now and on!*
 
 **more "advanced / future" updates! (difficulty low (top) to hard (bottom)**
 - Interaction with the windows audio banner (so when u click it it opens the YTM client)

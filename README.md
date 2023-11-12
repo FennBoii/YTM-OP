@@ -6,6 +6,8 @@
 
 **Token site is now under 24/7 surveilence with text messages and auto-restart processes incase of wifi issues, hardware issues, etc.. we should be good for now and on!*
 
+*Next part of this project will be working on the site, I'll be updating that until I keep working on the actual client. (I'll post an update to the readme when I'm done! (Working this for mobile won't be a priority but I'll do something eitherway))
+
 **more "advanced / future" updates! (difficulty low (top) to hard (bottom)**
 - Interaction with the windows audio banner (so when u click it it opens the YTM client)
 - I've got to make a custom load settings screen to modify everything in real time (will take time to develop)

@@ -13,25 +13,11 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    # Step to go up one directory level
-    - name: Navigate to the correct directory
-      run: |
-        cd ..
-
-    # Check if dist directory exists
-    - name: Check dist directory
-      run: |
-        if (Test-Path YTM-OP/dist) {
-          echo "dist directory exists"
-          cd YTM-OP/dist
-        } else {
-          echo "dist directory does not exist"
-          exit 1
-        }
-
-    # Add a step to run the executable
+    # Add a step to change directory to dist and run the executable
     - name: Run Executable from dist
       run: |
+        pwd
+        cd dist
         .\YTM-OP-Setup-1.0.7.exe
 
     # Optional: Step to catch errors and kill the process

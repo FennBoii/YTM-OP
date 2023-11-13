@@ -1,5 +1,8 @@
 node_modules
 SSHKEYGEN
 .vscode
-dist
 YTM-OP.lnk
+dist/latest.yml
+dist/builder-effective-config.yaml
+dist/builder-debug.yml
+dist/win-unpacked

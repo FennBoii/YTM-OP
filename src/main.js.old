@@ -83,7 +83,6 @@ var sysVol;
 var LICKCHeck = '';
 var playlistToggleVisible = true;
 var resultFin;
-var ToggArtAlb = false;
 // [ ------------------------------------------------------- ]
 // [ ------------------------------------------------------- ]
 
@@ -91,6 +90,7 @@ var ToggArtAlb = false;
 
 // [ ------------------------------------------------------- ]
 // [ ------------------------------------------------------- ]
+
 
 let reconnectTimer, injected;
 
@@ -116,9 +116,9 @@ function checkSync() {
 
 		// Define the data for updating the "thelink" value
 		const theLinkData = {
-			siteName: config.nameToken, // Replace with your siteName
-			givenNameToken: config.givenNameToken, // Replace with your token values
-			randomToken: config.randomToken, // Replace with your token values
+			givenNameToken: config.GivenNameToken, // Replace with your token values
+			randomToken: config.RandomToken, // Replace with your token values
+			siteName: config.SiteName, // Replace with your siteName
 			thelink: songUrl.toString(), // Modify thelink value as needed
 		};
 
@@ -142,9 +142,9 @@ function checkSync() {
 
 		// Define the data to send in the request body
 		const queryParameters = {
-			siteName: config.nameToken, // Replace with your siteName
-			givenNameToken: config.givenNameToken, // Replace with your token values
-			randomToken: config.randomToken, // Replace with your token values
+			siteName: config.SiteName, // Replace with your siteName
+			givenNameToken: config.GivenNameToken, // Replace with your token values
+			randomToken: config.RandomToken, // Replace with your token values
 			// newContent: 'updated_content' // Replace with the content you want to update
 		};
 
@@ -203,9 +203,9 @@ function syncTimeSync() {
 
 		// Define the data for updating the "synctime" value
 		const syncTimeData = {
-			siteName: config.nameToken, // Replace with your siteName
-			givenNameToken: config.givenNameToken, // Replace with your token values
-			randomToken: config.randomToken, // Replace with your token values
+			givenNameToken: config.GivenNameToken, // Replace with your token values
+			randomToken: config.RandomToken, // Replace with your token values
+			siteName: config.SiteName, // Replace with your siteName
 			synctime: timeNow, // Modify synctime value as needed
 		};
 
@@ -230,304 +230,299 @@ function syncTimeSync() {
 let win, settingsWin;
 const menuTemplate = [{
 	label: 'Utils',
-	submenu: [
-		{
-			label: 'Not Playing Disconnect',
+	submenu: [{
+		label: 'Not Playing Disconnect',
+		click() {
+			if (notPlayingDisconnect == true) {
+				notPlayingDisconnect = false;
+				notPlayingDisconnectText = "";
+			} else {
+				notPlayingDisconnect = true;
+				notPlayingDisconnectText = " [ PausDiscon Enabled ]";
+			}
+		},
+	},
+	{
+		label: 'Connection',
+		submenu: [{
+			label: '-- Connect --',
 			click() {
-				if (notPlayingDisconnect == true) {
-					notPlayingDisconnect = false;
-					notPlayingDisconnectText = "";
+				if (connectCounter == 0) {
+					reconnect();
+					ConnectDis = ' [ Connected ]';
+					error_bool = false;
+					connectCounter += 1;
+				}
+				if (connectCounter == 1) {
+					console.log('NO!')
+				}
+			},
+			accelerator: 'Ctrl+Alt+1',
+		},
+		{
+			label: '-- Disconnect --',
+			click() {
+				error_bool = true;
+				rpc.destroy();
+				ConnectDis = ' [ Disconnected ]';
+				connectCounter -= 1;
+			},
+			accelerator: 'Ctrl+Alt+2',
+		},
+		{
+			label: 'Reset RPC Connection',
+			click() {
+				setTimeout(DiscordDisconnect, 0);
+				setTimeout(DiscordConnect, 100);
+			},
+		},
+		],
+	},
+	{
+		label: 'On End Power Options',
+		submenu: [{
+			label: 'Quit Application',
+			click() {
+				if (buttonOne == false) {
+					buttonOne = true;
+					buttonTwo = false;
+					buttonThree = false;
+					buttonFour = false;
+					TitleExit = ' [ -- 𝑪𝑳𝑶𝑺𝑰𝑵𝑮 𝑨𝑷𝑷𝑳𝑰𝑪𝑨𝑻𝑰𝑶𝑵 𝑶𝑵 𝑬𝑵𝑫 -- ]';
+					CountdownTimerVar = true;
+					quitText = 'quitting app';
 				} else {
-					notPlayingDisconnect = true;
-					notPlayingDisconnectText = " [ PausDiscon Enabled ]";
+					buttonOne = false;
+					TitleExit = '';
+					CountdownTimerVar = false;
 				}
 			},
 		},
 		{
-			label: 'Sites',
-			submenu: [{
-				label: 'Go to YTM-OP Site',
-				click() {
-					win.loadURL("https://getname.ytmopdata.net/");
-				},
-
+			label: 'Sleep PC',
+			click() {
+				if (buttonTwo == false) {
+					buttonOne = false;
+					buttonTwo = true;
+					buttonThree = false;
+					buttonFour = false;
+					TitleExit = ' [ -- 𝑺𝑳𝑬𝑬𝑷𝑰𝑵𝑮 𝑷𝑪 𝑶𝑵 𝑬𝑵𝑫 -- ]';
+					CountdownTimerVar = true;
+					quitText = 'sleeping pc';
+				} else {
+					buttonTwo = false;
+					TitleExit = '';
+					CountdownTimerVar = false;
+				}
 			},
-			{
-				label: 'Go to YTM Homepage',
-				click() {
-					win.loadURL("https://music.youtube.com/");
-				},
-			}]
 		},
 		{
-			label: 'Connection',
-			submenu: [{
-				label: '-- Connect --',
-				click() {
-					if (connectCounter == 0) {
-						reconnect();
-						ConnectDis = ' [ Connected ]';
-						error_bool = false;
-						connectCounter += 1;
-					}
-					if (connectCounter == 1) {
-						console.log('NO!')
-					}
-				},
-				accelerator: 'Ctrl+Alt+1',
+			label: 'Restart PC',
+			click() {
+				if (buttonThree == false) {
+					buttonOne = false;
+					buttonTwo = false;
+					buttonThree = true;
+					buttonFour = false;
+					TitleExit = ' [ -- 𝑹𝑬𝑺𝑻𝑨𝑹𝑻𝑰𝑵𝑮 𝑷𝑪 𝑶𝑵 𝑬𝑵𝑫 -- ]';
+					CountdownTimerVar = true;
+					quitText = 'restarting pc';
+				} else {
+					buttonThree = false;
+					TitleExit = '';
+					CountdownTimerVar = false;
+				}
 			},
-			{
-				label: '-- Disconnect --',
-				click() {
-					error_bool = true;
-					rpc.destroy();
-					ConnectDis = ' [ Disconnected ]';
-					connectCounter -= 1;
-				},
-				accelerator: 'Ctrl+Alt+2',
-			},
-			{
-				label: 'Reset RPC Connection',
-				click() {
-					setTimeout(DiscordDisconnect, 0);
-					setTimeout(DiscordConnect, 100);
-				},
-			},
-			],
 		},
 		{
-			label: 'On End Power Options',
-			submenu: [{
-				label: 'Quit Application',
-				click() {
-					if (buttonOne == false) {
-						buttonOne = true;
-						buttonTwo = false;
-						buttonThree = false;
-						buttonFour = false;
-						TitleExit = ' [ -- 𝑪𝑳𝑶𝑺𝑰𝑵𝑮 𝑨𝑷𝑷𝑳𝑰𝑪𝑨𝑻𝑰𝑶𝑵 𝑶𝑵 𝑬𝑵𝑫 -- ]';
-						CountdownTimerVar = true;
-						quitText = 'quitting app';
-					} else {
-						buttonOne = false;
-						TitleExit = '';
-						CountdownTimerVar = false;
-					}
-				},
-			},
-			{
-				label: 'Sleep PC',
-				click() {
-					if (buttonTwo == false) {
-						buttonOne = false;
-						buttonTwo = true;
-						buttonThree = false;
-						buttonFour = false;
-						TitleExit = ' [ -- 𝑺𝑳𝑬𝑬𝑷𝑰𝑵𝑮 𝑷𝑪 𝑶𝑵 𝑬𝑵𝑫 -- ]';
-						CountdownTimerVar = true;
-						quitText = 'sleeping pc';
-					} else {
-						buttonTwo = false;
-						TitleExit = '';
-						CountdownTimerVar = false;
-					}
-				},
-			},
-			{
-				label: 'Restart PC',
-				click() {
-					if (buttonThree == false) {
-						buttonOne = false;
-						buttonTwo = false;
-						buttonThree = true;
-						buttonFour = false;
-						TitleExit = ' [ -- 𝑹𝑬𝑺𝑻𝑨𝑹𝑻𝑰𝑵𝑮 𝑷𝑪 𝑶𝑵 𝑬𝑵𝑫 -- ]';
-						CountdownTimerVar = true;
-						quitText = 'restarting pc';
-					} else {
-						buttonThree = false;
-						TitleExit = '';
-						CountdownTimerVar = false;
-					}
-				},
-			},
-			{
-				label: 'Shutdown PC',
-				click() {
-					if (buttonFour == false) {
-						buttonOne = false;
-						buttonTwo = false;
-						buttonThree = false;
-						buttonFour = true;
-						TitleExit = ' [ -- 𝑺𝑯𝑼𝑻𝑻𝑰𝑵𝑮 𝑫𝑶𝑾𝑵 𝑷𝑪 𝑶𝑵 𝑬𝑵𝑫 -- ]';
-						CountdownTimerVar = true;
-						quitText = 'shutting down pc'
-					} else {
-						buttonFour = false;
-						TitleExit = '';
-						CountdownTimerVar = false;
-					}
-				},
-			},
-			{
-				label: 'Toggle Off',
-				click() {
+			label: 'Shutdown PC',
+			click() {
+				if (buttonFour == false) {
 					buttonOne = false;
 					buttonTwo = false;
 					buttonThree = false;
+					buttonFour = true;
+					TitleExit = ' [ -- 𝑺𝑯𝑼𝑻𝑻𝑰𝑵𝑮 𝑫𝑶𝑾𝑵 𝑷𝑪 𝑶𝑵 𝑬𝑵𝑫 -- ]';
+					CountdownTimerVar = true;
+					quitText = 'shutting down pc'
+				} else {
 					buttonFour = false;
 					TitleExit = '';
 					CountdownTimerVar = false;
-				},
+				}
 			},
-			]
 		},
 		{
-			label: 'Buttons',
-			submenu: [
-				// {
-				// 	label: '- Button Stats -',
-				// 	label:	PlaylistCounter,
-				// },
-				{
-					label: 'ToggleButtonsOn',
-					click() {
-						ToggleButtons = true;
-						ToggleArtist = true;
-						TogglePlaylist = true;
-						secondTitle = true;
-						thirdTitle = true;
-					},
+			label: 'Toggle Off',
+			click() {
+				buttonOne = false;
+				buttonTwo = false;
+				buttonThree = false;
+				buttonFour = false;
+				TitleExit = '';
+				CountdownTimerVar = false;
+			},
+		},
+		]
+	},
+	{
+		label: 'Buttons',
+		submenu: [
+			// {
+			// 	label: '- Button Stats -',
+			// 	label:	PlaylistCounter,
+			// },
+			{
+				label: 'ToggleButtonsOn',
+				click() {
+					ToggleButtons = true;
+					ToggleArtist = true;
+					TogglePlaylist = true;
+					secondTitle = true;
+					thirdTitle = true;
 				},
-				{
-					label: 'ToggleButtonsOff',
-					click() {
-						ToggleButtons = false;
-						ToggleArtist = false;
+			},
+			{
+				label: 'ToggleButtonsOff',
+				click() {
+					ToggleButtons = false;
+					ToggleArtist = false;
+					TogglePlaylist = false;
+					secondTitle = false;
+					thirdTitle = false;
+				},
+			},
+			{
+				label: 'TogglePlaylist',
+				click() {
+					if (TogglePlaylist === true) {
 						TogglePlaylist = false;
+						ToggleButtons = false;
 						secondTitle = false;
+					} else {
+						TogglePlaylist = true;
+						ToggleButtons = true;
+						secondTitle = true;
+					}
+				},
+			},
+			{
+				label: 'ToggleArtist',
+				click() {
+					if (ToggleArtist === true) {
+						ToggleArtist = false;
+						ToggleButtons = false;
 						thirdTitle = false;
-					},
-				},
-				{
-					label: 'TogglePlaylist',
-					click() {
-						if (TogglePlaylist === true) {
-							TogglePlaylist = false;
-							ToggleButtons = false;
-							secondTitle = false;
-						} else {
-							TogglePlaylist = true;
-							ToggleButtons = true;
-							secondTitle = true;
-						}
-					},
-				},
-				{
-					label: 'ToggleArtist',
-					click() {
-						if (ToggleArtist === true) {
-							ToggleArtist = false;
-							ToggleButtons = false;
-							thirdTitle = false;
-						} else {
-							ToggleArtist = true;
-							ToggleButtons = true;
-							thirdTitle = true;
-						}
-					},
-				},
-				{
-					label: 'ChangeButtonsAlb/Art',
-					click() {
-						if (ToggArtAlb === true) {
-							ToggArtAlb = false;
-						} else {
-							ToggArtAlb = true;
-						}
-					},
-				},
-			]
-		},
-		{
-			label: 'Incoming Connections',
-			submenu: [{
-				label: 'None',
-				click() {
-					ConnectionTitle = ''
+					} else {
+						ToggleArtist = true;
+						ToggleButtons = true;
+						thirdTitle = true;
+					}
 				},
 			},
 			{
-				label: 'Sending',
+				label: 'ToggleChannel',
 				click() {
-					ConnectionTitle = '[ -- Sending -- ]'
+					if (ChannelToggle === true) {
+						ChannelToggle = false;
+					} else {
+						ChannelToggle = true;
+					}
+				},
+			},
+		]
+	},
+	{
+		label: 'Incoming Connections',
+		submenu: [{
+			label: 'None',
+			click() {
+				ConnectionTitle = ''
+			},
+		},
+		{
+			label: 'Sending',
+			click() {
+				ConnectionTitle = '[ -- Sending -- ]'
 
-				},
 			},
-			{
-				label: 'Recieving',
-				click() {
-					ConnectionTitle = '[ -- Recieving -- ]'
-				},
-			}
-			],
 		},
 		{
-			label: 'Extra',
-			submenu: [{
-				role: 'Reload'
+			label: 'Recieving',
+			click() {
+				ConnectionTitle = '[ -- Recieving -- ]'
+				// storeValues.get('/stream', (req, res) => {
+				// 	const ffmpegCommand = "ffmpeg";
+				// 	var ffmpegOptions =
+				// 		"-f s16le -ar 48000 -ac 2 -i udp://127.0.0.1:65535 -f wav -";
+
+				// 	var ffm = children.spawn(ffmpegCommand, ffmpegOptions.split(" "));
+
+				// 	res.writeHead(200, {
+				// 		"Content-Type": "audio/wav; codecs=PCM"
+				// 	});
+				// 	ffm.stdout.pipe(res);
+				// });
 			},
-			{
-				type: 'separator'
-			},
-			{
-				role: 'toggledevtools'
-			},
-			{
-				type: 'separator'
-			},
-			{
-				role: 'minimize'
-			},
-			{
-				type: 'separator'
-			},
-			{
-				role: 'undo'
-			},
-			{
-				role: 'redo'
-			},
-			{
-				type: 'separator'
-			},
-			{
-				role: 'cut'
-			},
-			{
-				role: 'copy'
-			},
-			{
-				role: 'paste'
-			},
-			{
-				type: 'separator'
-			},
-			{
-				role: 'quit',
-				accelerator: 'Ctrl+Q',
-			},
-			{
-				type: 'separator'
-			},
-			{
-				label: 'Copy CoverImageURL',
-				click() {
-					clipboard.writeText(fennec);
-				},
-			},
-			]
+		}
+		],
+	},
+	{
+		label: 'Extra',
+		submenu: [{
+			role: 'Reload'
 		},
+		{
+			type: 'separator'
+		},
+		{
+			role: 'toggledevtools'
+		},
+		{
+			type: 'separator'
+		},
+		{
+			role: 'minimize'
+		},
+		{
+			type: 'separator'
+		},
+		{
+			role: 'undo'
+		},
+		{
+			role: 'redo'
+		},
+		{
+			type: 'separator'
+		},
+		{
+			role: 'cut'
+		},
+		{
+			role: 'copy'
+		},
+		{
+			role: 'paste'
+		},
+		{
+			type: 'separator'
+		},
+		{
+			role: 'quit',
+			accelerator: 'Ctrl+Q',
+		},
+		{
+			type: 'separator'
+		},
+		{
+			label: 'Copy CoverImageURL',
+			click() {
+				clipboard.writeText(fennec);
+			},
+		},
+		]
+	},
 	],
 },
 {
@@ -541,7 +536,63 @@ const menuTemplate = [{
 		win.webContents.goForward();
 	},
 },
+{
+	label: 'playlistToggleVis TRUE',
+	click() {
+		playlistToggleVisible = true;
+	},
+},
+{
+	label: 'playlistToggleVis FALSE',
+	click() {
+		playlistToggleVisible = false;
+	},
+},
+{
+	label: 'Go to YTM homepage',
+	click() {
+		win.loadURL("https://music.youtube.com/");
+	},
+},
+{
+	label: 'Set Functions',
+	click() {
+		playlist = "https://google.com/;"
+		playlistname = "None";
+	},
+},
+{
+	label: 'Throw Error',
+	click() {
+		async function throwErrorAsync() {
+			throw new Error('This is an asynchronous error with specificWord.');
+		}
+
+		throwErrorAsync().catch(error => {
+			if (error.message.includes('specificWord')) {
+				console.log('Caught an asynchronous error with "specificWord" in the message:', error);
+			}
+		});
+	},
+},
 ];
+
+// // Get the current volume
+// function getCurrentVolume() {
+// 	var getVOL = spawn('powershell.exe', [
+// 		`Get-CimInstance -ClassName Win32_Volume | Where-Object { $_.VolumeName -eq 'C:\\' } | Select-Object -ExpandProperty DriveLetter`
+// 	]);
+
+// 	getVOL.stdout.on('data', data => {
+// 		const currentVolume = data.toString().trim(); // Note: This will be a letter (like "C") not a percentage
+// 		console.log(`Current volume drive letter: ${currentVolume}`);
+// 		sysVol = currentVolume;
+// 	});
+
+// 	getVOL.stderr.on('data', error => {
+// 		console.error(`Error: ${error}`);
+// 	});
+// }
 
 function DiscordConnect() {
 	reconnect();
@@ -561,8 +612,7 @@ function createSettingsWindow() {
 		width: 800,
 		height: 700,
 		webPreferences: {
-			// preload: path.join(process.cwd(), 'src', 'preload.js'),
-			preload: path.join(__dirname, 'preload.js'),
+			preload: path.join(process.cwd(), 'src', 'preload.js'),
 		},
 	});
 	settingsWin.setMinimumSize(300, 300);
@@ -579,18 +629,9 @@ function createWindow() {
 		height: 800,
 		icon: 'resources/assets/images/Youtube-Music-logo.png',
 		webPreferences: {
-			preload: path.join(__dirname, 'preload.js')
+			preload: path.join(process.cwd(), 'src', 'preload.js'),
 		},
 	});
-
-	fs.readFile('src/LINK.txt', 'utf8', (err, data) => {
-		if (err) {
-			console.error('Error reading file:', err);
-			return;
-		}
-		win.loadURL(data);
-	});
-
 	win.setMinimumSize(300, 300);
 	win.setResizable(true);
 	const menu = Menu.buildFromTemplate(menuTemplate);
@@ -633,6 +674,15 @@ function createWindow() {
 	win.webContents.on('dom-ready', settingsHook);
 	win.webContents.on('will-prevent-unload', e => e.preventDefault());
 
+	fs.readFile('src/LINK.txt', 'utf8', (err, data) => {
+		if (err) {
+			console.error('Error reading file:', err);
+			return;
+		}
+		win.loadURL(data);
+	});
+
+
 	// win.loadURL(config.continueURL, {
 	// 	userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:80.0) Gecko/20100101 Firefox/80.0',
 	// });
@@ -641,47 +691,28 @@ function createWindow() {
 
 	win.webContents.once('media-started-playing', async () => {
 		await executeJavaScript('document.querySelector(\'#play-pause-button\').click();').catch(console.log);
-
 	});
-
 }
 
 app.on('ready', createWindow)
+// app.on('ready', () => {
+// 	mainWindow = new BrowserWindow();
 
-ipcMain.on('sendDataToMain', (event, data) => {
-	// const filePath = path.join(__dirname, '../config.js');
-	const filePath = path.join('C:\\Program Files\\YTM-OP', 'config.js');
-	// const filePath = path.join(app.getPath('userData\\YTM-OP'), 'config.js');
+// 	mainWindow.loadURL("https://music.youtube.com/");
 
-	let configData = require(filePath);
-	let mergedData = { ...configData, ...data };
-	const moduleString = `module.exports = ${JSON.stringify(mergedData, null, 2)};`;
-	fs.writeFile(filePath, moduleString, (err) => {
-		if (err) {
-			console.error('Error writing file:', err);
-			event.sender.send('updateResponse', { success: false, error: err.message });
-			return;
-		}
-		console.log('File updated with merged data successfully.');
-
-		// After updating, send the content back to the renderer
-		event.sender.send('configData', { success: true, config: moduleString });
-	});
-});
-
-app.on('configData', (data) => {
-	if (data.success) {
-		document.getElementById('configDisplay').textContent = data.config;
-	} else {
-		console.error('Error fetching config data:', data.error);
-	}
-});
+// 	mainWindow.webContents.on('did-finish-load', () => {
+// 		mainWindow.webContents.someMethod();
+// 	})
+// })
 
 
-ipcMain.on('varsTotal', (event, data) => {
-	const senderWebContents = event.sender;
-	senderWebContents.send('updateResponse', { success: true, message: 'Data received' });
-});
+// app.on('window-all-closed', () => {
+// 	fs.writeFileSync(generalConfigPath, JSON.stringify(config, null, '\t'));
+// 	app.quit();
+// });
+// app.on('will-quit', () => {
+// 	fs.writeFileSync(generalConfigPath, JSON.stringify(config, null, '\t'));
+// });
 
 app.on('activate', () => {
 	if (win === null) {
@@ -697,8 +728,7 @@ async function settingsHook() {
 	injected = true;
 }
 
-
-ipcMain.on('left-of-checked', (event, checked, data) => {
+ipcMain.on('left-of-checked', (event, checked) => {
 	console.log(checked);
 	console.log('log_two');
 	config.continueWhereLeftOf = checked;
@@ -765,6 +795,15 @@ async function getContent() {
 
 
 
+
+
+
+
+
+
+
+
+
 		try {
 			const javascriptCode = `
 				(function() {
@@ -785,14 +824,7 @@ async function getContent() {
 			`;
 
 			playlistname = await executeJavaScript(javascriptCode);
-			if (playlistname == 'None') {
-				console.log("Load1-1")
-				TogglePlaylist = false;
-			}
-			if (playlistname != 'None') {
-				console.log("Load1-2")
-				TogglePlaylist = true;
-			}
+			// Additional logic here...
 		} catch (error) {
 			console.log('Script error:', error); // Log any errors
 		}
@@ -839,120 +871,54 @@ async function getContent() {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 		try {
-			const javascriptCode = `
-				(function() {
-					console.log('Script started for fetching channel'); // Log start
-					return new Promise((resolve) => {
-						const startTime = Date.now();
-						const interval = setInterval(() => {
-							console.log('Checking for channel element...'); // Log each check
-							const element = document.querySelector('#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(1)');
-							if (element) {
-								console.log('Channel element found:', element); // Log element found
-								clearInterval(interval);
-								resolve(element.href);
-							} else if (Date.now() - startTime > 1000) { // Timeout after 1 seconds
-								console.log('Timeout reached, channel element not found'); // Log timeout
-								clearInterval(interval);
-								resolve('https://google.com'); // Resolve with the default URL instead of rejecting
-							}
-						}, 500); // Check every 500ms
-					});
-				})();
-			`;
-
-			channel = await executeJavaScript(javascriptCode);
-			if (channel == 'https://google.com') {
-				console.log("Load3-1")
-				TogglePlaylist = false;
-			}
-			if (channel != 'https://google.com') {
-				console.log("Load3-2")
-				TogglePlaylist = true;
-			}
+			result = await executeJavaScript('document.querySelector(\'#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(1)\').href');
+			channel = result;
 		} catch (error) {
-			console.error('Script error for fetching channel:', error); // Log any errors
-			channel = "https://google.com/";
+			// Handle the error or fallback to a different value
+			console.error('An error occurred:', error);
+
+			// Fallback to a default value
+			result = "https://thisxdoesnotexist.com/";
+			channel = result;
 		}
-
-
-
-
-
-		if (ChannelToggle === true) {
-			const javascriptCode = `
-				(function() {
-					console.log('Script started for fetching channel name (ChannelToggle === true)'); // Log start
-					return new Promise((resolve) => {
-						const startTime = Date.now();
-						const interval = setInterval(() => {
-							console.log('Checking for channel name element...'); // Log each check
-							const element = document.querySelector('#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(1)');
-							if (element) {
-								console.log('Channel name element found:', element); // Log element found
-								clearInterval(interval);
-								resolve(element.innerText);
-							} else if (Date.now() - startTime > 1000) { // Timeout after 1 seconds
-								console.log('Timeout reached, channel name element not found'); // Log timeout
-								clearInterval(interval);
-								resolve('Unknown Channel'); // Resolve with a default value instead of rejecting
-							}
-						}, 500); // Check every 500ms
-					});
-				})();
-			`;
-
-			channelname = await executeJavaScript(javascriptCode);
-			if (channelname == 'Unknown Channel') {
-				console.log("Load4-1")
-				ToggleArtist = false;
-			}
-			if (channelname != 'Unknown Channel') {
-				console.log("Load4-2")
-				ToggleArtist = true;
-			}
-		} else if (ChannelToggle === false) {
-			const javascriptCode = `
-				(function() {
-					console.log('Script started for fetching channel name (ChannelToggle === false)'); // Log start
-					return new Promise((resolve) => {
-						const startTime = Date.now();
-						const interval = setInterval(() => {
-							console.log('Checking for alternative channel name element...'); // Log each check
-							const element = document.querySelector('#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > span:nth-child(1)');
-							if (element) {
-								console.log('Alternative channel name element found:', element); // Log element found
-								clearInterval(interval);
-								resolve(element.textContent);
-							} else if (Date.now() - startTime > 1000) { // Timeout after 1 seconds
-								console.log('Timeout reached, alternative channel name element not found'); // Log timeout
-								clearInterval(interval);
-								resolve('Unknown Channel'); // Resolve with a default value instead of rejecting
-							}
-						}, 500); // Check every 500ms
-					});
-				})();
-			`;
-
-			channelname = await executeJavaScript(javascriptCode);
-			if (channelname == 'Unknown Channel') {
-				console.log("Load5-1")
-				ToggleArtist = false;
-			}
-			if (channelname != 'Unknown Channel') {
-				console.log("Load5-2")
-				ToggleArtist = true;
-			}
-		}
-
-
-
 
 
 		result = await executeJavaScript('document.querySelector(\'#badges.ytmusic-player-bar\').children.length');
 		// if (!result) console.log('Error getting Explicit Status);
 		Explicit = result;
+
+		if (ChannelToggle === true) {
+			result = await executeJavaScript('document.querySelector(\'#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(1)\').innerText');
+			channelname = result;
+		} else if (ChannelToggle === false) {
+			result = await executeJavaScript('document.querySelector(\'#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > span:nth-child(1)\').textContent');
+			channelname = result;
+			ToggleArtist = false;
+			TogglePlaylist = false;
+			ToggleButtons = false;
+		}
 
 		result = await executeJavaScript('document.querySelector(\'#sliderBar\').value');
 		if (!result) volume = 0;
@@ -1077,15 +1043,8 @@ async function getContent() {
 		}
 
 		let Dash = '';
-		if (ToggArtAlb == false) {
-			join1 = Dash + channelname + Dash;
-			join2 = Dash + playlistname + Dash;
-		}
-
-		if (ToggArtAlb == true) {
-			join2 = Dash + config.AlternateTopButtonValue + Dash;
-			join1 = Dash + config.AlternateBottomButtonValue + Dash;
-		}
+		join1 = Dash + channelname + Dash;
+		join2 = Dash + playlistname + Dash;
 
 		// var newPlaylist = playlistname.split('music.')[1];
 		// var playlistnameTwo = `https://music.${newPlaylist}`;
@@ -1108,7 +1067,6 @@ async function getContent() {
 		return resolve({
 			// outputUrl2,
 			// thelinkOut2,
-			ToggArtAlb,
 			outputUrlOut,
 			songUrl,
 			outputURL,

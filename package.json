@@ -9,7 +9,7 @@
 		"lint": "eslint **/*.js",
 		"lint:fix": "eslint --fix **/*.js",
 		"start": "electron . --trace-warnings",
-		"start-ci": "timed-out 300 electron .",
+		"start-ci": "start-ci.bat",
 		"pack": "electron-builder --dir",
 		"package-linux": "electron-packager . YTMOP --platform=linux --arch=x64",
 		"dist:mac": "electron-builder --mac",

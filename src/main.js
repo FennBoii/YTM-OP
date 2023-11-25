@@ -5,26 +5,22 @@
 /* ---------------------------------DEFINE BEFORE RUN--------------------------------- */
 const DiscordRPC = require('discord-rpc');
 const easyVolume = require("easy-volume");
-const {
-	app,
-	BrowserWindow,
-	Menu,
-	nativeImage,
-	ipcMain,
-	webContents,
-	clipboard
-} = require('electron');
+const { app, BrowserWindow, Menu, nativeImage, ipcMain, webContents, clipboard } = require('electron');
 const fs = require('fs');
 const dataPath = app.getPath('userData');
 const axios = require('axios');
 const path = require('path');
-const {
-	spawn
-} = require('child_process');
-const config = require('C:\\Program Files\\YTM-OP\\config.js');
+const { spawn } = require('child_process');
 // const config = path.join(dataPath, 'config.js');
 // const generalConfigPath = path.join(dataPath, 'conf.json');
 // const { execDONE } = require('child_process');
+const configPath = path.resolve('C:\\Program Files\\YTM-OP\\config.json');
+var config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+function updateConfigFile(key, value) {
+	// let config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+	config[key] = value;
+	fs.writeFileSync(configPath, JSON.stringify(config, null, 2), 'utf8');
+}
 /* ---------------------------------DEFINE FUNCTIONS--------------------------------- */
 var thelink;
 var outputURL;
@@ -249,6 +245,10 @@ const menuTemplate = [{
 				label: 'Go to YTM-OP Site',
 				click() {
 					win.loadURL("https://getname.ytmopdata.net/");
+					error_bool = true;
+					rpc.destroy();
+					ConnectDis = ' [ Disconnected ]';
+					connectCounter -= 1;
 				},
 
 			},
@@ -256,6 +256,15 @@ const menuTemplate = [{
 				label: 'Go to YTM Homepage',
 				click() {
 					win.loadURL("https://music.youtube.com/");
+					if (connectCounter == 0) {
+						reconnect();
+						ConnectDis = ' [ Connected ]';
+						error_bool = false;
+						connectCounter += 1;
+					}
+					if (connectCounter == 1) {
+						console.log('NO!')
+					}
 				},
 			}]
 		},
@@ -540,8 +549,7 @@ const menuTemplate = [{
 	click() {
 		win.webContents.goForward();
 	},
-},
-];
+}];
 
 function DiscordConnect() {
 	reconnect();
@@ -583,13 +591,18 @@ function createWindow() {
 		},
 	});
 
-	fs.readFile('src/LINK.txt', 'utf8', (err, data) => {
-		if (err) {
-			console.error('Error reading file:', err);
-			return;
-		}
-		win.loadURL(data);
-	});
+	let albumORsong = config.albumORsong;
+
+	if (albumORsong == "song") {
+		win.loadURL(config.loadLastURL)
+	} else if (albumORsong == "album") {
+		win.loadURL(config.loadLastURL)
+	}
+	// else if (albumORsong == "both") {
+	// 	updateConfigFile('albumORsong', songUrl.toString());
+	// 	win.loadURL(config.loadLastURL);
+	// 	updateConfigFile('albumORsong', playlist.toString());
+	// }
 
 	win.setMinimumSize(300, 300);
 	win.setResizable(true);
@@ -599,16 +612,6 @@ function createWindow() {
 	// win.webContents.openDevTools();
 
 	win.on('close', async () => {
-		fs.writeFile('src/LINK.txt', win.webContents.getURL().toString(), err => {
-			if (err) {
-				// console.error('Error writing to file:', err);
-				LICKCHeck = 'uwu';
-			} else {
-				// console.log('File written successfully!');
-				LICKCHeck = 'owo';
-			}
-		});
-
 		let tempInfo = await getContent().catch(console.log);
 		// eslint-disable-next-line no-unused-vars
 		var {
@@ -724,6 +727,11 @@ async function getContent() {
 		var title,
 			playlistname,
 			result;
+
+		// } else if (albumORsong == "both") {
+		// 	updateConfigFile('albumORsong', songUrl.toString());
+		// 	updateConfigFile('albumORsong', playlist.toString());
+		// }
 
 		result = await executeJavaScript('document.querySelector(\'div.content-info-wrapper yt-formatted-string.title\').title;');
 		if (!result) return '- d e p r e s s i o n -';
@@ -861,15 +869,14 @@ async function getContent() {
 					});
 				})();
 			`;
-
 			channel = await executeJavaScript(javascriptCode);
 			if (channel == 'https://google.com') {
 				console.log("Load3-1")
-				TogglePlaylist = false;
+				ToggleArtist = false;
 			}
 			if (channel != 'https://google.com') {
 				console.log("Load3-2")
-				TogglePlaylist = true;
+				ToggleArtist = true;
 			}
 		} catch (error) {
 			console.error('Script error for fetching channel:', error); // Log any errors
@@ -902,7 +909,6 @@ async function getContent() {
 					});
 				})();
 			`;
-
 			channelname = await executeJavaScript(javascriptCode);
 			if (channelname == 'Unknown Channel') {
 				console.log("Load4-1")
@@ -934,7 +940,6 @@ async function getContent() {
 					});
 				})();
 			`;
-
 			channelname = await executeJavaScript(javascriptCode);
 			if (channelname == 'Unknown Channel') {
 				console.log("Load5-1")
@@ -1087,6 +1092,18 @@ async function getContent() {
 			join1 = Dash + config.AlternateBottomButtonValue + Dash;
 		}
 
+		let albumORsong = config.albumORsong;
+
+		if (albumORsong == "song") {
+			if (title && playlist) {
+				updateConfigFile('loadLastURL', songUrl.toString());
+			}
+		} else if (albumORsong == "album") {
+			if (title && playlist) {
+				updateConfigFile('loadLastURL', playlist.toString());
+			}
+		}
+
 		// var newPlaylist = playlistname.split('music.')[1];
 		// var playlistnameTwo = `https://music.${newPlaylist}`;
 		// console.log(playlistnameTwo);
@@ -1173,9 +1190,8 @@ async function getContent() {
 	});
 }
 
-
 // eslint-disable-next-line no-inline-comments
-const clientId = '835023222562095124'; /* 633709502784602133*/
+const clientId = config.discordID; /* 633709502784602133*/
 DiscordRPC.register(clientId);
 
 let rpc = new DiscordRPC.Client({
@@ -1220,150 +1236,19 @@ function setActivity() {
 	var qualities = 0;
 	var VersionNumber = `System Volume is at: ${systemVolume}% Player volume is at: ${volume}%`;
 
+
 	if (CountdownTimerVar === true) {
-		if (RealCountdown >= 340 && RealCountdown < 360) {
+		if (RealCountdown >= 0 && RealCountdown < 360) {
 			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 360s ]';
+			// Calculate the nearest multiple of 10 above or equal to RealCountdown
+			let nearestMultipleOfTen = Math.ceil(RealCountdown / 5) * 5;
+			warningText = '[ ' + quitText + ' in ' + nearestMultipleOfTen + 's ]';
+		} else {
+			RealCountdown = 'error counting down!';
 		}
-		if (RealCountdown >= 330 && RealCountdown < 350) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 350s ]';
-		}
-		if (RealCountdown >= 320 && RealCountdown < 340) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 340s ]';
-		}
-		if (RealCountdown >= 310 && RealCountdown < 330) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 330s ]';
-		}
-		if (RealCountdown >= 300 && RealCountdown < 320) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 320s ]';
-		}
-		if (RealCountdown >= 290 && RealCountdown < 310) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 310s ]';
-		}
-		if (RealCountdown >= 280 && RealCountdown < 300) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 300s ]';
-		}
-		if (RealCountdown >= 270 && RealCountdown < 290) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 290s ]';
-		}
-		if (RealCountdown >= 260 && RealCountdown < 280) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 280s ]';
-		}
-		if (RealCountdown >= 250 && RealCountdown < 270) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 270s ]';
-		}
-		if (RealCountdown >= 240 && RealCountdown < 260) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 260s ]';
-		}
-		if (RealCountdown >= 230 && RealCountdown < 250) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 250s ]';
-		}
-		if (RealCountdown >= 220 && RealCountdown < 240) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 240s ]';
-		}
-		if (RealCountdown >= 210 && RealCountdown < 230) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 230s ]';
-		}
-		if (RealCountdown >= 200 && RealCountdown < 220) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 220s ]';
-		}
-		if (RealCountdown >= 190 && RealCountdown < 210) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 210s ]';
-		}
-		if (RealCountdown >= 180 && RealCountdown < 190) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 190s ]';
-		}
-		if (RealCountdown >= 170 && RealCountdown < 180) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 180s ]';
-		}
-		if (RealCountdown >= 160 && RealCountdown < 170) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 170s ]';
-		}
-		if (RealCountdown >= 150 && RealCountdown < 160) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 160s ]';
-		}
-		if (RealCountdown >= 140 && RealCountdown < 150) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 150s ]';
-		}
-		if (RealCountdown >= 130 && RealCountdown < 140) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 140s ]';
-		}
-		if (RealCountdown >= 120 && RealCountdown < 130) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 130s ]';
-		}
-		if (RealCountdown >= 110 && RealCountdown < 120) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 120s ]';
-		}
-		if (RealCountdown >= 100 && RealCountdown < 110) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 110s ]';
-		}
-		if (RealCountdown >= 90 && RealCountdown < 100) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 100s ]';
-		}
-		if (RealCountdown >= 80 && RealCountdown < 90) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 90s ]';
-		}
-		if (RealCountdown >= 70 && RealCountdown < 80) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 80s ]';
-		}
-		if (RealCountdown >= 60 && RealCountdown < 70) {
-			ThirdEntry = '⚠️•';
-			warningText = '[' + quitText + ' in 70s ]';
-		}
-		if (RealCountdown >= 50 && RealCountdown < 60) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 60s ]';
-		}
-		if (RealCountdown >= 40 && RealCountdown < 50) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 50s ]';
-		}
-		if (RealCountdown >= 30 && RealCountdown < 40) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 40s ]';
-		}
-		if (RealCountdown >= 20 && RealCountdown < 30) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 30s ]';
-		}
-		if (RealCountdown >= 10 && RealCountdown < 20) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 20s ]';
-		}
-		if (RealCountdown >= 0 && RealCountdown < 10) {
-			ThirdEntry = '⚠️•';
-			warningText = '[ ' + quitText + ' in 10s ]';
-		} else (
-			RealCountdown = 'error counting down!'
-		)
 	}
+
+	//The 5) * 5 = 5 seconds so "234) * 234" is 234 seconds!
 
 	if (title && CountdownTimerVar === false) {
 		warningText = '';

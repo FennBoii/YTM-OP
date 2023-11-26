@@ -1,6 +1,8 @@
 // Request the current config data on page load
 window.api.send('load-config');
 
+var errorCatch = 0;
+
 // Listen for the config data from the main process
 window.api.receive('config-loaded', (configData) => {
     console.log("Received config data in renderer:", configData); // Log received data
@@ -16,59 +18,36 @@ document.getElementById('configForm').addEventListener('submit', (event) => {
         window.api.send('save-config', configData);
     } catch (error) {
         alert('Invalid JSON format: ' + error.message);
+        console.log("Error");
+        errorCatch += 1;
     }
 });
 
+document.getElementById('saveConfig').addEventListener('click', function () {
+    setTimeout(() => {
+        this.style.animation = 'slideOut 2s';
+        this.style.backgroundColor = 'yellow';
+        this.innerText = 'Submitting..';
+    }, 200); // After 1 second, start the slide-in animation
 
-
-
-/*
-const fs = require('fs');
-const { dialog } = require('electron').remote;
-const { ipcRenderer } = require('electron');
-
-document.getElementById('saveButton').addEventListener('click', () => {
-    const updatedConfig = {
-        // collect data from your form fields
-    };
-    fs.writeFile('C:\\Program Files\\YTM-OP\\config.json', JSON.stringify(updatedConfig), 'utf8', err => {
-        if (err) {
-            console.error("Error writing the file", err);
-            return;
-        }
-        alert('Config saved successfully!');
-    });
-});
-
-ipcRenderer.send('request-config');
-ipcRenderer.send('load-config');
-
-ipcRenderer.on('config-response', (event, { data, error }) => {
-    if (error) {
-        console.error("Error: ", error);
-        return;
+    if (errorCatch == 1) {
+        setTimeout(() => {
+            this.style.animation = 'slideIn 1s';
+            this.style.backgroundColor = 'red';
+            this.innerText = 'Save Error!';
+        }, 1800); // After 1 second, start the slide-in animation
     }
-    for (const key in data) {
-        const input = document.getElementById(key);
-        if (input) {
-            input.value = data[key];
-        }
+    
+    if (errorCatch == 0) {
+        setTimeout(() => {
+            this.style.animation = 'slideIn 1s';
+            this.style.backgroundColor = 'green';
+            this.innerText = 'Save Success!';
+        }, 1800); // After 1 second, start the slide-in animation
     }
-});
 
-ipcRenderer.on('config-loaded', (event, configData) => {
-    document.getElementById('configTextarea').value = JSON.stringify(configData, null, 2);
+    setTimeout(() => {
+        this.innerText = 'Save Again?';
+        this.style.backgroundColor = 'white';
+    }, 3800); // After 1 second, start the slide-in animation
 });
-
-document.getElementById('configForm').addEventListener('submit', (event) => {
-    event.preventDefault();
-    const configString = document.getElementById('configTextarea').value;
-
-    try {
-        const configData = JSON.parse(configString);
-        ipcRenderer.send('save-config', configData);
-    } catch (error) {
-        alert('Invalid JSON format: ' + error.message);
-    }
-});
-*/

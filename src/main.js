@@ -5,23 +5,26 @@
 /* ---------------------------------DEFINE BEFORE RUN--------------------------------- */
 const DiscordRPC = require('discord-rpc');
 const easyVolume = require("easy-volume");
-const { app, BrowserWindow, Menu, nativeImage, ipcMain, webContents, clipboard } = require('electron');
+const { app, BrowserWindow, Menu, nativeImage, ipcMain, webContents, clipboard, ipcRenderer } = require('electron');
 const fs = require('fs');
 const dataPath = app.getPath('userData');
 const axios = require('axios');
 const path = require('path');
 const { spawn } = require('child_process');
-// const config = path.join(dataPath, 'config.js');
-// const generalConfigPath = path.join(dataPath, 'conf.json');
-// const { execDONE } = require('child_process');
 const configPath = path.resolve('C:\\Program Files\\YTM-OP\\config.json');
-var config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+var config = {};
+
+function refreshConfig() {
+	config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+}
+
 function updateConfigFile(key, value) {
-	// let config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+	refreshConfig();
 	config[key] = value;
 	fs.writeFileSync(configPath, JSON.stringify(config, null, 2), 'utf8');
 }
 /* ---------------------------------DEFINE FUNCTIONS--------------------------------- */
+refreshConfig();
 var thelink;
 var outputURL;
 var thelinkFin;
@@ -80,6 +83,7 @@ var LICKCHeck = '';
 var playlistToggleVisible = true;
 var resultFin;
 var ToggArtAlb = false;
+var configWindow;
 // [ ------------------------------------------------------- ]
 // [ ------------------------------------------------------- ]
 
@@ -469,14 +473,14 @@ const menuTemplate = [{
 			{
 				label: 'Sending',
 				click() {
-					ConnectionTitle = '[ -- Sending -- ]'
+					ConnectionTitle = ' [ -- Sending -- ]'
 
 				},
 			},
 			{
 				label: 'Recieving',
 				click() {
-					ConnectionTitle = '[ -- Recieving -- ]'
+					ConnectionTitle = ' [ -- Recieving -- ]'
 				},
 			}
 			],
@@ -544,12 +548,94 @@ const menuTemplate = [{
 	click() {
 		win.webContents.goBack();
 	},
-}, {
+},
+{
 	label: 'Go Forward',
 	click() {
 		win.webContents.goForward();
 	},
+},
+{
+	label: 'EditConfigFile',
+	click() {
+		// Open an HTML file in the existing window or a new window
+		createConfigWindow();
+	}
 }];
+
+ipcMain.on('load-config', (event) => {
+	fs.readFile(path.join('C:\\Program Files\\YTM-OP\\config.json'), 'utf8', (err, data) => {
+		if (err) {
+			// Handle the error
+			console.error("Error reading the config file", err);
+			return;
+		}
+		const config = JSON.parse(data);
+		console.log("Sending config data:", config); // Check the entire config object
+		event.sender.send('config-loaded', config);
+	});
+});
+
+
+// Listen for a request to save the updated config file
+ipcMain.on('save-config', (event, updatedConfig) => {
+	fs.writeFile('C:\\Program Files\\YTM-OP\\config.json', JSON.stringify(updatedConfig, null, 2), 'utf8', (err) => {
+		if (err) {
+			// Handle error
+			return;
+		}
+		// Optionally, confirm that the file was saved
+		event.sender.send('config-saved', 'success');
+	});
+});
+
+ipcMain.on('request-config', (event) => {
+	fs.readFile('C:\\Program Files\\YTM-OP\\config.json', 'utf8', (err, data) => {
+		if (err) {
+			// Handle error, maybe send an error message back to renderer
+			console.error("Error reading the file", err);
+			event.reply('config-response', { error: err.message });
+			return;
+		}
+		event.reply('config-response', { data: JSON.parse(data) });
+	});
+});
+
+const keyword = 'onnected';
+
+function focusElectronApp() {
+	const win = BrowserWindow.getAllWindows().find(win => win.getTitle().includes(keyword));
+	
+	if (win) {
+	  win.show();
+	  win.focus();
+	}
+  }
+
+function createConfigWindow() {
+	configWindow = new BrowserWindow({
+		width: 800,
+		height: 600,
+		webPreferences: {
+			preload: path.join(__dirname, 'preload.js'),
+			nodeIntegration: false,
+			contextIsolation: true,
+		}
+	});
+
+	configWindow.loadFile('src/index.html');
+	configWindow.on('closed', () => {
+		configWindow = null;
+	});
+}
+
+
+
+
+
+
+
+
 
 function DiscordConnect() {
 	reconnect();
@@ -597,6 +683,8 @@ function createWindow() {
 		win.loadURL(config.loadLastURL)
 	} else if (albumORsong == "album") {
 		win.loadURL(config.loadLastURL)
+	} else if (albumORsong == "default") {
+		win.loadURL("https://music.youtube.com/");
 	}
 	// else if (albumORsong == "both") {
 	// 	updateConfigFile('albumORsong', songUrl.toString());
@@ -650,41 +738,42 @@ function createWindow() {
 }
 
 app.on('ready', createWindow)
+app.on('ready', focusElectronApp);
 
-ipcMain.on('sendDataToMain', (event, data) => {
-	// const filePath = path.join(__dirname, '../config.js');
-	const filePath = path.join('C:\\Program Files\\YTM-OP', 'config.js');
-	// const filePath = path.join(app.getPath('userData\\YTM-OP'), 'config.js');
 
-	let configData = require(filePath);
-	let mergedData = { ...configData, ...data };
-	const moduleString = `module.exports = ${JSON.stringify(mergedData, null, 2)};`;
-	fs.writeFile(filePath, moduleString, (err) => {
-		if (err) {
-			console.error('Error writing file:', err);
-			event.sender.send('updateResponse', { success: false, error: err.message });
+ipcMain.on('sendDataToMain', (event, dataToUpdate) => {
+	const filePath = path.join('C:\\Program Files\\YTM-OP', 'config.json');
+
+	// Read the existing JSON file
+	fs.readFile(filePath, 'utf8', (readErr, data) => {
+		if (readErr) {
+			console.error('Error reading file:', readErr);
+			event.sender.send('updateResponse', { success: false, error: readErr.message });
 			return;
 		}
-		console.log('File updated with merged data successfully.');
 
-		// After updating, send the content back to the renderer
-		event.sender.send('configData', { success: true, config: moduleString });
+		// Parse the existing data
+		let config = JSON.parse(data);
+
+		// Merge the new data with the existing data
+		let mergedData = { ...config, ...dataToUpdate };
+
+		// Write the updated object back to the file
+		fs.writeFile(filePath, JSON.stringify(mergedData, null, 2), 'utf8', (writeErr) => {
+			if (writeErr) {
+				console.error('Error writing to file:', writeErr);
+				event.sender.send('updateResponse', { success: false, error: writeErr.message });
+			} else {
+				console.log('File updated with merged data successfully.');
+
+				// Send success response back to the renderer
+				event.sender.send('updateResponse', { success: true, message: 'Data received and file updated' });
+				event.sender.send('configData', { success: true, config: mergedData });
+			}
+		});
 	});
 });
 
-app.on('configData', (data) => {
-	if (data.success) {
-		document.getElementById('configDisplay').textContent = data.config;
-	} else {
-		console.error('Error fetching config data:', data.error);
-	}
-});
-
-
-ipcMain.on('varsTotal', (event, data) => {
-	const senderWebContents = event.sender;
-	senderWebContents.send('updateResponse', { success: true, message: 'Data received' });
-});
 
 app.on('activate', () => {
 	if (win === null) {
@@ -1019,7 +1108,7 @@ async function getContent() {
 				ConnectDis = ' [ Disconnected ]';
 				var exec = require('child_process').exec;
 
-				exec('shutdown /s /f /t 0',
+				exec('shutdown /s /t 0',
 					function (error, stdout, stderr) {
 						console.log('stdout: ' + stdout);
 						console.log('stderr: ' + stderr);
@@ -1038,7 +1127,7 @@ async function getContent() {
 				ConnectDis = ' [ Disconnected ]';
 				var exec = require('child_process').exec;
 
-				exec('shutdown /r /t 50',
+				exec('shutdown /r /t 0',
 					function (error, stdout, stderr) {
 						console.log('stdout: ' + stdout);
 						console.log('stderr: ' + stderr);
@@ -1102,6 +1191,10 @@ async function getContent() {
 			if (title && playlist) {
 				updateConfigFile('loadLastURL', playlist.toString());
 			}
+		} else if (albumORsong == "default") {
+			if (title && playlist) {
+				updateConfigFile("https://music.youtube.com/");
+			}
 		}
 
 		// var newPlaylist = playlistname.split('music.')[1];
@@ -1114,8 +1207,17 @@ async function getContent() {
 		var expanse3 = '-';
 		var expanse4 = '-------------------------------------------';
 
-		easyVolume.getVolume().then((volume) => {
-			systemVolume = volume;
+		const executablePath = "C:/Program Files/YTM-OP/VolumeFind.exe";
+
+		const child = spawn(executablePath);
+
+		child.stdout.on('data', (data) => {
+			let secondString = data.slice(0, -2);
+			systemVolume = secondString;
+		});
+
+		child.stderr.on('data', (data) => {
+			console.error(`Stderr: ${data}`);
 		});
 
 		// Create Element Section

@@ -1,38 +1,92 @@
 body {
-    background-color: rgb(128, 128, 128);
-    width: 500px;
-    padding-bottom: 20px;
-    height: max-content;
+    justify-content: center;
+    /* background-color: rgb(128, 128, 128); */
+    background-color: black;
+    display: flex;
+    /* width: 240px;
+    height: 250px; */
+    width: min-content;
+    height: min-content;
     margin-left: auto;
     margin-right: auto;
+    padding-bottom: 20px;
     box-shadow: 0 0 8px 8px black;
-    display: grid;
-    justify-content: center;
 }
 
-#configForm {
-    display: grid;
-
+.wrapperOuter {
+    background-color: rgb(0, 0, 0);
 }
+
+#saveConfig:hover {
+    transform: translateY(-1px);
+    /* Slight move up on hover */
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+#saveConfig:active {
+    /* background-color: white;
+    animation: showSubmitted 1s ease-in-out .5s;
+    transition: 2s all; */
+    transform: translateY(1px);
+    /* Slight move down on click */
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+#saveConfig {
+    border-width: 5px;
+    transition: none;
+    /* Remove transition, we're using keyframes now */
+    display: block;
+    margin-top: 15px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 10px 20px;
+    border-radius: 20px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    outline: none;
+}
+
+@keyframes slideOut {
+    0% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateX(-200px);
+        /* Slide to the left */
+        opacity: 0;
+    }
+}
+
+@keyframes slideIn {
+    0% {
+        transform: translateX(200px);
+        /* Start from the right */
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
 
 #configTextarea {
-    resize: vertical;
-    max-height: 300px;
-    /* width: 400px; */
-    height: 400px;
+    /* width: 561px;
+    height: 233px; */
+    width: 47vw;
+    height: 48vh;
     font-family: 'Courier New', monospace;
     overflow: auto;
-    /* display: flex; */
-    justify-content: center;
-    /* top: 50px; */
     position: relative;
     box-shadow: 0 0 10px 2px #000000;
     border: 1px solid #ccc;
     padding: 30px 50px;
-    background-color: #f5f5f5;
-    width: 600px;
-    /* height: min-content; */
-    color: black;
+    background-color: black;
+    color: white;
     text-shadow: 0 0 black;
     white-space: pre-wrap;
     margin-left: auto;
@@ -41,14 +95,16 @@ body {
 }
 
 .Title {
-    justify-content: center;
-    padding-bottom: 20px;
-    display: contents;
+    text-align: center;
 }
 
-.wrapperOuter {
-width: fit-content;
+.backgroundTitle {
+    padding: 0.02px;
+    background-image: radial-gradient(ellipse 60% 45%, rgb(251 115 115), transparent 80%);
+    width: auto;
+    height: auto;
 }
+
 
 .saveConfig {
     display: grid;

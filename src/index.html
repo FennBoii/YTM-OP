@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <title>Configuration Page</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <!-- Include any stylesheets or additional meta tags here -->
+</head>
+
+<body>
+    <div class="wrapperOuter">
+        <div class="backgroundTitle">
+            <div class="Title">
+                <h1>--- config.json ---</h1>
+            </div>
+        </div>
+
+        <form id="configForm">
+            <textarea id="configTextarea" spellcheck="false"></textarea>
+
+            <button type="submit" id="saveConfig">Save Changes</button>
+        </form>
+    </div>
+    <script src="renderer.js"></script>
+</body>
+
+</html>

@@ -6,9 +6,8 @@
 
 **Token site is now under 24/7 surveilence with text messages and auto-restart processes incase of wifi issues, hardware issues, etc.. we should be good for now and on!*
 
-*The token site is 98.3256328643256423543245.8% completed! I've got it working with the player and ontop of that I've got some good ideas I can add to this player in the future! More updates underway!
-
-<h3>1.0.7 was reuploaded! You can see the changes by going to "Utils > Sites". There is the new site I've been working on. The changes are; including the ytm-op site into the player and it auto imports your keys with a button so you may need a new config file but thats alright! also ytm-op player will need admin priviledges twice when you install (with the Setup.exe File), why twice? It needs it first to install into the programFiles directory and then again to run as admin. Why admin you may ask? because inorder to insert the keys into your config file automatically it needs admin priviledges for it's location. This is a somewhat major change since you don't have to physically leave the player anymore and in the future there won't be a need for timers in the config file since everything will be based triggers and timers for when things load and want to load! More changes to come!</h3>
+<h3>Important Note</h3>
+-Run the player as Admin ALWAYS; Needed simply for write perms.
 
 **more "advanced / future" updates! (difficulty low (top) to hard (bottom)**
 - Interaction with the windows audio banner (so when u click it it opens the YTM client)
@@ -18,34 +17,31 @@
 - (maybe) Just a title in the taskbar with the name of the song instead of the whole application's square?
 
 <center>
-
-<h2><b>There is no need for these commands anymore! It automatically makes the config.js these files for you and there is also no need for svcl.exe anymore I use a different package that works seamlessly!</b></h2>
-
 <b>THERE MAY BE ERRORS WHEN CLOSING AND MAYBE SOME DURING, I AM WORKING ON THESE JUST RESTART THE CLIENT OR ADD THE ISSUES TO "ISSUES" TAB</b>
 
 # YTM-OP
 ## This project is a self project meaning this is mostly just for me but your allowed to do whatever you wish with this project if you come across it.</center>
 
-* Summary: "This is a Youtube Music Client with a Discord Rich Presence and janky VRChat OSC support and only if you know how to run it
+* Summary: "This is a Youtube Music Client with a lot of built in features (adding VRC OSC again natively, soon)"
 
 <hr />
 <center><h2>How to setup client syncing</h2></center>
+- Launch the player (make sure its running with Administrator (your keys cannot be inserted if not) and once its connected to discord, click on Utils > Sites > Go to YTM-OP site. Discord will disconnect.
+- Once there, put ANY name in and generate those keys! Then once that page loads, use the bottom button and it'll insert them for you automatically.
+- Now that the config.json gets updated live, your able to use them without restarting the client! Just use the menu! Utils > Incoming Connections > sending or receiving! Clikc on <b>Edit Config</b> for live editing!
+- Know that everytime you put a name into the site the random token WILL be reset but the other keys will be left the same. Also, still on the site your able to click and copy all the keys to send and soon, ill make all of this a url and itll do it all auto with just a simple link!
 
-    1. Your going to have to go to this site: https://getname.ytmopdata.net/, put your name in and get the keys, don't touch the go to page site button yet, the site is still under construction.
-    2. Go to your player client location where u installed it, or you can just run it from the dist folder in the release, open the config.js and put your keys in the respective places and edit the name and everything you'd want to use.
-    3. Open the client and go to the **Utils** menu and hover over "Incoming Connections", you can choose what you'd want to do. (Sending makes it so that your client updates the playing url and time so that if another client connects with the name keys from the site name u made, they can receive it.) (Receiving makes your client receive the data being sent, this means that the timers you set in the config file can be used, the **resyncSongUrl** will be used to load the new song url on a timer (too fast will get you stuck in a reload loop) and **outOfSyncPlayingSong** will be the timer for how fast you want to get the **timeNow** from the other client, this is a quick reload kind of thing so I recommend 3 as to not OVERLOAD the database... please...)
-    4. Give the site credentials to friends etc.. and play along this works at least I think for everyone at the moment, i've done a lot of trial and error. If there are any errors put them into the Issues tab PLEASE, thankuuu for reading <3
-
+<b>more "advanced / future" updates! (difficulty low (top) to hard (bottom)</b>
 - Make everything look neater with a better menu and cleaner look
 - Allow the titlebar to be customized through text in textfiles for ultimate customization
     - If you've got any ideas, leave them somewhere maybe in issues idk I'll *definitely* add them
-- Try to add releases for Mac and Linux in the future when I get the time
+- Try to add releases for Mac and Linux in the future when I get the time (Currently working on a release for linux)
 
 ***Features***
-- Just download the Installer from the download page and thats it! Nothing too it :3
-- Added a feature that allows the client to act a little like spotify in the sense that it disconnects when your song is paused and connects when its playing.. I haven't really tested this fully but it works for now. It's called "Not Playing Disconnect" in the Utils.
+- Just download the Installer from the download page and run it, It's quite simple!
+- Your able to automatically disconnect and reconnect the discord activity whether your music is paused or it's playing! In the menu  this framework is called "notPlayingDisconnect"!
 - Allows you to enable and disable discord buttons
-- You can now modify the alternate value of the buttons which are the default "Album" and "Artist"! Toggle it in the *Utils* > *Buttons* > *ChangeButtonsAlb/Art*!
+- You can now modify the alternate value of the buttons which are the default "Album" and "Artist"! Toggle it in the Utils > Buttons > ChangeButtonsAlb/Art!
 - Has options for "Quitting the application", "Sleeping your PC", "Restarting your PC", and "Shutting down your PC" after the song ends.
 - Your able to Send and receive functionally between clients (bascially like spotify)!
 - Continuous updates (Its not daily but its also not monthly)

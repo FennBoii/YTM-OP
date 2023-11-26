@@ -13,6 +13,15 @@
 <b>more "advanced / future" updates! (difficulty low (top) to hard (bottom)</b>
 
 
+- Allow the titlebar to be customized through text in textfiles for ultimate customization
+    - If you've got any ideas, leave them somewhere maybe in issues idk I'll *definitely* add them
+
+
+- Make everything look neater with a better menu and cleaner look
+
+
+- Try to add releases for Mac and Linux in the future when I get the time (Currently working on a release for linux)
+
 - Interaction with the windows audio banner (so when u click it it opens the YTM client)
 
 
@@ -38,6 +47,8 @@
 
 <hr />
 <center><h2>How to setup client syncing</h2></center>
+
+
 - Launch the player (make sure its running with Administrator (your keys cannot be inserted if not) and once its connected to discord, click on Utils > Sites > Go to YTM-OP site. Discord will disconnect.
 
 
@@ -49,11 +60,6 @@
 
 - Know that everytime you put a name into the site the random token WILL be reset but the other keys will be left the same. Also, still on the site your able to click and copy all the keys to send and soon, ill make all of this a url and itll do it all auto with just a simple link!
 
-<b>more "advanced / future" updates! (difficulty low (top) to hard (bottom)</b>
-- Make everything look neater with a better menu and cleaner look
-- Allow the titlebar to be customized through text in textfiles for ultimate customization
-    - If you've got any ideas, leave them somewhere maybe in issues idk I'll *definitely* add them
-- Try to add releases for Mac and Linux in the future when I get the time (Currently working on a release for linux)
 
 ***Features***
 - Just download the Installer from the download page and run it, It's quite simple!

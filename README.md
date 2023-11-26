@@ -27,8 +27,14 @@
 <hr />
 <center><h2>How to setup client syncing</h2></center>
 - Launch the player (make sure its running with Administrator (your keys cannot be inserted if not) and once its connected to discord, click on Utils > Sites > Go to YTM-OP site. Discord will disconnect.
+
+
 - Once there, put ANY name in and generate those keys! Then once that page loads, use the bottom button and it'll insert them for you automatically.
+
+
 - Now that the config.json gets updated live, your able to use them without restarting the client! Just use the menu! Utils > Incoming Connections > sending or receiving! Clikc on <b>Edit Config</b> for live editing!
+
+
 - Know that everytime you put a name into the site the random token WILL be reset but the other keys will be left the same. Also, still on the site your able to click and copy all the keys to send and soon, ill make all of this a url and itll do it all auto with just a simple link!
 
 <b>more "advanced / future" updates! (difficulty low (top) to hard (bottom)</b>

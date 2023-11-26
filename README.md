@@ -19,8 +19,8 @@
 
 
 -Run the player as Admin ALWAYS; Needed simply for write perms.
-<br>
-<br>
+
+
 <b>more "advanced / future" updates! (difficulty low (top) to hard (bottom)</b>
 
 

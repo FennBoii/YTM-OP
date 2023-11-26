@@ -9,7 +9,7 @@
 <h3>Important Note</h3>
 -Run the player as Admin ALWAYS; Needed simply for write perms.
 <br>
-
+<br>
 **more "advanced / future" updates! (difficulty low (top) to hard (bottom)**
 - Interaction with the windows audio banner (so when u click it it opens the YTM client)
 - I've got to make a custom load settings screen to modify everything in real time (will take time to develop)

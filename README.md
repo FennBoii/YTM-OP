@@ -10,7 +10,7 @@
 -Run the player as Admin ALWAYS; Needed simply for write perms.
 <br>
 <br>
-**more "advanced / future" updates! (difficulty low (top) to hard (bottom)**
+<b>more "advanced / future" updates! (difficulty low (top) to hard (bottom)</b>
 
 
 - Interaction with the windows audio banner (so when u click it it opens the YTM client)

@@ -6,7 +6,18 @@
 
 **Token site is now under 24/7 surveilence with text messages and auto-restart processes incase of wifi issues, hardware issues, etc.. we should be good for now and on!*
 
+<center>
+<b>THERE MAY BE ERRORS WHEN CLOSING AND MAYBE SOME DURING, I AM WORKING ON THESE JUST RESTART THE CLIENT OR ADD THE ISSUES TO "ISSUES" TAB</b>
+
+# YTM-OP
+## This project is a self project meaning this is mostly just for me but your allowed to do whatever you wish with this project if you come across it.</center>
+
+* Summary: "This is a Youtube Music Client with a lot of built in features (adding VRC OSC again natively, soon)"
+
+
 <h3>Important Note</h3>
+
+
 -Run the player as Admin ALWAYS; Needed simply for write perms.
 <br>
 <br>
@@ -37,15 +48,6 @@
 - (maybe) Just a title in the taskbar with the name of the song instead of the whole application's square?
 
 
-<center>
-<b>THERE MAY BE ERRORS WHEN CLOSING AND MAYBE SOME DURING, I AM WORKING ON THESE JUST RESTART THE CLIENT OR ADD THE ISSUES TO "ISSUES" TAB</b>
-
-# YTM-OP
-## This project is a self project meaning this is mostly just for me but your allowed to do whatever you wish with this project if you come across it.</center>
-
-* Summary: "This is a Youtube Music Client with a lot of built in features (adding VRC OSC again natively, soon)"
-
-<hr />
 <center><h2>How to setup client syncing</h2></center>
 
 

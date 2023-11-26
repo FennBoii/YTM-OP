@@ -8,6 +8,7 @@
 
 <h3>Important Note</h3>
 -Run the player as Admin ALWAYS; Needed simply for write perms.
+<br>
 
 **more "advanced / future" updates! (difficulty low (top) to hard (bottom)**
 - Interaction with the windows audio banner (so when u click it it opens the YTM client)
@@ -32,7 +33,7 @@
 - Once there, put ANY name in and generate those keys! Then once that page loads, use the bottom button and it'll insert them for you automatically.
 
 
-- Now that the config.json gets updated live, your able to use them without restarting the client! Just use the menu! Utils > Incoming Connections > sending or receiving! Clikc on <b>Edit Config</b> for live editing!
+- Now that the config.json gets updated live, your able to use them without restarting the client! Just use the menu! Utils > Incoming Connections > sending or receiving! Click on <b>Edit Config</b> for live editing!
 
 
 - Know that everytime you put a name into the site the random token WILL be reset but the other keys will be left the same. Also, still on the site your able to click and copy all the keys to send and soon, ill make all of this a url and itll do it all auto with just a simple link!

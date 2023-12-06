@@ -9,7 +9,7 @@
 <center>
 <b>THERE MAY BE ERRORS WHEN CLOSING AND MAYBE SOME DURING, I AM WORKING ON THESE JUST RESTART THE CLIENT OR ADD THE ISSUES TO "ISSUES" TAB</b>
 
-<h2>I UNDERSTAND THERE IS A GLOBAL ERROR NOW OF AN ELEMENT, YOUTUBE MUSIC CHANGED AN ELEMENT LOCATION, VERSION 1.0.8 WILL BE RELEASED SOON</h2>
+<h2>False alarm, seems my windows decided to freakout and change some files somehow... not to worry 1.0.8 will be released soon thou</h2>
 
 # YTM-OP
 ## This project is a self project meaning this is mostly just for me but your allowed to do whatever you wish with this project if you come across it.</center>

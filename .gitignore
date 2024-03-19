@@ -1,5 +1,6 @@
+.circleci
+.php_tmp
 node_modules
 SSHKEYGEN
 .vscode
-YTM-OP.lnk
-dist/*
+dist

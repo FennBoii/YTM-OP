@@ -44,8 +44,7 @@
 			]
 		},
 		"win": {
-			"icon": "resources/assets/build/win/icon.ico",
-			"requestedExecutionLevel": "requireAdministrator"
+			"icon": "resources/assets/build/win/icon.ico"
 		},
 		"nsis": {
 			"artifactName": "${productName}-Setup-${version}.${ext}",
@@ -71,35 +70,67 @@
 		"extraResources": [
 			"app.manifest",
 			{
-				"from": "config.js",
-				"to": "extra/config.js"
+				"from": "config.json",
+				"to": "extra/config.json"
 			}
 		],
 		"extraFiles": [
-			"resources/assets/images/*.png", {
-				"from": "config.js",
+			"resources/assets/images/*.png",
+			{
+				"from": "config.json",
+				"to": "resources",
+				"filter": [
+					"**/*"
+				]
+			},
+			{
+				"from": "config.json",
+				"to": "%home%",
+				"filter": [
+					"**/*"
+				]
+			},
+			{
+				"from": "VolumeFind.exe",
 				"to": ".",
-				"filter": ["**/*"]
+				"filter": [
+					"**/*"
+				]
+			},
+			{
+				"from": "NAudio.Wasapi.dll",
+				"to": ".",
+				"filter": [
+					"**/*"
+				]
 			}
 		]
 	},
 	"dependencies": {
-		"axios": "^1.6.0",
+		"axios": "^1.6.7",
+		"blessed": "^0.1.81",
 		"builder-util-runtime": "^9.2.2",
+		"cli-spinners": "^2.9.2",
+		"cli-table3": "^0.6.3",
 		"clipboardy": "^4.0.0",
 		"discord-rpc": "^4.0.1",
-		"discord.js": "^14.13.0",
+		"dotenv": "^16.4.1",
 		"easy-volume": "^1.1.0",
 		"electron-context-menu": "^3.3.0",
+		"html-to-text": "^9.0.5",
 		"jpeg-js": "^0.4.4",
+		"jsdom": "^24.0.0",
 		"loudness": "^0.4.2",
 		"minimist": "^1.2.8",
 		"mkdirp": "^3.0.1",
 		"node": "^21.1.0",
+		"node-addon-api": "^7.1.0",
 		"node-alsa-ctl": "^0.0.2",
 		"node-fetch": "^3.3.2",
 		"node-gyp": "^10.0.0",
 		"npm-force-resolutions": "^0.0.10",
+		"osc": "^2.4.4",
+		"path": "^0.12.7",
 		"prettier": "^3.0.3",
 		"prompt": "^1.3.0",
 		"systeminformation": "^5.18.15"

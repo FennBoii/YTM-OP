@@ -12,111 +12,40 @@ process.on('unhandledRejection', (error) => {
 const DiscordRPC = require("discord-rpc");
 const crypto = require('crypto');
 const easyVolume = require("easy-volume");
-const os = require('os');
 const {
 	app,
-	Menu,
-	shell,
 	session,
+	BrowserWindow,
+	Menu,
+	nativeImage,
 	ipcMain,
+	webContents,
 	clipboard,
 	ipcRenderer,
-	webContents,
-	nativeImage,
-	BrowserWindow,
-	globalShortcut,
 } = require("electron");
 const fs = require("fs");
 const axios = require("axios");
 const path = require("path");
-const { spawn, ChildProcess } = require("child_process");
-const { setTimeout } = require("timers/promises");
+const { spawn } = require("child_process");
+const configPath = path.resolve("C:\\Program Files\\YTM-OP\\config.json");
+// const configPath = path.resolve('./currentPath.txt');
 
-
-
-const configUrl = 'https://raw.githubusercontent.com/FennBoii/YTM-OP/master/config.json';
-let configPath = path.resolve(os.homedir(), 'config.json');
-console.log(configPath);
-function refreshConfig() {
-	try {
-		// Try to read the config file from the specified path
-		config = JSON.parse(fs.readFileSync(configPath, "utf8"));
-	} catch (error) {
-		if (error.code === 'ENOENT') {
-			// File doesn't exist in the specified path, try default location
-			console.error('Config file not found in specified path:', configPath);
-			console.log('Attempting to read config file from default location...');
-			configPath = path.resolve(os.homedir(), 'config.json');
-			try {
-				config = JSON.parse(fs.readFileSync(configPath, "utf8"));
-			} catch (defaultError) {
-				console.error('Error reading config file from default location:', defaultError);
-				console.log('Creating a new config file...');
-				// Create a new config file
-				fs.writeFileSync(configPath, '{}');
-				config = {};
-			}
-		} else {
-			// Other error, log and rethrow
-			console.error('Error reading config file:', error);
-			throw error;
-		}
-	}
-}
-
-function downloadDefaultConfig() {
-	axios.get('https://raw.githubusercontent.com/FennBoii/YTM-OP/master/config.json')
-		.then(response => {
-			// Convert response.data to a string
-			const dataString = JSON.stringify(response.data);
-
-			// Write the string data to the local config file
-			fs.writeFileSync(configPath, dataString);
-			console.log('Default config file downloaded successfully.');
-		})
-		.catch(error => {
-			console.error('Failed to download default config file:', error);
-		});
-	app.quit();
-	setTimeout(5000, app.relaunch());
-}
-
-if (!fs.existsSync(configPath)) {
-	// Download the default config file if it doesn't exist
-	downloadDefaultConfig();
-} else {
-	console.log('Config file already exists.');
-}
-
-let blockMediaKeys = false;
 var config = {};
 
-refreshConfig(); // Initialize config
+function refreshConfig() {
+	config = JSON.parse(fs.readFileSync(configPath, "utf8"));
+}
 
 function updateConfigFile(key, value) {
 	refreshConfig();
 	config[key] = value;
 	fs.writeFileSync(configPath, JSON.stringify(config, null, 2), "utf8");
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* ---------------------------------DEFINE FUNCTIONS--------------------------------- */
 refreshConfig();
 var publicPageURL;
-var thelink, VersionNumber, synctimeGET, systemVolume = 0, ToggleButtons = true, ChannelToggle = false, TogglePlaylist = true, ToggleArtist = true, volume = 0, artist, songUrl = "https://google.com/3", titleTwo = "", detailsTwo = "- Loading -", stateTwo = "- Loading -", ConnectDis = " [ Disconnected ]", detailsThree = "Default", channel = "https://google.com/4", error_bool = false, PlaylistCounter = "", ConnectionTitle = "", RealCountdown, CountdownTime, secondTitle = true, thirdTitle = true, textView = false, paused, imageicon, repeat, playlist, channelname, Explicit, join1, join2, timeNow = 1, timeMax, notPlayingDisconnect = false, notPlayingDisconnectText = "", buttonOne = false, buttonTwo = false, buttonThree = false, buttonFour = false, warningText = "", getNAME, TitleExit = "", quitText = "", connectCounter = 1, RealCountdownTitleBar = "", CountdownTimerVar = false, sysVol, LICKCHeck = "", playlistToggleVisible = true;
-var ToggArtAlb = false, configWindow, finalContactVar, GfinalContactVar, urlFinal, outputTest, title, ImageIcon, playlistname, FINALTHREEVAR, joinn1, joinn2, largeImageText, plaaylist, largeImageKey, details, state, ThirdEntry, qualities = 0, result, timeMaxMinus, startTimestamp, endTimestamp, stopTime = 0, timeoutDisco = 0, globalCounter = 0, imgVer = 0, globalDisconnect = false, theFinalowoNess = "Nada There is nothing YET NONEEEEE", systemVolumeDEC;
+var thelink, VersionNumber, synctimeGET, systemVolume = 0, ToggleButtons = true, ChannelToggle = false, TogglePlaylist = true, ToggleArtist = true, volume = 0, artist, songUrl = "https://google.com/3", titleTwo = "", detailsTwo = "- Loading -", stateTwo = "- Loading -", ConnectDis = " [ Disconnected ]", detailsThree = "Default", channel = "https://google.com/4", error_bool = false, PlaylistCounter = "", ConnectionTitle = "", RealCountdown, CountdownTime, secondTitle = true, thirdTitle = true, textView = false, paused, imageicon, repeat, playlist, channelname, Explicit, join1, join2, timeNow = 1, timeMax, notPlayingDisconnect, notPlayingDisconnectText = "", buttonOne = false, buttonTwo = false, buttonThree = false, buttonFour = false, warningText = "", getNAME, TitleExit = "", quitText = "", connectCounter = 1, RealCountdownTitleBar = "", CountdownTimerVar = false, sysVol, LICKCHeck = "", playlistToggleVisible = true;
+var ToggArtAlb = false, configWindow, finalContactVar, GfinalContactVar, urlFinal, outputTest, title, ImageIcon, playlistname, FINALTHREEVAR, joinn1, joinn2, largeImageText, plaaylist, largeImageKey, details, state, ThirdEntry, qualities = 0, result, timeMaxMinus, startTimestamp, endTimestamp, now = new Date();
 // [ ------------------------------------------------------- ]
 // [ ------------------------------------------------------- ]
 
@@ -128,7 +57,7 @@ var ToggArtAlb = false, configWindow, finalContactVar, GfinalContactVar, urlFina
 let reconnectTimer, injected;
 
 const resourcePath =
-	process.platform == "darwin" ? "Contents/Resources" : "resources ]";
+	process.platform === "darwin" ? "Contents/Resources" : "resources ]";
 
 function executeJavaScript(code) {
 	return new Promise((resolve, reject) => {
@@ -237,7 +166,7 @@ function checkSync() {
 				);
 				const linksCombined = linkWithoutTimeParam + timeParamValue;
 
-				if (songUrl == linksCombined) {
+				if (songUrl === linksCombined) {
 					// Check the time difference
 					if (Math.abs(synctime - timeNow) < config.outOfSyncPlayingSong) {
 						console.log("This doesn't need to be synced again");
@@ -307,13 +236,6 @@ const menuTemplate = [
 	{
 		label: "Utils",
 		submenu: [
-			{
-				label: "RefreshImage",
-				click() {
-					reloadImageUrl();
-					setLargeIconImage();
-				},
-			},
 			{
 				label: "Not Playing Disconnect",
 				click() {
@@ -512,7 +434,7 @@ const menuTemplate = [
 					{
 						label: "TogglePlaylist",
 						click() {
-							if (TogglePlaylist == true) {
+							if (TogglePlaylist === true) {
 								TogglePlaylist = false;
 								secondTitle = false;
 							} else {
@@ -524,7 +446,7 @@ const menuTemplate = [
 					{
 						label: "ToggleArtist",
 						click() {
-							if (ToggleArtist == true) {
+							if (ToggleArtist === true) {
 								ToggleArtist = false;
 								thirdTitle = false;
 							} else {
@@ -536,7 +458,7 @@ const menuTemplate = [
 					{
 						label: "ChangeButtonsAlb/Art",
 						click() {
-							if (ToggArtAlb == true) {
+							if (ToggArtAlb === true) {
 								ToggArtAlb = false;
 							} else {
 								ToggArtAlb = true;
@@ -647,15 +569,9 @@ const menuTemplate = [
 	},
 ];
 
-ipcMain.on('quit-app', () => {
-	// Quit the application
-	app.quit();
-	app.relaunch();
-});
-
 ipcMain.on("load-config", (event) => {
 	fs.readFile(
-		path.join(configPath),
+		path.join("C:\\Program Files\\YTM-OP\\config.json"),
 		"utf8",
 		(err, data) => {
 			if (err) {
@@ -674,7 +590,7 @@ ipcMain.on("load-config", (event) => {
 // Listen for a request to save the updated config file
 ipcMain.on("save-config", (event, updatedConfig) => {
 	fs.writeFile(
-		configPath,
+		"C:\\Program Files\\YTM-OP\\config.json",
 		JSON.stringify(updatedConfig, null, 2),
 		"utf8",
 		(err) => {
@@ -690,7 +606,7 @@ ipcMain.on("save-config", (event, updatedConfig) => {
 });
 
 ipcMain.on("request-config", (event) => {
-	fs.readFile(configPath, "utf8", (err, data) => {
+	fs.readFile("C:\\Program Files\\YTM-OP\\config.json", "utf8", (err, data) => {
 		if (err) {
 			// Handle error, maybe send an error message back to renderer
 			console.error("Error reading the file", err);
@@ -720,24 +636,6 @@ function focusElectronApp() {
 	console.log("executed FocusElectronApp");
 }
 
-
-const SimpleTemplate = [
-	{
-		label: "Close Config Window",
-		click() {
-			configWindow.close();
-			const menu = Menu.buildFromTemplate(menuTemplate);
-			Menu.setApplicationMenu(menu);
-		},
-	},
-	{
-		label: "Go to your info site",
-		click() {
-			shell.openExternal('https://getname.ytmopdata.net/userRedirects/' + config.nameToken + "/" + config.nameToken + ".html");
-		},
-	},
-];
-
 function createConfigWindow() {
 	configWindow = new BrowserWindow({
 		width: 800,
@@ -748,18 +646,14 @@ function createConfigWindow() {
 			contextIsolation: true,
 		},
 	});
-	const menu = Menu.buildFromTemplate(SimpleTemplate);
-	Menu.setApplicationMenu(menu);
 
 	configWindow.loadFile("src/index.html");
 	configWindow.on("closed", () => {
 		configWindow = null;
-		const menu = Menu.buildFromTemplate(menuTemplate);
-		Menu.setApplicationMenu(menu);
 	});
 
 	console.log("executed CreateConfigWindow")
-} //lower5
+}
 
 function DiscordConnect() {
 	reconnect();
@@ -773,7 +667,7 @@ function DiscordDisconnect() {
 	console.log("Discord Disconnected");
 }
 
-if (process.platform == "win64") {
+if (process.platform === "win64") {
 	menuTemplate.unshift({});
 }
 
@@ -788,6 +682,7 @@ function createSettingsWindow() {
 	});
 	settingsWin.setMinimumSize(300, 300);
 	settingsWin.setResizable(true);
+	const menu = Menu.buildFromTemplate(menuTemplate);
 	Menu.setApplicationMenu(menu);
 	settingsWin.setMenuBarVisibility(true);
 	console.log("executed createSettingsWindow");
@@ -822,38 +717,10 @@ function createPREWindow() {
 		win.loadURL("https://getname.ytmopdata.net/")
 	});
 	console.log("executed createPREWindow");
-
-	globalShortcut.register('MediaPreviousTrack', (event) => {
-		if (!blockMediaKeys) {
-			win.webContents.executeJavaScript('document.querySelector(\'#left-controls > div > tp-yt-paper-icon-button.previous-button.style-scope.ytmusic-player-bar\').click()');
-		} else {
-			win.webContents.executeJavaScript('document.querySelector(\'#left-controls > div > tp-yt-paper-icon-button:nth-child(2)\').click()');
-		}
-	});
-
-	globalShortcut.register('MediaPlayPause', (event) => {
-		if (!blockMediaKeys) {
-			win.webContents.executeJavaScript('document.querySelector(\'#play-pause-button\').click()');
-		} else {
-			win.webContents.executeJavaScript('document.querySelector(\'#play-pause-button\').click()');
-		}
-	});
-
-	globalShortcut.register('MediaNextTrack', (event) => {
-		if (!blockMediaKeys) {
-			win.webContents.executeJavaScript('document.querySelector(\'#left-controls > div > tp-yt-paper-icon-button.next-button.style-scope.ytmusic-player-bar\').click()');
-		} else {
-			win.webContents.executeJavaScript('document.querySelector(\'#left-controls > div > tp-yt-paper-icon-button:nth-child(5)\').click()');
-		}
-	});
 }
 
 
-function toggleBlockMediaKeys(block) {
-	blockMediaKeys = block;
-}
-
-function createWindow() { // lower0
+function createWindow() {
 	// Create the browser window.
 	win = new BrowserWindow({
 		width: 1200,
@@ -874,6 +741,10 @@ function createWindow() { // lower0
 		win.loadURL("https://music.youtube.com/");
 	}
 
+
+
+
+
 	win.setMinimumSize(300, 300);
 	win.setResizable(true);
 	const menu = Menu.buildFromTemplate(menuTemplate);
@@ -888,7 +759,6 @@ function createWindow() { // lower0
 			time: 1,
 			paused: undefined,
 		};
-		app.exit();
 	});
 	win.on("closed", () => {
 		rpc.destroy();
@@ -896,35 +766,19 @@ function createWindow() { // lower0
 		win = null;
 	});
 	win.on("page-title-updated", (e, title) => {
-		if (buttonOne == true || buttonTwo == true || buttonThree == true || buttonFour == true) {
-			win.setTitle(
-				`${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}${notPlayingDisconnectText} ${config.username}`
-			);
-		} else {
-			win.setTitle(
-				`${titleTwo} - ${stateTwo}${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}${notPlayingDisconnectText} ${config.username}`
-			);
-		}
+		win.setTitle(
+			`${titleTwo} - ${stateTwo}${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}${notPlayingDisconnectText} ${config.username}`
+		); // Added 'PageTitleReload' function for constant reload
 		BrowserWindow.title = "owo";
 		e.preventDefault();
-
 	});
 
-	setInterval(() => {
-		// systemVolume++;
-		win.webContents.send('updateSystemVolume', "system vol:\n" + systemVolumeDEC);
-	}, 1000); // Update every 5 seconds
-
-	setInterval(() => {
-		// volume++;
-		win.webContents.send('updatePlayerVolume', "player vol:\n" + volume);
-	}, 1000); // Update every 5 seconds
-
-	// win.webContents.on("dom-ready", settingsHook);
+	win.webContents.on("dom-ready", settingsHook);
 	win.webContents.on("will-prevent-unload", (e) => e.preventDefault());
-	console.log("executed createWindow");
 
+	console.log("executed createWindow");
 }
+
 
 
 
@@ -940,7 +794,7 @@ app.on("ready", focusElectronApp);
 
 
 ipcMain.on("sendDataToMain", (event, dataToUpdate) => {
-	const filePath = path.join(configPath);
+	const filePath = path.join("C:\\Program Files\\YTM-OP\\config.json");
 
 	// Read the existing JSON file
 	fs.readFile(filePath, "utf8", (readErr, data) => {
@@ -976,6 +830,7 @@ ipcMain.on("sendDataToMain", (event, dataToUpdate) => {
 					});
 				} else {
 					console.log("File updated with merged data successfully.");
+
 					// Send success response back to the renderer
 					event.sender.send("updateResponse", {
 						success: true,
@@ -989,41 +844,43 @@ ipcMain.on("sendDataToMain", (event, dataToUpdate) => {
 			}
 		);
 	});
-	console.log("executed senddatatomain");
-	loadCurrentGivenURL();
+	console.log("executed senddatatomain")
 });
 
-function loadCurrentGivenURL() {
-	win.loadURL(config.loadLastURL);
+// app.on("activate", () => {
+// 	if (win === null) {
+// 		createWindow();
+// 	}
+// });
+
+async function settingsHook() {
+	if (injected) return;
+
+	// eslint-disable-next-line max-len
+	await executeJavaScript(
+		fs
+			.readFileSync(path.join(process.cwd(), "src", "settingsInjection.js"))
+			.toString()
+			.replaceAll("\r", "")
+	);
+	injected = true;
 }
 
-let efyud = 0;
-if (efyud == 0) {
-	setTimeout(10000, reloadPage);
-	efyud += 1;
-	console.log("DIDMEDIDIT");
-}
-function reloadPage() {
-	win.webContents.reloadIgnoringCache();
-}
+// ipcMain.on("left-of-checked", (event, checked, data) => {
+// 	console.log(checked);
+// 	console.log("log_two");
+// 	config.continueWhereLeftOf = checked;
 
-// async function createCustomElement() {
-// 	// Create a new element
-// 	const customElement = document.createElement('div');
-// 	customElement.textContent = `System Volume: ${systemVolume}`;
-// 	customElement.style.padding = '5px';
-// 	customElement.style.border = '2px solid green';
-// 	customElement.style.backgroundColor = 'lightgreen';
+// 	if (checked === true) {
+// 		config.continueURL = "https://music.youtube.com/";
+// 	}
 
-// 	// Get the parent element
-// 	const parentElement = document.querySelector('#right-content > ytmusic-settings-button');
+// 	event.returnValue = undefined;
+// });
 
-// 	// Append the new element to the parent
-// 	parentElement.appendChild(customElement);
-// }
-
-// createCustomElement();
-
+// ipcMain.on("get-left-of-checked", (event) => {
+// 	event.returnValue = config.continueWhereLeftOf;
+// });
 
 ipcMain.on("settings-clicked", () => {
 	createSettingsWindow();
@@ -1032,6 +889,8 @@ ipcMain.on("settings-clicked", () => {
 async function getContent() {
 	// eslint-disable-next-line no-async-promise-executor
 	return new Promise(async (resolve, reject) => {
+
+
 
 		let titleResult;
 		// Title Get Element
@@ -1055,7 +914,7 @@ async function getContent() {
 				`;
 
 			titleResult = await executeJavaScript(javascriptCode);
-			// console.log("Load0-1");
+			console.log("Load0-1");
 			if (titleResult.length > 50) {
 				title = titleResult.substring(0, 50);
 				titleTwo = titleResult.substring(0, 49);
@@ -1064,10 +923,67 @@ async function getContent() {
 				titleTwo = titleResult;
 			}
 		} catch (error) {
-			// console.log("Load0-2");
+			console.log("Load0-2");
 			console.log("Script error, title:", error); // Log any errors
 			console.log("ERRORED title OBJECT");
 		}
+
+
+
+
+
+
+
+		// Playlist Name Get Element
+		try {
+			const javascriptCode = `
+				(function() {
+					return new Promise((resolve) => {
+						const startTime = Date.now();
+						const interval = setInterval(() => {
+							const element = document.querySelector('div.content-info-wrapper yt-formatted-string.title');
+							const elementTwo = document.querySelector('#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > yt-formatted-string');
+							if (element) {
+								console.log("Sent1");
+								clearInterval(interval);
+								resolve(element.title || 'None');
+							} else if (elementTwo) {
+								console.log("Sent2");
+								clearInterval(interval);
+								resolve(element.title || 'None');
+							} else if (Date.now() - startTime > 1000) { // Timeout after 1 seconds
+								console.log("Sent3");
+								clearInterval(interval);
+								resolve('None'); // Resolve with 'None' instead of rejecting
+							}
+						}, 500); // Check every 500ms
+					});
+				})();
+			`;
+
+			playlistname = await executeJavaScript(javascriptCode);
+			console.log("Load1-1");
+			// title = playlistname;
+			// if (!playlistname.includes("None")) {
+			// 	TogglePlaylist = false;
+			// }
+		} catch (error) {
+			console.log("Load1-2");
+			console.log("Script error:", error); // Log any errors
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 		// artist Name Get Element
 		try {
@@ -1076,7 +992,7 @@ async function getContent() {
 					return new Promise((resolve) => {
 						const startTime = Date.now();
 						const interval = setInterval(() => {
-							const element = document.querySelector('span.subtitle yt-formatted-string.byline');
+							const element = document.querySelector('div.content-info-wrapper yt-formatted-string.title');
 							if (element) {
 								clearInterval(interval);
 								resolve(element.title || 'None');
@@ -1090,11 +1006,16 @@ async function getContent() {
 			`;
 			let artiste = await executeJavaScript(javascriptCode);
 			artist = artiste.split(" • ")
-			// console.log("Load2-1");
+			console.log("Load2-1");
+			// title = playlistname;
+			// if (!playlistname.includes("None")) {
+			// 	TogglePlaylist = false;
+			// }
 		} catch (error) {
-			// console.log("Load2-2");
+			console.log("Load2-2");
 			console.log("Script error:", error); // Log any errors
 		}
+
 
 		// timeNow Name Get Element
 		try {
@@ -1116,11 +1037,17 @@ async function getContent() {
 				})();
 			`;
 			timeNow = await executeJavaScript(javascriptCode);
-			// console.log("Load3-1");
+			console.log("Load3-1");
+			// title = playlistname;
+			// if (!playlistname.includes("None")) {
+			// 	TogglePlaylist = false;
+			// }
 		} catch (error) {
-			// console.log("Load3-2");
+			console.log("Load3-2");
 			console.log("Script error:", error); // Log any errors
 		}
+
+
 
 		// timeMax Name Get Element
 		try {
@@ -1142,11 +1069,43 @@ async function getContent() {
 						})();
 					`;
 			timeMax = await executeJavaScript(javascriptCode);
-			// console.log("Load4-1");
+			console.log("Load4-1");
+			// title = playlistname;
+			// if (!playlistname.includes("None")) {
+			// 	TogglePlaylist = false;
+			// }
 		} catch (error) {
-			// console.log("Load4-2");
+			console.log("Load4-2");
 			console.log("Script error:", error); // Log any errors
 		}
+
+
+
+
+
+		// result = await executeJavaScript(
+		// 	"document.querySelector('#progress-bar').getAttribute('aria-valuenow');"
+		// );
+		// if (!result) return reject("Error grabbing time now");
+		// timeNow = result;
+
+
+		// result = await executeJavaScript(
+		// 	"document.querySelector('#progress-bar').getAttribute('aria-valuemax');"
+		// );
+		// if (!result) return reject("Error grabbing time max");
+		// timeMax = result;
+
+
+		// result = await executeJavaScript(
+		// 	"document.querySelector('#play-pause-button').title;"
+		// );
+		// if (!result) return reject("Error grabbing play status");
+		// paused = result !== "Pause";
+
+
+
+
 
 		// paused Name Get Element
 		try {
@@ -1168,11 +1127,30 @@ async function getContent() {
 				})();
 			`;
 			paused = await executeJavaScript(javascriptCode);
-			// console.log("Load5-1");
+			console.log("Load5-1");
+			// title = playlistname;
+			// if (!playlistname.includes("None")) {
+			// 	TogglePlaylist = false;
+			// }
 		} catch (error) {
-			// console.log("Load5-2");
+			console.log("Load5-2");
 			console.log("Script error:", error); // Log any errors
 		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 		// repeat Get Element
 		try {
@@ -1181,7 +1159,7 @@ async function getContent() {
 				return new Promise((resolve) => {
 					const startTime = Date.now();
 					const interval = setInterval(() => {
-						const element = document.querySelector('#right-controls > div > tp-yt-paper-icon-button.repeat.style-scope.ytmusic-player-bar');
+						const element =document.querySelector('#right-controls > div > tp-yt-paper-icon-button.repeat.style-scope.ytmusic-player-bar');
 						if (element) {
 							clearInterval(interval);
 							resolve(element.title || 'None');
@@ -1195,24 +1173,24 @@ async function getContent() {
 			`;
 
 			repeat = await executeJavaScript(javascriptCode);
-			// console.log("Load6-1");
+			console.log("Load6-1");
 		} catch (error) {
 			console.log("Script error, ImageIcon:", error); // Log any errors
 			console.log("ERRORED REPEAT OBJECT");
-			// console.log("Load6-2");
+			console.log("Load6-2");
 		}
 
 
 		// result = await executeJavaScript('document.querySelector(\'#movie_player > div.ytp-chrome-top > div.ytp-title > div > a\').href');
 		if (win.webContents.getURL() != null) {
 			result = win.webContents.getURL();
-			// console.log("Load7-1");
+			console.log("Load7-1");
 		}
 		if (result.includes("watch?v")) {
 			songUrl = result;
 		}
 		if (!result) {
-			// console.log("Load7-2");
+			console.log("Load7-2");
 			return reject('Error grabbing song url');
 		}
 
@@ -1238,12 +1216,16 @@ async function getContent() {
 			`;
 
 			playlistname = await executeJavaScript(javascriptCode);
-			// console.log("Load8-1");
+			console.log("Load8-1");
+			// if (!playlistname.includes("None")) {
+			// 	TogglePlaylist = true;
+			// }
 		} catch (error) {
-			// console.log("Load8-2");
+			console.log("Load8-2");
 			console.log("Script error:", error); // Log any errors
 			console.log("ERRORED playlistName OBJECT");
 		}
+
 
 		// Playlist URL Get Element
 		try {
@@ -1266,15 +1248,16 @@ async function getContent() {
 				`;
 
 			playlist = await executeJavaScript(javascriptCode);
-			// console.log("Load9-1");
+			console.log("Load9-1");
 			// Additional logic here...
 			if (playlist == "https://google.com") {
 				TogglePlaylist = false;
-			} else {
+			}
+			if (playlist != "https://google.com") {
 				TogglePlaylist = true;
 			}
 		} catch (error) {
-			// console.log("Load9-2");
+			console.log("Load9-2");
 			console.log("Script error:", error); // Log any errors
 			console.log("ERRORED playlist OBJECT");
 		}
@@ -1303,7 +1286,7 @@ async function getContent() {
 				})();
 			`;
 			channel = await executeJavaScript(javascriptCode);
-			// console.log("Load10-1");
+			console.log("Load10-1");
 			if (channel == "https://google.com") {
 				ToggleArtist = false;
 			}
@@ -1311,17 +1294,18 @@ async function getContent() {
 				ToggleArtist = true;
 			}
 		} catch (error) {
-			// console.log("Load10-2");
+			console.log("Load10-2");
 			console.error("Script error for fetching channel:", error); // Log any errors
 			channel = "https://google.com/";
 			console.log("ERRORED channel OBJECT");
 		}
 
+
 		// Channel Name Get Element
-		if (ChannelToggle == true) {
+		if (ChannelToggle === true) {
 			const javascriptCode = `
 				(function() {
-					console.log('Script started for fetching channel name (ChannelToggle == true)'); // Log start
+					console.log('Script started for fetching channel name (ChannelToggle === true)'); // Log start
 					return new Promise((resolve) => {
 						const startTime = Date.now();
 						const interval = setInterval(() => {
@@ -1347,10 +1331,10 @@ async function getContent() {
 			if (channelname != "Unknown Channel") {
 				ToggleArtist = true;
 			}
-		} else if (ChannelToggle == false) {
+		} else if (ChannelToggle === false) {
 			const javascriptCode = `
 				(function() {
-					console.log('Script started for fetching channel name (ChannelToggle == false)'); // Log start
+					console.log('Script started for fetching channel name (ChannelToggle === false)'); // Log start
 					return new Promise((resolve) => {
 						const startTime = Date.now();
 						const interval = setInterval(() => {
@@ -1371,15 +1355,19 @@ async function getContent() {
 			`;
 
 			channelname = await executeJavaScript(javascriptCode);
-			// console.log("Load11-1");
+			console.log("Load11-1");
 			if (channelname == "Unknown Channel") {
-				// console.log("Load11-2");
+				console.log("Load11-2");
 				ToggleArtist = false;
 			}
 			if (channelname != "Unknown Channel") {
 				ToggleArtist = true;
 			}
 		}
+
+
+
+
 
 		// Explicit Get Element
 		try {
@@ -1401,19 +1389,35 @@ async function getContent() {
 			})();
 			`;
 			Explicit = await executeJavaScript(javascriptCode);
-			// console.log("Load12-1");
+			console.log("Load12-1");
+			// title = playlistname;
+			// if (!playlistname.includes("None")) {
+			// 	TogglePlaylist = false;
+			// }
 		} catch (error) {
-			// console.log("Load12-2");
+			console.log("Load12-2");
 			console.log("Script error:", error); // Log any errors
 		}
 
-		try {
-			const javascriptCode = `
+
+
+
+
+
+
+
+
+
+
+
+		async function getVolume() {
+			try {
+				const javascriptCode = `
 				(function() {
 					return new Promise((resolve) => {
 						const startTime = Date.now();
 						const interval = setInterval(() => {
-							const slider = document.querySelector('#volume-slider');
+							const slider = document.querySelector('#sliderBar');
 							if (slider) {
 								clearInterval(interval);
 								resolve(slider.value); // Resolve with the slider's value
@@ -1426,14 +1430,17 @@ async function getContent() {
 				})();
 				`;
 
-			volume = await executeJavaScript(javascriptCode);
-			// console.log("Load13-1");
-		} catch (error) {
-			// console.log("Load13-2");
-			console.log("Script error:", error); // Log any errors
-			console.log("ERRORED volume OBJECT");
+				volume = await executeJavaScript(javascriptCode);
+				console.log("Load13-1");
+				// Additional logic here...
+				return volume;
+			} catch (error) {
+				console.log("Load13-2");
+				console.log("Script error:", error); // Log any errors
+				console.log("ERRORED volume OBJECT");
+				return 0;
+			}
 		}
-
 
 		// Get Volume
 		// getVolume().then(volume => {
@@ -1470,16 +1477,16 @@ async function getContent() {
 
 		// <---- Custom CSS Ends Here
 
-		if ((TogglePlaylist == false) & (ToggleArtist == false)) {
+		if ((TogglePlaylist === false) & (ToggleArtist === false)) {
 			PlaylistCounter = "playlist = false, artist = false";
 		}
-		if ((TogglePlaylist == true) & (ToggleArtist == false)) {
+		if ((TogglePlaylist === true) & (ToggleArtist === false)) {
 			PlaylistCounter = "playlist = true, artist = false";
 		}
-		if ((TogglePlaylist == false) & (ToggleArtist == true)) {
+		if ((TogglePlaylist === false) & (ToggleArtist === true)) {
 			PlaylistCounter = "playlist = false, artist = true";
 		}
-		if ((TogglePlaylist == true) & (ToggleArtist == true)) {
+		if ((TogglePlaylist === true) & (ToggleArtist === true)) {
 			PlaylistCounter = "playlist = true, artist = true";
 		}
 
@@ -1607,17 +1614,19 @@ async function getContent() {
 
 		child.stdout.on("data", (data) => {
 			let secondString = data.slice(0, -2);
-			systemVolume = Math.floor(parseFloat(secondString));
+			systemVolume = secondString;
+		});
+
+		child.stderr.on("data", (data) => {
+			console.error(`Stderr: ${data}`);
 		});
 
 		// Create Element Section
-		if (textView == true) {
+		if (textView === true) {
 			document.createElement("textarea");
 		}
 
 		publicPageURL = win.webContents.getURL();
-
-		globalCounter += 1;
 
 		return resolve({
 			// VersionNumber,
@@ -1644,7 +1653,6 @@ async function getContent() {
 			// expanse3,
 			// ToggleArtist,
 			// expanse4,
-			globalCounter,
 			time: [timeNow, timeMax],
 			expanse5,
 			title,
@@ -1665,20 +1673,10 @@ async function getContent() {
 			largeImageText,
 			joinn2,
 			plaaylist,
-			buttons: [playlist, channel],
 			joinn1,
 			channel,
-			artistStuff: [artist[0], artist[1], artist[2]],
-			stopTime,
-			timeoutDisco,
-			notPlayingDisconnect,
-			connectCounter,
-			imgVer,
-			theFinalowoNess,
-			blockMediaKeys,
-			toggleBlockMediaKeys,
-			// CountdownTimerVar, thelink, VersionNumber, synctimeGET, systemVolume, ToggleButtons, ChannelToggle, TogglePlaylist, ToggleArtist, volume, artist, songUrl, titleTwo, detailsTwo, stateTwo, ConnectDis, detailsThree, channel, error_bool, PlaylistCounter, ConnectionTitle, RealCountdown, CountdownTime, secondTitle, thirdTitle, textView, paused, imageicon, repeat, playlist, channelname, Explicit, join1, join2, timeNow, timeMax, notPlayingDisconnect, notPlayingDisconnectText, buttonOne, buttonTwo, buttonThree, buttonFour, warningText, getNAME, TitleExit, quitText, connectCounter, RealCountdownTitleBar, CountdownTimerVar, sysVol, LICKCHeck, playlistToggleVisible,
-			// ToggArtAlb, configWindow, finalContactVar, GfinalContactVar, urlFinal, outputTest, title, ImageIcon, playlistname, FINALTHREEVAR, joinn1, joinn2, largeImageText, plaaylist, largeImageKey, details, endTimestamp, startTimestamp
+			CountdownTimerVar, thelink, VersionNumber, synctimeGET, systemVolume, ToggleButtons, ChannelToggle, TogglePlaylist, ToggleArtist, volume, artist, songUrl, titleTwo, detailsTwo, stateTwo, ConnectDis, detailsThree, channel, error_bool, PlaylistCounter, ConnectionTitle, RealCountdown, CountdownTime, secondTitle, thirdTitle, textView, paused, imageicon, repeat, playlist, channelname, Explicit, join1, join2, timeNow, timeMax, notPlayingDisconnect, notPlayingDisconnectText, buttonOne, buttonTwo, buttonThree, buttonFour, warningText, getNAME, TitleExit, quitText, connectCounter, RealCountdownTitleBar, CountdownTimerVar, sysVol, LICKCHeck, playlistToggleVisible,
+			ToggArtAlb, configWindow, finalContactVar, GfinalContactVar, urlFinal, outputTest, title, ImageIcon, playlistname, FINALTHREEVAR, joinn1, joinn2, largeImageText, plaaylist, largeImageKey, details, endTimestamp, startTimestamp
 			// LICKCHeck,
 			// synctimeGET,
 			// systemVolume,
@@ -1717,9 +1715,10 @@ async function getContent() {
 }
 
 async function reloadImageUrl() {
-	// imageIcon Get Element
-	try {
-		const javascriptCode = `
+	if (timeNow < 2) {
+		// imageIcon Get Element
+		try {
+			const javascriptCode = `
 		(function() {
 			return new Promise((resolve) => {
 				const startTime = Date.now();
@@ -1737,37 +1736,35 @@ async function reloadImageUrl() {
 		})();
 	`;
 
-		imageicon = await executeJavaScript(javascriptCode);
-	} catch (error) {
-		console.log("Script error, imageIcon:", error); // Log any errors
+			imageicon = await executeJavaScript(javascriptCode);
+		} catch (error) {
+			console.log("Script error, imageIcon:", error); // Log any errors
+		}
+
+
+		let url1 = imageicon.replace("w60", "w512");
+		urlFinal = url1.replace("h60", "h512");
+		// console.log("urlFinal =", urlFinal);
+		let finalURL = encodeURIComponent(urlFinal);
+
+		const baseURL = 'https://getname.ytmopdata.net/webpageEdit.php'; // Replace with your base URL
+
+		const theLinkData = {
+			givenNameToken: config.givenNameToken,
+			randomToken: config.randomToken, // Replace with your token values
+			sitename: config.nameToken, // Replace with your siteName
+			thelink: finalURL,
+		};
+
+		try {
+			const response = await axios.get(`${baseURL}/webpageEdit.php`, { params: theLinkData });
+			// console.log('Update "thelink" response:', response.data);
+			// console.log("response:", response);
+		} catch (error) {
+			console.error('Error updating "thelink":', error.message);
+		} //LOWER1
 	}
-
-
-	let url1 = imageicon.replace("w60", "w512");
-	urlFinal = url1.replace("h60", "h512");
-	// console.log("urlFinal =", urlFinal);
-	let finalURL = encodeURIComponent(urlFinal);
-
-	const baseURL = 'https://getname.ytmopdata.net/webpageEdit.php'; // Replace with your base URL
-
-	const theLinkData = {
-		givenNameToken: config.givenNameToken,
-		randomToken: config.randomToken, // Replace with your token values
-		sitename: config.nameToken, // Replace with your siteName
-		thelink: finalURL,
-		imgVer: imgVer,
-	};
-
-	try {
-		const response = await axios.get(`${baseURL}/webpageEdit.php`, { params: theLinkData });
-		// console.log('Update "thelink" response:', response.data);
-		// console.log("response:", response);
-	} catch (error) {
-		console.error('Error updating "thelink":', error.message);
-	} //LOWER1
-	imgVer += 1;
 }
-
 
 console.log("TitleTwo Output:" + titleTwo.toString());
 
@@ -1789,324 +1786,237 @@ let rpc = new DiscordRPC.Client({
 
 let songInfo;
 
-function setLargeIconImage() {
-	// Use stopTime here
-	if (title) {
-		theFinalowoNess = "https://getname.ytmopdata.net/userRedirects/" + config.nameToken + "/" + config.nameToken + ".png" + '?timestamp=' + stopTime.toString().substring(0, 8) + globalCounter.toString() + '?songName=' + encodeURIComponent(artist[0].toString().substring(3, 0)) + '?v=' + imgVer;
-	}
-}
-
 // eslint-disable-next-line complexity
 function setActivity() {
-	if (!rpc || !win) {
-		return;
-	}
-
-	const { title, time } = songInfo || {
-		title: "",
-		artist: "???",
-		time: 1,
-		ErrorStatus: undefined,
-		paused: 'Pause',
-		Explicit: false,
-		repeat: "off",
-		playlist: "https://e621.net/",
-		channel: "https://e621.net",
-		join1: "-",
-		join2: "-",
-	};
-	const now = new Date();
-
-	systemVolumeDEC = Math.round(systemVolume);
-	VersionNumber = `Player volume is at: ${volume}% System Volume is at: ${systemVolumeDEC}%`;
-
-	if (CountdownTimerVar == true) {
-		if (RealCountdown >= 0 && RealCountdown < 360) {
-			ThirdEntry = "⚠️•";
-			// Calculate the nearest multiple of 10 above or equal to RealCountdown
-			let nearestMultipleOfTen = Math.ceil(RealCountdown / 5) * 5;
-			warningText = "[ " + quitText + " in " + nearestMultipleOfTen + "s ]";
-		} else {
-			RealCountdown = "error counting down!";
-		}
-	}
-
-	//The 5) * 5 = 5 seconds so "234) * 234" is 234 seconds!
-
-	if (title && CountdownTimerVar == false) {
-		warningText = "";
-		if (repeat.includes("off") && paused == "Pause") {
-			console.log("yayDONE1");
-			ThirdEntry = "▶️ •";
-			qualities = 1;
-		} else if (repeat.includes("all") && paused == "Pause") {
-			console.log("yayDONE2");
-			ThirdEntry = "🔁 •";
-			qualities = 2;
-		} else if (repeat.includes("one") && paused == "Pause") {
-			console.log("yayDONE3");
-			ThirdEntry = "🔂 •";
-			qualities = 3;
+	if (paused == "Pause") {
+		if (!rpc || !win) {
+			return;
 		}
 
-		if (repeat.includes("off") && paused == "Play") {
-			console.log("bruhNO2")
-			ThirdEntry = "⏸ •d";
-		}
-	}
-
-	if (paused == 'Play' && qualities == 1 && CountdownTimerVar == false) {
-		console.log("SetACTbru")
-		ThirdEntry = "⏸ •a";
-	} else if (paused == 'Play' && qualities == 2 && CountdownTimerVar == false) {
-		ThirdEntry = "⏸ •b";
-	} else if (paused == 'Play' && qualities == 3 && CountdownTimerVar == false) {
-		ThirdEntry = "⏸ •c";
-	}
-
-	if (paused == 'Pause' && notPlayingDisconnect == true && connectCounter == 0) {
-		ConnectDis = " [ Connected ]";
-		reconnect();
-		error_bool = false;
-		connectCounter + 1;
-		timeoutDisco = 0;
-		connectCounter = 1;
-		console.log("CONNECTeeeeeeeeeD");
-		if (connectCounter >= 1) {
-			console.log("NO!");
-		}
-	}
-
-	if (paused == 'Play' && notPlayingDisconnect == true && connectCounter == 1) {
-		if (timeoutDisco == 0) {
-			ConnectDis = " [ Disconnected ]";
-			rpc.destroy();
-			error_bool = true;
-			connectCounter = 0;
-			timeoutDisco = 1;
-			console.log("DISCONNECTeeeeeeeeeD");
-		}
-	}
-
-
-	if (title) {
-		let length = 256;
-		if (title.length > length) {
-			var NewTitle = title.substring(0, length);
-			console.log("CUT");
-		}
-		else {
-			NewTitle = `${title}`;
-			console.log("CUT-NOT");
-		}
-	}
-
-	if (TogglePlaylist == true) {
-		if (!playlist) {
-			plaaylist = "https://google.com/1";
-		} else if (playlist) {
-			plaaylist = playlist;
-			// plaaylist = playlist;
-		}
-	} else {
-		plaaylist = "https://google.com/2";
-	}
-
-	if (Explicit == 'None') {
-		var NewerTitle = ` `;
-	} else if (Explicit == 1) {
-		NewerTitle = `🅴`;
-	} else if (Explicit == 1) {
-		NewerTitle = `🅴`;
-	}
-
-	if (!title & !artist) {
-		console.log("pausedFALSE");
-		largeImageKey =
-			"https://i.postimg.cc/XNPqqY9f/owo.jpg"; /* https://i.postimg.cc/Y9zgFMdS/uwu.webp */
-		largeImageText = "VersionNumberDed"; // ----------------------------- //
-		startTimestamp = now;
-		endTimestamp = 0;
-		detailsTwo = details;
-		stateTwo = state;
-	} else {
-		console.log("pausedTRUE");
-		startTimestamp = now - time[0] * 1000;
-		endTimestamp = startTimestamp + time[1] * 1000;
-		details = `${ThirdEntry} ${NewTitle} ${warningText}`;
-		detailsThree = `${NewTitle} • ${warningText}`;
-		let star1 = "•";
-		let star2 = "•";
-		let artistZRe;
-		if (artist[1] == undefined && artist[2] == undefined) {
-			artistZRe = "[ " + artist[0] + " ]";
-			toggleBlockMediaKeys(true);
-		} else {
-			artistZRe = artist[0];
-			toggleBlockMediaKeys(false);
-		}
-		if (artist[1] == undefined) {
-			star1 = "";
-		} else {
-			star1 = "•";
-		}
-		if (artist[2] == undefined) {
-			star2 = "";
-		} else {
-			star2 = "•";
-		}
-		state = `${NewerTitle} ${artistZRe || "Unknown"} ${star1} ${artist[1] || ""} ${star2} ${artist[2] || ""}`;
-
-		console.log("executed setLargeIconImage");
-
-		if (timeNow <= 3 && paused == "Pause") {
-			stopTime = Date.now();
-			reloadImageUrl();
-			setLargeIconImage();
-		}
-
-		if (timeNow >= 4) {
-			FINALTHREEVAR = theFinalowoNess;
-			console.log("I SET THE NEW VALUE");
-		}
-
-		if (title) { // LOWER3
-			if (repeat.includes("one")) {
-				largeImageText = VersionNumber;
-				largeImageKey = FINALTHREEVAR;
-			}
-
-			if (repeat.includes("one") && paused == "Play") {
-				startTimestamp = 0;
-				endTimestamp = 0;
-			}
-
-			if (repeat.includes("all")) {
-				largeImageText = VersionNumber;
-				largeImageKey = FINALTHREEVAR;
-
-			}
-			if (repeat.includes("all") && paused == "Play") {
-				startTimestamp = 0;
-				endTimestamp = 0;
-			}
-
-			if (repeat.includes("off")) {
-				largeImageText = VersionNumber;
-				largeImageKey = FINALTHREEVAR;
-			}
-			if (repeat.includes("off") && paused == "Play") {
-				startTimestamp = 0;
-				endTimestamp = 0;
-			}
-		}
-
-		// SECTION FOR ALL WRITE-OUT DATA WITH THE TERMINAL -- CHECK HERE
-		process.stdout.write("\x1Bc");
-		console.log("-- Here's Some Info Lovely --\n");
-		// console.log('');
-		// console.log('--', searchAbout, 'is Forming --\n');
-		// console.log('-- Love Is Forming --');
-		console.log(songInfo);
-		detailsTwo = details;
-		stateTwo = state;
-	}
-
-	if (error_bool == true) {
-		largeImageKey = "https://i.postimg.cc/0QTQdXmp/whatt.png";
-		largeImageText = "error";
-		startTimestamp = 0;
-		endTimestamp = 0;
-	}
-
-	// var theElement = "document.querySelector('#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > span:nth-child(1)').textContent";
-
-	joinn1 = String(join1).slice(0, 31, "-");
-	joinn2 = String(join2).slice(0, 31, "-");
-
-	if (ToggleButtons == false) {
-		var activity = {
-			details,
-			state,
-			startTimestamp,
-			largeImageKey,
-			largeImageText,
-			instance: true,
+		const { title, time } = songInfo || {
+			title: "",
+			artist: "???",
+			time: 1,
+			ErrorStatus: undefined,
+			paused: 'Pause',
+			Explicit: false,
+			repeat: "off",
+			playlist: "https://e621.net/",
+			channel: "https://e621.net",
+			join1: "-",
+			join2: "-",
 		};
-	}
-	if (ToggleButtons == true) {
-		if (ToggleArtist == false && TogglePlaylist == false) {
-			activity = {
-				details,
-				state,
-				startTimestamp,
-				largeImageKey,
-				largeImageText,
-				instance: true,
-			};
+
+		let systemVolumeDEC = Math.round(systemVolume);
+		VersionNumber = `System Volume is at: ${systemVolumeDEC}% Player volume is at: ${volume}%`;
+
+		if (CountdownTimerVar === true) {
+			if (RealCountdown >= 0 && RealCountdown < 360) {
+				ThirdEntry = "⚠️•";
+				// Calculate the nearest multiple of 10 above or equal to RealCountdown
+				let nearestMultipleOfTen = Math.ceil(RealCountdown / 5) * 5;
+				warningText = "[ " + quitText + " in " + nearestMultipleOfTen + "s ]";
+			} else {
+				RealCountdown = "error counting down!";
+			}
 		}
-		if (ToggleArtist == true && TogglePlaylist == true) {
-			activity = {
-				details,
-				state,
-				startTimestamp,
-				largeImageKey,
-				largeImageText,
-				buttons: [
-					{
-						label: `${joinn2}`,
-						url: plaaylist,
-					},
-					{
-						label: `${joinn1}`,
-						url: channel,
-					},
-				],
-				instance: true,
-			};
+
+		//The 5) * 5 = 5 seconds so "234) * 234" is 234 seconds!
+
+		if (title && CountdownTimerVar === false) {
+			warningText = "";
+			if (repeat.includes("off")  && paused === "Pause") {
+				console.log("yayDONE1");
+				ThirdEntry = "▶️ •";
+				qualities = 1;
+			} else if (repeat.includes("all") && paused === "Pause") {
+				console.log("yayDONE2");
+				ThirdEntry = "🔁 •";
+				qualities = 2;
+			} else if (repeat.includes("one") && paused === "Pause") {
+				console.log("yayDONE3");
+				ThirdEntry = "🔂 •";
+				qualities = 3;
+			}
+			
+			if (repeat.includes("off") && paused == "Play") {
+				console.log("bruhNO2")
+				ThirdEntry = "⏸ •d";
+			}
 		}
-		if (ToggleArtist == true && TogglePlaylist == false) {
-			activity = {
-				details,
-				state,
-				startTimestamp,
-				largeImageKey,
-				largeImageText,
-				buttons: [
-					{
-						label: `${joinn1}`,
-						url: channel,
-					},
-				],
-				instance: true,
-			};
+
+		if (paused == 'Play' && qualities == 1 && CountdownTimerVar === false) {
+			console.log("SetACTbru")
+			ThirdEntry = "⏸ •a";
+		} else if (paused == 'Play' && qualities == 2 && CountdownTimerVar === false) {
+			ThirdEntry = "⏸ •b";
+		} else if (paused == 'Play' && qualities == 3 && CountdownTimerVar === false) {
+			ThirdEntry = "⏸ •c";
 		}
-		if (TogglePlaylist == true && ToggleArtist == false) {
-			activity = {
-				details,
-				state,
-				startTimestamp,
-				largeImageKey,
-				largeImageText,
-				buttons: [
-					{
-						label: `${joinn2}`,
-						url: plaaylist,
-					},
-				],
-				instance: true,
-			};
+
+
+		if (paused == 'Pause' && notPlayingDisconnect === true && connectCounter === 0) {
+			reconnect();
+			ConnectDis = " [ Connected ]";
+			error_bool = false;
+			connectCounter += 1;
+			console.log("ALIVENESS");
 		}
-		if ((error_bool == true) & !title & !artist) {
-			details = ">>>>>>>>>>>>>>>";
-			state = ">>>>>>>>>>>>>>>";
+
+		if (paused == 'Pause' && notPlayingDisconnect === true && connectCounter === 1) {
+			rpc.destroy();
+			ConnectDis = " [ Disconnected ]";
+			error_bool = true;
+			connectCounter -= 1;
+			console.log("DEADNESS");
+		}
+
+
+		if (title) {
+			let length = 256;
+			if (title.length > length) {
+				var NewTitle = title.substring(0, length);
+				console.log("CUT");
+			}
+			else {
+				NewTitle = `${title}`;
+				console.log("CUT-NOT");
+			}
+		}
+
+		if (TogglePlaylist === true) {
+			if (!playlist) {
+				plaaylist = "https://google.com/1";
+			} else if (playlist) {
+				plaaylist = playlist;
+			}
+		} else {
+			plaaylist = "https://google.com/2";
+		}
+
+		if (!Explicit) {
+			NewerTitle = ` `;
+		} else if (Explicit === 1) {
+			var NewerTitle = `🅴`;
+		} else if (Explicit === 1) {
+			NewerTitle = `🅴`;
+		}
+
+		if (!title & !artist) {
+			console.log("pausedFALSE");
+			largeImageKey =
+			"https://i.postimg.cc/XNPqqY9f/owo.jpg"; /* https://i.postimg.cc/Y9zgFMdS/uwu.webp */
+			largeImageText = "VersionNumberDed"; // ----------------------------- //
+			startTimestamp = now;
+			endTimestamp = 0;
+			detailsTwo = details;
+			stateTwo = state;
+		} else {
+			console.log("pausedTRUE");
+			startTimestamp = now - time[0] * 1000;
+			endTimestamp = startTimestamp + time[1] * 1000;
+			details = `${ThirdEntry} ${NewTitle} ${warningText}`;
+			detailsThree = `${NewTitle} • ${warningText}`;
+			state = `${NewerTitle} ${artist[0] || "Unknown"} • ${artist[1] || "Unknown"
+				} • ${artist[2] || "Unknown"}`;
+
+
+
+
+
+			//DOWNLOAD THE IMAGE SECTION
+			// if (title) {
+			// 	const THEBASEurl = "https://getname.ytmopdata.net/userRedirects/" + config.nameToken + "/" + config.nameToken + ".png" + '?timestamp=' + Date.now();
+			// 	const outputPath = 'src/images/' + config.nameToken + '.png';
+
+			// 	async function downloadFile(url, outputPath) {
+			// 		const response = await axios({
+			// 			method: 'GET',
+			// 			url: url,
+			// 			responseType: 'stream'
+			// 		});
+
+			// 		const writer = fs.createWriteStream(outputPath);
+
+			// 		response.data.pipe(writer);
+
+			// 		return new Promise((resolve, reject) => {
+			// 			writer.on('finish', resolve);
+			// 			writer.on('error', reject);
+			// 		});
+			// 	}
+			// 	console.log("download?");
+
+			// 	downloadFile(THEBASEurl, outputPath);
+			// }
+
+
+
+
+
+
+			// let imageKeyThree = "https://getname.ytmopdata.net/userRedirects/" + config.nameToken + "/" + config.nameToken + ".png" + '?timestamp=' + Date.now();
+			// let imageKeyThree = "src/images/Balloons.png";
+			// const BinaryURL = "https://getname.ytmopdata.net/userRedirects/" + config.nameToken + "/" + config.nameToken + ".png";
+
+			FINALTHREEVAR = "https://getname.ytmopdata.net/userRedirects/" + config.nameToken + "/" + config.nameToken + ".png" + '?timestamp=' + endTimestamp;
+
+			if (title) { // LOWER
+				if (repeat.includes("one")) {
+					largeImageText = VersionNumber;
+					largeImageKey = FINALTHREEVAR;
+				}
+
+				if (repeat.includes("one") && paused == "Play") {
+					startTimestamp = 0;
+					endTimestamp = 0;
+				}
+
+				if (repeat.includes("all")) {
+					largeImageText = VersionNumber;
+					largeImageKey = FINALTHREEVAR;
+
+				}
+				if (repeat.includes("all") && paused == "Play") {
+					startTimestamp = 0;
+					endTimestamp = 0;
+				}
+
+				if (repeat.includes("off")) {
+					largeImageText = VersionNumber;
+					largeImageKey = FINALTHREEVAR;
+				}
+				if (repeat.includes("off") && paused == "Play") {
+					startTimestamp = 0;
+					endTimestamp = 0;
+				}
+			}
+
+			// SECTION FOR ALL WRITE-OUT DATA WITH THE TERMINAL -- CHECK HERE
+			process.stdout.write("\x1Bc");
+			console.log("-- Here's Some Info Lovely --\n");
+			// console.log('');
+			// console.log('--', searchAbout, 'is Forming --\n');
+			// console.log('-- Love Is Forming --');
+			console.log(songInfo);
+			detailsTwo = details;
+			stateTwo = state;
+		}
+
+		if (error_bool === true) {
 			largeImageKey = "https://i.postimg.cc/0QTQdXmp/whatt.png";
 			largeImageText = "error";
 			startTimestamp = 0;
 			endTimestamp = 0;
-			detailsTwo = ">>>>>>>>>>>>>>>";
-			stateTwo = ">>>>>>>>>>>>>>>";
-			activity = {
+		}
+
+		// var theElement = "document.querySelector('#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > span:nth-child(1)').textContent";
+
+		joinn1 = String(join1).slice(0, 31, "-");
+		joinn2 = String(join2).slice(0, 31, "-");
+
+		if (ToggleButtons === false) {
+			var activity = {
 				details,
 				state,
 				startTimestamp,
@@ -2115,9 +2025,89 @@ function setActivity() {
 				instance: true,
 			};
 		}
-	}
-	if (endTimestamp) activity.endTimestamp = endTimestamp;
-	if (timeoutDisco == 0) {
+		if (ToggleButtons === true) {
+			if (ToggleArtist === false && TogglePlaylist === false) {
+				activity = {
+					details,
+					state,
+					startTimestamp,
+					largeImageKey,
+					largeImageText,
+					instance: true,
+				};
+			}
+			if (ToggleArtist === true && TogglePlaylist === true) {
+				activity = {
+					details,
+					state,
+					startTimestamp,
+					largeImageKey,
+					largeImageText,
+					buttons: [
+						{
+							label: `${joinn2}`,
+							url: plaaylist,
+						},
+						{
+							label: `${joinn1}`,
+							url: channel,
+						},
+					],
+					instance: true,
+				};
+			}
+			if (ToggleArtist === true && TogglePlaylist === false) {
+				activity = {
+					details,
+					state,
+					startTimestamp,
+					largeImageKey,
+					largeImageText,
+					buttons: [
+						{
+							label: `${joinn1}`,
+							url: channel,
+						},
+					],
+					instance: true,
+				};
+			}
+			if (TogglePlaylist === true && ToggleArtist === false) {
+				activity = {
+					details,
+					state,
+					startTimestamp,
+					largeImageKey,
+					largeImageText,
+					buttons: [
+						{
+							label: `${joinn2}`,
+							url: plaaylist,
+						},
+					],
+					instance: true,
+				};
+			}
+			if ((error_bool === true) & !title & !artist) {
+				details = ">>>>>>>>>>>>>>>";
+				state = ">>>>>>>>>>>>>>>";
+				largeImageKey = "https://i.postimg.cc/0QTQdXmp/whatt.png";
+				largeImageText = "error";
+				startTimestamp = 0;
+				endTimestamp = 0;
+				detailsTwo = ">>>>>>>>>>>>>>>";
+				stateTwo = ">>>>>>>>>>>>>>>";
+				activity = {
+					details,
+					state,
+					startTimestamp,
+					largeImageKey,
+					largeImageText,
+					instance: true,
+				};
+			}
+		}
+		if (endTimestamp) activity.endTimestamp = endTimestamp;
 		rpc.setActivity(activity);
 	}
 }
@@ -2207,27 +2197,60 @@ async function updateSongInfo() {
 	// 	// },
 	// ]);
 
-	let isPaused = (paused === 'Play');
-
 	if (!title && !artist) {
-		// Handle no audio playing
-		win.setProgressBar(-1); // Remove the progress bar
-		win.setOverlayIcon(null, "Browsing");
-	} else {
-		// Handle audio playing or paused
-		let progress = time[0] / time[1];
-		let mode = isPaused ? "paused" : "normal";
-		let color = isPaused ? '#FFFF00' : '#00FF00'; // Yellow when paused, green when playing
-	
 		if (process.platform === "win32") {
-			win.setProgressBar(progress, { mode: mode, color: color });
-		} else {
-			win.setProgressBar(progress);
+			win.setProgressBar(1 + 1e-10);
 		}
-	
-		// Update any other UI elements based on the state
+		win.setOverlayIcon(null, "Browsing");
+	} else if (process.platform === "win64") {
+		win.setProgressBar(time[0] / time[1], {
+			mode: paused ? "paused" : "normal",
+		});
+
+		toolTipButtons[1].flags = ["enabled"];
+
+		// var playingImage = 'https://i.postimg.cc/3NMxTsy0/Playing.png';
+		// var PausedImage = 'https://i.postimg.cc/DyPy9Y7m/Paused.png';
+		// var StoppedImage = 'https://i.postimg.cc/Vk7s6rr8/Stopped.png';
+		// var RepeatAll = 'https://i.postimg.cc/VLmzWBXw/Repeat-all.png';
+		// var RepeatOne = 'https://i.postimg.cc/sxcdNq5r/Repeat-one.png';
+		var playingImage = "assets/images/Playing.png";
+		var PausedImage = "https://i.postimg.cc/DyPy9Y7m/Paused.png";
+		var StoppedImage = "https://i.postimg.cc/Vk7s6rr8/Stopped.png";
+		var RepeatAll = "https://i.postimg.cc/VLmzWBXw/Repeat-all.png";
+		var RepeatOne = "https://i.postimg.cc/sxcdNq5r/Repeat-one.png";
+
+		if (repeat.includes("one")) {
+			win.setOverlayIcon(getNativeImage(RepeatOne, "Repeat One"));
+			win.setThumbarButtons(toolTipButtons);
+		}
+		if (repeat.includes("one") && paused == 'Pause') {
+			win.setOverlayIcon(getNativeImage(playingImage, "Playing"));
+			win.setThumbarButtons(toolTipButtons);
+		}
+
+		if (repeat.includes("all")) {
+			win.setOverlayIcon(getNativeImage(RepeatAll, "Repeat All"));
+			win.setThumbarButtons(toolTipButtons);
+		}
+		if (repeat.includes("all") && paused == 'Pause') {
+			win.setOverlayIcon(getNativeImage(PausedImage, "Playing"));
+			win.setThumbarButtons(toolTipButtons);
+		}
+
+		if (repeat.includes("off")) {
+			win.setOverlayIcon(getNativeImage(playingImage, "Playing"));
+			win.setThumbarButtons(toolTipButtons);
+		}
+		if (paused == 'Play') {
+			win.setOverlayIcon(getNativeImage(PausedImage, "Paused"));
+		}
+	} else {
+		win.setProgressBar(time[0] / time[1]);
+		console.log("WinICON:", paused);
+		// win.setOverlayIcon(getNativeImage(StoppedImage), 'Stopped');
+		// win.setThumbarButtons(toolTipButtons);
 	}
-	
 }
 
 rpc.once("disconnected", (title) => {
@@ -2249,29 +2272,17 @@ function reconnect() {
 			clearInterval(reconnectTimer);
 			ConnectDis = " [ Connected ]";
 			console.log("-- Connected --");
-			if (buttonOne == true || buttonTwo == true || buttonThree == true || buttonFour == true) {
-				win.setTitle(
-					`${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}${notPlayingDisconnectText} ${config.username}`
-				);
-			} else {
-				win.setTitle(
-					`${titleTwo} - ${stateTwo}${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}${notPlayingDisconnectText} ${config.username}`
-				);
-			}
+			win.setTitle(
+				`${titleTwo} - ${stateTwo}${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}${notPlayingDisconnectText} ${config.username}`
+			); // Added 'PageTitleReload' function for constant reload
 		})
 		.catch((err) => {
 			rpc = null;
 			console.error(err);
 			ConnectDis = " [ Disconnected ]";
-			if (buttonOne == true || buttonTwo == true || buttonThree == true || buttonFour == true) {
-				win.setTitle(
-					`${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}${notPlayingDisconnectText} ${config.username}`
-				);
-			} else {
-				win.setTitle(
-					`${titleTwo} - ${stateTwo}${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}${notPlayingDisconnectText} ${config.username}`
-				);
-			}
+			win.setTitle(
+				`${titleTwo} - ${stateTwo}${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}${notPlayingDisconnectText} ${config.username}`
+			); // Added 'PageTitleReload' function for constant reload
 		});
 }
 
@@ -2283,32 +2294,174 @@ function getNativeImage(filePath) {
 
 function setPageName() {
 	if (artist && titleTwo) {
-		if (buttonOne == true || buttonTwo == true || buttonThree == true || buttonFour == true) {
-			win.setTitle(
-				`${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}${notPlayingDisconnectText} ${config.username}`
-			);
-		} else {
-			win.setTitle(
-				`${titleTwo} - ${stateTwo}${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}${notPlayingDisconnectText} ${config.username}`
-			);
-		}
+		win.setTitle(
+			`${titleTwo} - ${stateTwo}${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}${notPlayingDisconnectText} ${config.username}`
+		); // Added 'PageTitleReload' function for constant reload
 	}
 }
 
-app.on('will-quit', () => {
-	globalShortcut.unregisterAll();
-});
+// function fullSync() { // ======== A FUNCTION TO SEND DATA TO A WEB-SERVER ========
+// 	if (volume === 0) {
+// 		console.log('Waiting for load...');
+// 	} else {
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\PlaylistCounter.txt', PlaylistCounter, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\PlaylistCounter.txt', 'Error: SecondTitleErrored'); // -- PlaylistCounter --
+// 		});
+// 		// ============
+// 		if (secondTitle === true) {
+// 			var SecondTitleErrored = 'true';
+// 		} else {
+// 			SecondTitleErrored = 'false';
+// 		}
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\secondTitle.txt', SecondTitleErrored, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\secondTitle.txt', 'Error: secondTitle'); // -- SecondTitle --
+// 			// testToImage.generateSync('owo', path('X:\\Webserver\\Images'));
+// 		});
+// 		// ============
+// 		if (thirdTitle === true) {
+// 			var thirdTitleErrored = 'true';
+// 		} else {
+// 			thirdTitleErrored = 'false';
+// 		}
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\thirdTitle.txt', thirdTitleErrored, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\thirdTitle.txt', 'Error: thirdTitle'); // -- thirdTitle --
+// 		});
+// 		// ============
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\stateTwo.txt', stateTwo, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\stateTwo.txt', 'Error: stateTwo'); // -- stateTwo --
+// 		});
+// 		// ============
+// 		if (error_bool === true) {
+// 			var error_boolErrored = 'true';
+// 		} else {
+// 			error_boolErrored = 'false';
+// 		}
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\error_bool.txt', error_boolErrored, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\error_bool.txt', 'Error: error_bool'); // -- error_bool --
+// 		});
+// 		// ============
+// 		var detailsTwoTwo = detailsTwo;
+// 		var detailsTwoTwoErrored = JSON.stringify(detailsTwoTwo);
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\detailsTwo.txt', detailsTwoTwoErrored, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\detailsTwo.txt', 'Error: detailsTwo'); // -- detailsTwo --
+// 		});
+// 		// ============
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\detailsThree.txt', detailsThree, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\detailsThree.txt', 'Error: detailsThree'); // -- detailsThree --
+// 		});
+// 		// ============
+// 		fs.writeFile('c:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\titleTwo.txt', titleTwo, error => {
+// 			if (error) fsLibrary.writeFile('c:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\titleTwo.txt', 'Error: titleTwo'); // -- titleTwo --
+// 		});
+// 		// ============
+// 		if (ToggleButtons === true) {
+// 			var ToggleButtonsErrored = 'true';
+// 		} else {
+// 			ToggleButtonsErrored = 'false';
+// 		}
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\ToggleButtons.txt', ToggleButtonsErrored, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\ToggleButtons.txt', 'Error: ToggleButtons'); // -- ToggleButtons --
+// 		});
+// 		// ============
+// 		if (TogglePlaylist === true) {
+// 			var TogglePlaylistErrored = 'true';
+// 		} else {
+// 			TogglePlaylistErrored = 'false';
+// 		}
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\TogglePlaylist.txt', TogglePlaylistErrored, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\TogglePlaylist.txt', 'Error: TogglePlaylist'); // -- TogglePlaylist --
+// 		});
+// 		// ============
+// 		if (ToggleArtist === true) {
+// 			var ToggleArtistErrored = 'true';
+// 		} else {
+// 			ToggleArtistErrored = 'false';
+// 		}
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\ToggleArtist.txt', ToggleArtistErrored, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\ToggleArtist.txt', 'Error: ToggleArtist'); // -- ToggleArtist --
+// 		});
+// 		// ============
+// 		var artistTwo = artist;
+// 		var artistErrored = JSON.stringify(artistTwo);
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\artist.txt', artistErrored, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\artist.txt', 'Error: artist'); // -- artist --
+// 		});
+// 		// ============
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\timeNow.txt', timeNow, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\timeNow.txt', 'Error: timeNow'); // -- timeNow --
+// 		});
+// 		// ============
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\timeMax.txt', timeMax, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\timeMax.txt', 'Error: timeMax'); // -- timeMax --
+// 		});
+// 		// ============
+// 		if (paused === true) {
+// 			var pausedErrored = 'true';
+// 		} else {
+// 			pausedErrored = 'false';
+// 		}
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\paused.txt', pausedErrored, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\paused.txt', 'Error: paused'); // -- paused --
+// 		});
+// 		// ============
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\imageicon.txt', imageicon, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\imageicon.txt', 'Error: imageicon'); // -- imageicon --
+// 		});
+// 		// ============
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\repeat.txt', repeat, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\repeat.txt', 'Error: repeat'); // -- repeat --
+// 		});
+// 		// ============
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\channel.txt', channel, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\channel.txt', 'Error: channel'); // -- channel --
+// 		});
+// 		// ============
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\playlist.txt', playlist, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\playlist.txt', 'Error: playlist'); // -- playlist --
+// 		});
+// 		// ============
+// 		var ExplicitErrored = JSON.stringify(Explicit);
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\Explicit.txt', ExplicitErrored, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\Explicit.txt', 'Error: Explicit'); // -- Explicit --
+// 		});
+// 		// ============
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\channelname.txt', channelname, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\channelname.txt', 'Error: channelname'); // -- channelname --
+// 		});
+// 		// ============
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\join1.txt', join1, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\join1.txt', 'Error: join1'); // -- join1 --
+// 		});
+// 		// ============
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\join2.txt', join2, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\join2.txt', 'Error: join2'); // -- join2 --
+// 		});
+// 		// ============
+// 		var volumeErrored = JSON.stringify(volume);
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\volume.txt', volumeErrored, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\volume.txt', 'Error: volume'); // -- volume --
+// 		});
+// 		// ============
+// 		var sysVolErrored = JSON.stringify(sysVol);
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\sysVol.txt', sysVolErrored, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\sysVol.txt', 'Error: sysVol'); // -- sysVol --
+// 		});
+// 		// ============
+// 		fs.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\ConnectDis.txt', ConnectDis, error => {
+// 			if (error) fsLibrary.writeFile('C:\\Users\\Thepl\\Downloads\\YouTube-Music-Client-master\\allVars\\ConnectDis.txt', 'Error: ConnectDis'); // -- ConnectDis --
+// 		});
+// 	}
+// }
 
 rpc.on("ready", () => {
 	setActivity();
 	setInterval(setActivity, 1e3);
-	// setInterval(reloadImageUrl, 5e3);
+	setInterval(reloadImageUrl, 1e3);
 	setInterval(checkSync, config.resyncSongUrl);
 	setInterval(syncTimeSync, 1000);
 	//setInterval(fullSync, 1e3);
 	setInterval(updateSongInfo, 1e3);
 	setInterval(setPageName, 1e3);
-	setTimeout(setLargeIconImage, 10000);
 	ConnectDis = " [ Connected ]";
 });
 

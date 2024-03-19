@@ -73,12 +73,12 @@ function downloadDefaultConfig() {
 			// Write the string data to the local config file
 			fs.writeFileSync(configPath, dataString);
 			console.log('Default config file downloaded successfully.');
+			app.quit();
+			app.relaunch();
 		})
 		.catch(error => {
 			console.error('Failed to download default config file:', error);
 		});
-	app.quit();
-	setTimeout(5000, app.relaunch());
 }
 
 if (!fs.existsSync(configPath)) {
@@ -115,7 +115,7 @@ function updateConfigFile(key, value) {
 /* ---------------------------------DEFINE FUNCTIONS--------------------------------- */
 refreshConfig();
 var publicPageURL;
-var thelink, VersionNumber, synctimeGET, systemVolume = 0, ToggleButtons = true, ChannelToggle = false, TogglePlaylist = true, ToggleArtist = true, volume = 0, artist, songUrl = "https://google.com/3", titleTwo = "", detailsTwo = "- Loading -", stateTwo = "- Loading -", ConnectDis = " [ Disconnected ]", detailsThree = "Default", channel = "https://google.com/4", error_bool = false, PlaylistCounter = "", ConnectionTitle = "", RealCountdown, CountdownTime, secondTitle = true, thirdTitle = true, textView = false, paused, imageicon, repeat, playlist, channelname, Explicit, join1, join2, timeNow = 1, timeMax, notPlayingDisconnect = false, notPlayingDisconnectText = "", buttonOne = false, buttonTwo = false, buttonThree = false, buttonFour = false, warningText = "", getNAME, TitleExit = "", quitText = "", connectCounter = 1, RealCountdownTitleBar = "", CountdownTimerVar = false, sysVol, LICKCHeck = "", playlistToggleVisible = true;
+var thelink, VersionNumber, synctimeGET, systemVolume = 0, ToggleButtons = true, ChannelToggle = false, TogglePlaylist = true, ToggleArtist = true, volume = 0, artist, songUrl = "https://music.youtube.com", titleTwo = "", detailsTwo = "- Loading -", stateTwo = "- Loading -", ConnectDis = " [ Disconnected ]", detailsThree = "Default", channel = "https://music.youtube.com", error_bool = false, PlaylistCounter = "", ConnectionTitle = "", RealCountdown, CountdownTime, secondTitle = true, thirdTitle = true, textView = false, paused, imageicon, repeat, playlist, channelname, Explicit, join1, join2, timeNow = 1, timeMax, notPlayingDisconnect = false, notPlayingDisconnectText = "", buttonOne = false, buttonTwo = false, buttonThree = false, buttonFour = false, warningText = "", getNAME, TitleExit = "", quitText = "", connectCounter = 1, RealCountdownTitleBar = "", CountdownTimerVar = false, sysVol, LICKCHeck = "", playlistToggleVisible = true;
 var ToggArtAlb = false, configWindow, finalContactVar, GfinalContactVar, urlFinal, outputTest, title, ImageIcon, playlistname, FINALTHREEVAR, joinn1, joinn2, largeImageText, plaaylist, largeImageKey, details, state, ThirdEntry, qualities = 0, result, timeMaxMinus, startTimestamp, endTimestamp, stopTime = 0, timeoutDisco = 0, globalCounter = 0, imgVer = 0, globalDisconnect = false, theFinalowoNess = "Nada There is nothing YET NONEEEEE", systemVolumeDEC;
 // [ ------------------------------------------------------- ]
 // [ ------------------------------------------------------- ]
@@ -1887,7 +1887,7 @@ function setActivity() {
 			console.log("DISCONNECTeeeeeeeeeD");
 		}
 	}
-
+	
 
 	if (title) {
 		let length = 256;
@@ -1903,13 +1903,13 @@ function setActivity() {
 
 	if (TogglePlaylist == true) {
 		if (!playlist) {
-			plaaylist = "https://google.com/1";
+			plaaylist = "https://music.youtube.com";
 		} else if (playlist) {
 			plaaylist = playlist;
 			// plaaylist = playlist;
 		}
 	} else {
-		plaaylist = "https://google.com/2";
+		plaaylist = "https://music.youtube.com";
 	}
 
 	if (Explicit == 'None') {
@@ -2218,16 +2218,16 @@ async function updateSongInfo() {
 		let progress = time[0] / time[1];
 		let mode = isPaused ? "paused" : "normal";
 		let color = isPaused ? '#FFFF00' : '#00FF00'; // Yellow when paused, green when playing
-	
+
 		if (process.platform === "win32") {
 			win.setProgressBar(progress, { mode: mode, color: color });
 		} else {
 			win.setProgressBar(progress);
 		}
-	
+
 		// Update any other UI elements based on the state
 	}
-	
+
 }
 
 rpc.once("disconnected", (title) => {

@@ -1,3 +1,13 @@
+<<<<<<< HEAD
+=======
+[![Node.js CI](https://github.com/FennBoii/YTM-OP/actions/workflows/node.js.yml/badge.svg)](https://github.com/FennBoii/YTM-OP/actions/workflows/node.js.yml)
+![GitHub release (by tag)](https://img.shields.io/github/downloads/FennBoii/YTM-OP/1.0.5/total)
+![GitHub release (by tag)](https://img.shields.io/github/downloads/FennBoii/YTM-OP/1.0.6/total)
+![GitHub release (by tag)](https://img.shields.io/github/downloads/FennBoii/YTM-OP/1.0.7/total)
+![GitHub release (by tag)](https://img.shields.io/github/downloads/FennBoii/YTM-OP/1.0.8/total)
+![Website](https://img.shields.io/website?up_message=site%20UP&down_message=site%20DOWN&url=https%3A%2F%2Fgetname.ytmopdata.net%2F&label=Token%20Page%20-&labelColor=%23ff00ff&link=https%3A%2F%2Fgetname.ytmopdata.net%2F)
+
+>>>>>>> 17ac6ffa27dc1d82bfd7f25f4b4ea1119262855a
 <h4>THERE MAY BE A FEW ERRORS WHEN CLOSING AND MAYBE SOME DURING, I AM WORKING ON THESE JUST RESTART THE CLIENT OR ADD THE ISSUES TO "ISSUES" TAB</h4>
 
 # YTM-OP
@@ -43,4 +53,8 @@ Some stuff I've fixed / need to work on:
 
 </center>
 </br>
+<<<<<<< HEAD
 </br>
+=======
+</br>
+>>>>>>> 17ac6ffa27dc1d82bfd7f25f4b4ea1119262855a

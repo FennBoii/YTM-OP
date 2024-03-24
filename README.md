@@ -49,9 +49,3 @@ Some stuff I've fixed / need to work on:
 - No self promotion anywhere (I like to let the consumer use the product however they please, ad-free!)
 
 </center>
-</br>
-<<<<<<< HEAD
-</br>
-=======
-</br>
->>>>>>> 17ac6ffa27dc1d82bfd7f25f4b4ea1119262855a

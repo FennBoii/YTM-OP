@@ -10,8 +10,8 @@
 * Summary: This is a Youtube Music Client Wrapper with, a Discord Rich Presence, client connectivity, and (Not implimented yet) VRChat OSC support (to be added soon).
 
 <hr />
-<center>How to setup client syncing
-<center>- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</center>
+<center>How to setup client syncing<br />
+<center>- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</center></center><br />
 <i>It's a lot simpler than ever before, load up the player and put in your name. This will be used for communicating with my web server. Once you press the button to insert all keys, the player automatically reloads itself and your done! Everything is automated. If you want to make it easy, send the person ur json file and replace it in ur </i><b>%home%</b> <i>directory. Done :3</i>
 <hr />
 Some stuff I've fixed / need to work on:

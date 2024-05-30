@@ -57,7 +57,7 @@ Some stuff I've fixed / need to work on:
 
 
 <center>
-
+<br />
   
 <b>How to run without the exe? / New to js?</b>
 1. Download the ZIP and unzip it to a location.

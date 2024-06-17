@@ -78,7 +78,7 @@ function updatePlayerVolumeElement() {
 function changeYTLayoutElement() {
   const imageIcon = document.querySelector('#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.thumbnail-image-wrapper.style-scope.ytmusic-player-bar > img');
   const parentElement = document.querySelector('#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.thumbnail-image-wrapper.style-scope.ytmusic-player-bar');
-  document.body.style = "--paper-slider-knob-color: #f00";
+  // document.body.style = "--paper-slider-knob-color: #f00";
   if (parentElement) {
 
     imageIcon.style.display = "none";
@@ -137,6 +137,8 @@ function changeYTLayoutElement() {
     const hoverVolumeSlider = document.querySelector('#volume-slider');
     const sliderVolumeKnob = document.querySelector('#volume-slider');
     const parentCenterDiv = document.createElement("div");
+    const bodyElement = document.querySelector("body");
+    const titleElement = document.createElement("div");
 
     // if (sliderVolumeKnob) {
     //   sliderVolumeKnob.style.backgroundColor = "red";
@@ -147,10 +149,10 @@ function changeYTLayoutElement() {
     // }
 
     // if (sliderVolumeKnob) {
-      // sliderVolumeKnob.style.backgroundColor = "red";
-      // sliderVolumeKnob.style.left = "0.3vw"
-      // sliderVolumeKnob.style.position = "relative";
-      // sliderVolumeKnob.style.top = "-1vh";
+    // sliderVolumeKnob.style.backgroundColor = "red";
+    // sliderVolumeKnob.style.left = "0.3vw"
+    // sliderVolumeKnob.style.position = "relative";
+    // sliderVolumeKnob.style.top = "-1vh";
     // }
 
     if (sliderBarKnob) {
@@ -171,12 +173,28 @@ function changeYTLayoutElement() {
     parentCenterDiv.style.top = "62px";
     parentCenterDiv.appendChild(progressBar);
     parentPlayerBar.appendChild(parentCenterDiv);
-
+    titleElement.style.width = "auto";
+    titleElement.id = "menuBarElement";
+    titleElement.style.height = "15px";
+    titleElement.style.position = "relative";
+    titleElement.style.display = "block";
+    titleElement.style.color = "red";
+    titleElement.style.backgroundColor = "red";
+    titleElement.style.margin = "auto auto";
+    titleElement.style.zIndex = "5";
+    titleElement.style.top = "-185px";
+    bodyElement.appendChild(titleElement);
 
     if (progressBar) {
       sliderContainer.style.height = "10px";
       sliderBar.style.top = "-13px";
+<<<<<<< HEAD
       progressBar.style = "--paper-slider-height: 4px";
+=======
+      // progressBarPercent.style.top = "55px"
+      progressBarSlider.style.zIndex = "1";
+      // progressBar.style = "--paper-slider-height: 4px";
+>>>>>>> 572b3d8 (updated server, images work now on all clients)
       progressBar.style.display = "flex";
       progressBar.style.width = "min-content";
       progressBar.style.position = "relative";

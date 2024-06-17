@@ -86,10 +86,16 @@ function changeYTLayoutElement() {
     let imageIconREAL = document.createElement('img');
     imageIconREAL.id = 'daddysMilk';
     parentElement.appendChild(imageIconREAL);
+    let element = document.querySelector('#layout'); //element
+    const pseudoElement = document.createElement('div'); // pseudoElement
+    pseudoElement.textContent = "theTopElEMENT5940"; //
+
 
     let menuButtons = document.querySelector('#items > ytmusic-guide-entry-renderer:nth-child(1) > tp-yt-paper-item');
 
     ipcRenderer.on('changeYTLayout', (event, imageUrl) => {
+      element.parentNode.insertBefore(pseudoElement, element)
+
       imageIconREAL.src = imageUrl;
       imageIconREAL.style.position = "relative";
       imageIconREAL.style.overflow = "hidden";
@@ -147,10 +153,10 @@ function changeYTLayoutElement() {
     // }
 
     // if (sliderVolumeKnob) {
-      // sliderVolumeKnob.style.backgroundColor = "red";
-      // sliderVolumeKnob.style.left = "0.3vw"
-      // sliderVolumeKnob.style.position = "relative";
-      // sliderVolumeKnob.style.top = "-1vh";
+    // sliderVolumeKnob.style.backgroundColor = "red";
+    // sliderVolumeKnob.style.left = "0.3vw"
+    // sliderVolumeKnob.style.position = "relative";
+    // sliderVolumeKnob.style.top = "-1vh";
     // }
 
     if (sliderBarKnob) {

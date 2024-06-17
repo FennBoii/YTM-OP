@@ -936,6 +936,7 @@ setInterval(() => {
 }, 2000);
 
 let intervalIdDisco;
+<<<<<<< HEAD
 
 if (isDisOpen == false) {
 	intervalIdDisco = setInterval(() => {
@@ -993,6 +994,8 @@ setInterval(() => {
 }, 2000);
 
 let intervalIdDisco;
+=======
+>>>>>>> 3e88736 (updated gitignore)
 let aftersendStatus = false;
 
 app.on("ready", createPREWindow);
@@ -2168,6 +2171,7 @@ function setActivity() {
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 // if (isDisOpen === true) {
 // 	var isDisOpenInterval = setInterval(afterSend, 5000);
 // 	console.log(`- LOG -- EXECUTED 'afterSend' -`);
@@ -2176,6 +2180,11 @@ function setActivity() {
 var isDisOpenInterval = setInterval(afterSend, 5000);
 console.log(`- LOG -- EXECUTED 'afterSend' -`);
 >>>>>>> 0b57287 (updated disconnected funcs)
+=======
+// if (isDisOpen === true) {
+// 	var isDisOpenInterval = setInterval(afterSend, 5000);
+// 	console.log(`- LOG -- EXECUTED 'afterSend' -`);
+>>>>>>> 3e88736 (updated gitignore)
 // }
 
 const intervalId = setInterval(isDiscordRunning, 2000); // Run checkDiscordRunning every 5 seconds
@@ -2187,6 +2196,7 @@ async function isDiscordRunning() {
 
 		if (outputGotten.length > 10) {
 <<<<<<< HEAD
+<<<<<<< HEAD
 			console.log(`- LOG -- DISCORD ID FOUND: ${outputGotten} -`);
 			if (!isDisOpen) {
 				isDisOpen = true;
@@ -2196,6 +2206,12 @@ async function isDiscordRunning() {
 			if (!isDisOpen) {
 				isDisOpen = true;
 >>>>>>> 0b57287 (updated disconnected funcs)
+=======
+			console.log(`- LOG -- DISCORD ID FOUND: ${outputGotten} -`);
+			if (!isDisOpen) {
+				isDisOpen = true;
+
+>>>>>>> 3e88736 (updated gitignore)
 				// console.log(`- LOG -- 'isDisOpen' IS: ${isDisOpen} -`);
 			}
 		} else {
@@ -2259,9 +2275,12 @@ if (!isDisOpen) {
 
 
 
+<<<<<<< HEAD
 =======
 
 >>>>>>> 0b57287 (updated disconnected funcs)
+=======
+>>>>>>> 3e88736 (updated gitignore)
 
 
 async function updateSongInfo() {

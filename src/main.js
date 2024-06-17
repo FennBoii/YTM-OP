@@ -1,7 +1,7 @@
-process.on('unhandledRejection', (error) => {
-	console.error('Unhandled Promise Rejection:', error);
-	// Add additional error handling logic as needed
-});
+// process.on('unhandledRejection', (error) => {
+// 	console.error('Unhandled Promise Rejection:', error);
+// 	// Add additional error handling logic as needed
+// });
 
 // var scrapeWebContent = require('app.scrapeWebContent');
 /* eslint-disable no-inline-comments */
@@ -12,6 +12,9 @@ process.on('unhandledRejection', (error) => {
 const DiscordRPC = require("discord-rpc");
 const crypto = require('crypto');
 const easyVolume = require("easy-volume");
+const util = require('util');
+const localShortcut = require('electron-localshortcut');
+const exec = util.promisify(require('child_process').exec);
 const os = require('os');
 const {
 	app,
@@ -103,20 +106,11 @@ function updateConfigFile(key, value) {
 
 
 
-
-
-
-
-
-
-
-
-
 /* ---------------------------------DEFINE FUNCTIONS--------------------------------- */
 refreshConfig();
 var publicPageURL;
 var thelink, VersionNumber, synctimeGET, systemVolume = 0, ToggleButtons = true, ChannelToggle = false, TogglePlaylist = true, ToggleArtist = true, volume = 0, artist, songUrl = "https://music.youtube.com", titleTwo = "", detailsTwo = "- Loading -", stateTwo = "- Loading -", ConnectDis = " [ Disconnected ]", detailsThree = "Default", channel = "https://music.youtube.com", error_bool = false, PlaylistCounter = "", ConnectionTitle = "", RealCountdown, CountdownTime, secondTitle = true, thirdTitle = true, textView = false, paused, imageicon, repeat, playlist, channelname, Explicit, join1, join2, timeNow = 1, timeMax, notPlayingDisconnect = false, notPlayingDisconnectText = "", buttonOne = false, buttonTwo = false, buttonThree = false, buttonFour = false, warningText = "", getNAME, TitleExit = "", quitText = "", connectCounter = 1, RealCountdownTitleBar = "", CountdownTimerVar = false, sysVol, LICKCHeck = "", playlistToggleVisible = true;
-var ToggArtAlb = false, configWindow, finalContactVar, GfinalContactVar, urlFinal, outputTest, title, ImageIcon, playlistname, FINALTHREEVAR, joinn1, joinn2, largeImageText, plaaylist, largeImageKey, details, state, ThirdEntry, qualities = 0, result, timeMaxMinus, startTimestamp, endTimestamp, stopTime = 0, timeoutDisco = 0, globalCounter = 0, imgVer = 0, globalDisconnect = false, theFinalowoNess = "Nada There is nothing YET NONEEEEE", systemVolumeDEC;
+var ToggArtAlb = false, configWindow, finalContactVar, GfinalContactVar, urlFinal, outputTest, title, ImageIcon, playlistname, FINALTHREEVAR, joinn1, joinn2, largeImageText, plaaylist, largeImageKey, details, state, ThirdEntry, qualities = 0, result, timeMaxMinus, startTimestamp, endTimestamp, stopTime = 0, timeoutDisco = 0, globalCounter = 0, imgVer = 0, globalDisconnect = false, theFinalowoNess = "Nada There is nothing YET NONEEEEE", systemVolumeDEC, url1, imageiconNOW, imageReplace2, isDiscordRunningVar = false, outputGotten;
 // [ ------------------------------------------------------- ]
 // [ ------------------------------------------------------- ]
 
@@ -740,6 +734,7 @@ const SimpleTemplate = [
 
 function createConfigWindow() {
 	configWindow = new BrowserWindow({
+		frame: false,
 		width: 800,
 		height: 600,
 		webPreferences: {
@@ -779,6 +774,7 @@ if (process.platform == "win64") {
 
 function createSettingsWindow() {
 	settingsWin = new BrowserWindow({
+		frame: false,
 		width: 800,
 		height: 700,
 		webPreferences: {
@@ -795,6 +791,7 @@ function createSettingsWindow() {
 
 function createPREWindow() {
 	win = new BrowserWindow({
+		frame: false,
 		width: 1200,
 		height: 800,
 		icon: "resources/assets/images/Youtube-Music-logo.png",
@@ -856,6 +853,7 @@ function toggleBlockMediaKeys(block) {
 function createWindow() { // lower0
 	// Create the browser window.
 	win = new BrowserWindow({
+		frame: false,
 		width: 1200,
 		height: 800,
 		icon: "resources/assets/images/Youtube-Music-logo.png",
@@ -910,15 +908,38 @@ function createWindow() { // lower0
 
 	});
 
+	win.webContents.on('before-input-event', (event, input) => {
+        if (input.type === 'keyDown' && /^[a-zA-Z]$/.test(input.key)) {
+			let typedCharacters;
+            typedCharacters += input.key.toLowerCase();
+            if (typedCharacters.endsWith('coo')) {
+                console.log('"coo" typed!');
+                const progressContainer = win.webContents.executeJavaScript('document.getElementById("#progressContainer")');
+                progressContainer.classList.add('animate-background');
+                setTimeout(() => {
+                    progressContainer.classList.remove('animate-background');
+                }, 6000);
+                typedCharacters = '';
+            }
+        } else {
+            typedCharacters = '';
+        }
+    });
+
+	setInterval(() => {
+		win.webContents.send('changeYTLayout', imageReplace2);
+
+	}, 2000);
+
 	setInterval(() => {
 		// systemVolume++;
 		win.webContents.send('updateSystemVolume', "system vol:\n" + systemVolumeDEC);
-	}, 1000); // Update every 5 seconds
+	}, 2000); // Update every 5 seconds
 
 	setInterval(() => {
 		// volume++;
 		win.webContents.send('updatePlayerVolume', "player vol:\n" + volume);
-	}, 1000); // Update every 5 seconds
+	}, 2000); // Update every 5 seconds
 
 	// win.webContents.on("dom-ready", settingsHook);
 	win.webContents.on("will-prevent-unload", (e) => e.preventDefault());
@@ -1435,6 +1456,34 @@ async function getContent() {
 		}
 
 
+		// getImageURLNOW
+		try {
+			const javascriptCode = `
+			(function() {
+				return new Promise((resolve) => {
+					const startTime = Date.now();
+					const interval = setInterval(() => {
+						const element = document.querySelector('#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.thumbnail-image-wrapper.style-scope.ytmusic-player-bar > img');
+						if (element) {
+							clearInterval(interval);
+							resolve(element.src || 'None');
+						} else if (Date.now() - startTime > 1000) { // Timeout after 1 seconds
+							clearInterval(interval);
+							resolve('None'); // Resolve with 'None' instead of rejecting
+						}
+					}, 500); // Check every 500ms
+				});
+			})();
+		`;
+
+			imageiconNOW = await executeJavaScript(javascriptCode);
+		} catch (error) {
+			console.log("Script error, imageIconNOW:", error); // Log any errors
+		}
+
+		let imageReplace1 = imageiconNOW.replace("w60", "w4112");
+		imageReplace2 = imageReplace1.replace("h60", "h4112");
+
 		// Get Volume
 		// getVolume().then(volume => {
 		// 	console.log('Volume:', volume);
@@ -1443,7 +1492,15 @@ async function getContent() {
 		// 	console.log("CAUGHT ERROR VOLUME");
 		// });
 
-
+		{/* <div class="lowerArrow" style="
+    width: 20px;
+    height: 20px;
+    color: #1c88e7;
+    display: block;
+    position: relative;
+    z-index: initial;
+    top: -200px;
+"> */}
 
 		// result = await executeJavaScript('document.getElementById(\'share-url\').value');
 		// if (!result) return '- d e p r e s s i o n -';
@@ -1644,6 +1701,7 @@ async function getContent() {
 			// expanse3,
 			// ToggleArtist,
 			// expanse4,
+			isDiscordRunningVar,
 			globalCounter,
 			time: [timeNow, timeMax],
 			expanse5,
@@ -1677,6 +1735,9 @@ async function getContent() {
 			theFinalowoNess,
 			blockMediaKeys,
 			toggleBlockMediaKeys,
+			urlFinal,
+			url1,
+			// finalURL,
 			// CountdownTimerVar, thelink, VersionNumber, synctimeGET, systemVolume, ToggleButtons, ChannelToggle, TogglePlaylist, ToggleArtist, volume, artist, songUrl, titleTwo, detailsTwo, stateTwo, ConnectDis, detailsThree, channel, error_bool, PlaylistCounter, ConnectionTitle, RealCountdown, CountdownTime, secondTitle, thirdTitle, textView, paused, imageicon, repeat, playlist, channelname, Explicit, join1, join2, timeNow, timeMax, notPlayingDisconnect, notPlayingDisconnectText, buttonOne, buttonTwo, buttonThree, buttonFour, warningText, getNAME, TitleExit, quitText, connectCounter, RealCountdownTitleBar, CountdownTimerVar, sysVol, LICKCHeck, playlistToggleVisible,
 			// ToggArtAlb, configWindow, finalContactVar, GfinalContactVar, urlFinal, outputTest, title, ImageIcon, playlistname, FINALTHREEVAR, joinn1, joinn2, largeImageText, plaaylist, largeImageKey, details, endTimestamp, startTimestamp
 			// LICKCHeck,
@@ -1743,8 +1804,8 @@ async function reloadImageUrl() {
 	}
 
 
-	let url1 = imageicon.replace("w60", "w512");
-	urlFinal = url1.replace("h60", "h512");
+	url1 = imageicon.replace("w60", "w4112");
+	urlFinal = url1.replace("h60", "h4112");
 	// console.log("urlFinal =", urlFinal);
 	let finalURL = encodeURIComponent(urlFinal);
 
@@ -1781,11 +1842,11 @@ getContent()
 
 // eslint-disable-next-line no-inline-comments
 const clientId = config.discordID; /* 633709502784602133*/
-DiscordRPC.register(clientId);
+if (isDiscordRunningVar == true) {
+	DiscordRPC.register(clientId);
+}
+const rpc = new DiscordRPC.Client({ transport: 'ipc', }); // 10 seconds timeout
 
-let rpc = new DiscordRPC.Client({
-	transport: "ipc",
-});
 
 let songInfo;
 
@@ -1887,7 +1948,7 @@ function setActivity() {
 			console.log("DISCONNECTeeeeeeeeeD");
 		}
 	}
-	
+
 
 	if (title) {
 		let length = 256;
@@ -1973,18 +2034,20 @@ function setActivity() {
 		if (title) { // LOWER3
 			if (repeat.includes("one")) {
 				largeImageText = VersionNumber;
-				largeImageKey = FINALTHREEVAR;
+				// largeImageKey = FINALTHREEVAR;
+				largeImageKey = urlFinal;
 			}
-
+			
 			if (repeat.includes("one") && paused == "Play") {
 				startTimestamp = 0;
 				endTimestamp = 0;
 			}
-
+			
 			if (repeat.includes("all")) {
 				largeImageText = VersionNumber;
-				largeImageKey = FINALTHREEVAR;
-
+				// largeImageKey = FINALTHREEVAR;
+				largeImageKey = urlFinal;
+				
 			}
 			if (repeat.includes("all") && paused == "Play") {
 				startTimestamp = 0;
@@ -1993,7 +2056,8 @@ function setActivity() {
 
 			if (repeat.includes("off")) {
 				largeImageText = VersionNumber;
-				largeImageKey = FINALTHREEVAR;
+				// largeImageKey = FINALTHREEVAR;
+				largeImageKey = urlFinal;
 			}
 			if (repeat.includes("off") && paused == "Play") {
 				startTimestamp = 0;
@@ -2117,24 +2181,74 @@ function setActivity() {
 		}
 	}
 	if (endTimestamp) activity.endTimestamp = endTimestamp;
-	if (timeoutDisco == 0) {
+	// function afterSend() {
+	if (isDiscordRunningVar == true) {
 		rpc.setActivity(activity);
+		console.log("DONE82")
 	}
+	// }
 }
 
 
-// largeImageURL({ format, size } = {}) {
-// 	if (!this.largeImage) return null;
-// 	if (/^spotify:/.test(this.largeImage)) {
-// 		return `https://i.scdn.co/image/${this.largeImage.slice(8)}`;
-// 	} else if (/^twitch:/.test(this.largeImage)) {
-// 		return `https://static-cdn.jtvnw.net/previews-ttv/live_user_${this.largeImage.slice(7)}.png`;
-// 	}
-// 	return this.activity.presence.client.rest.cdn.AppAsset(this.activity.applicationId, this.largeImage, {
-// 		format,
-// 		size,
-// 	});
-// }
+
+
+
+
+
+
+
+let intervalId;
+let owoYE = 0;
+
+async function isDiscordRunning() {
+	if (owoYE == 0) {
+		try {
+			const { stdout } = await exec('wmic process where name="Discord.exe" get ProcessId');
+			const outputGotten = stdout.trim().replace(/\D/g, ''); // Extract only digits
+			console.log(outputGotten);
+			let DIEEEEE = 0;
+
+			if (DIEEEEE == 0) {
+				if (outputGotten.length > 10) {
+					console.log("DISCORD IS OPEN");
+					owoYE += 1;
+					setTimeout(afterSend(), 5000); // Rerun the function after 5 seconds
+					console.log("Done32545723179864537567896453w4");
+					DIEEEEE += 1;
+					// clearInterval(intervalId); // Stop the interval once Discord is detected as running
+				}
+			} else {
+				console.log("DISCORD IS CLOSED");
+				isDiscordRunningVar = false;
+			}
+		} catch (error) {
+			console.error('Error checking if Discord is running:', error);
+			isDiscordRunningVar = false; // Set the variable to false in case of an error
+		}
+	}
+}
+function runDiscordCheck() {
+	intervalId = setTimeout(isDiscordRunning(), 5000); // Run checkDiscordRunning every 5 seconds
+}
+
+if (isDiscordRunningVar == false) {
+	runDiscordCheck();
+}
+
+
+
+
+
+
+
+
+
+
+// Usage
+if (isDiscordRunningVar == false) {
+	isDiscordRunning();
+};
+
 
 async function updateSongInfo() {
 	if (!rpc || !win) {
@@ -2282,6 +2396,8 @@ function getNativeImage(filePath) {
 }
 
 function setPageName() {
+
+	
 	if (artist && titleTwo) {
 		if (buttonOne == true || buttonTwo == true || buttonThree == true || buttonFour == true) {
 			win.setTitle(
@@ -2304,14 +2420,17 @@ rpc.on("ready", () => {
 	setInterval(setActivity, 1e3);
 	// setInterval(reloadImageUrl, 5e3);
 	setInterval(checkSync, config.resyncSongUrl);
-	setInterval(syncTimeSync, 1000);
+	setInterval(syncTimeSync, 1e8);
 	//setInterval(fullSync, 1e3);
 	setInterval(updateSongInfo, 1e3);
 	setInterval(setPageName, 1e3);
+	setInterval(isDiscordRunning, 3e3);
 	setTimeout(setLargeIconImage, 10000);
 	ConnectDis = " [ Connected ]";
 });
 
-rpc.login({
-	clientId,
-});
+function afterSend() {
+	rpc.login({ clientId });
+	setTimeout(afterSend, 10000); // Rerun the function after 5 seconds
+	isDiscordRunningVar = true;
+}

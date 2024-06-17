@@ -51,4 +51,17 @@ Some stuff I've fixed / need to work on:
 =======
 <center><i><h2>YTM-OP</i></h2></center>
 - this <b>underConstruction</b> branch will be for every time I work on this project to save the progress on. This will be updated very frequently.
+<<<<<<< HEAD
 >>>>>>> 17a107e (updated readme)
+=======
+
+
+<center>
+  <b>How to run without the exe? / New to js?</b>
+  1. Download the ZIP and unzip it to a location.
+  2. open a cmd window in admin mode and make sure you have npm and node installed.
+  3. cd into the directory and type "npm i". (This might take a while)
+  4. When everything is installed it should say: "found 0 vulnerabilities"; when you see this your ready.
+  5. simply run "npm run start". You have launched the development version.
+</center>
+>>>>>>> 988d30d (updated readme)

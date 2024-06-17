@@ -889,6 +889,65 @@ setInterval(() => {
 		systemVolume = Math.floor(parseFloat(secondString));
 		// console.log(`- LOG -- GOT SYS VOL -`);
 	});
+<<<<<<< HEAD
+=======
+
+	systemVolumeDEC = Math.round(systemVolume);
+
+	win.webContents.send('updateSystemVolume', "system vol:\n" + systemVolumeDEC);
+	// console.log(`- LOG -- EXECUTED 'updateSystemVolume' -`)
+}, 1000);
+
+let volumeOUTGET;
+// FUNCTION TO GET PLAUYER VOLUME owo
+setInterval(() => {
+	// volume++;
+
+	try {
+		const javascriptCode = `
+    (function() {
+        return new Promise((resolve) => {
+            const startTime = Date.now();
+            const interval = setInterval(() => {
+                const slider = document.querySelector('#volume-slider');
+                if (slider) {
+                    clearInterval(interval);
+                    resolve(slider.value); // Resolve with the slider's value
+                } else if (Date.now() - startTime > 3000) { // Timeout after 3 seconds
+                    clearInterval(interval);
+                    resolve(0); // Resolve with 0 if slider is not found
+                }
+            }, 500); // Check every 500ms
+        });
+    })();
+    `;
+
+		executeJavaScript(javascriptCode).then((volumeOUT) => {
+			// console.log(`- LOG -- GOT THE PLAYER VOL ELE ${volumeOUT} -`);
+			volumeOUTGET = volumeOUT;
+			win.webContents.send('updatePlayerVolume', "player vol:\n" + volumeOUT);
+		}).catch((error) => {
+			console.log(`- LOG -- GOT PLAYER VOL ERR, VOL: ${volume}, ERR: ${error} -`);
+		});
+	} catch (error) {
+		console.log(`- LOG -- GOT PROMISE ERR, VOL: ${volume}, ERR: ${error} -`);
+	}
+	// console.log(`- LOG -- EXECUTED 'updatePlayerVolume' -`)
+}, 2000);
+
+let intervalIdDisco;
+
+if (isDisOpen == false) {
+	intervalIdDisco = setInterval(() => {
+		process.stdout.write("\x1Bc");
+		console.log(`- / / :DISCONNECTED INFO: \\ \\ -`);
+		console.log(`- LOG -- DISCORD IS 'NOT' OPEN -`);
+		console.log(`- LOG -- SYSTEM VOL: '${systemVolumeDEC}' -`);
+		console.log(`- LOG -- PLAYER VOL: '${volumeOUTGET}' -`);
+		console.log(`- LOG -- ISDISOPEN INFO: '${isDisOpen}' -`);
+	}, 1000);
+}
+>>>>>>> 0b57287 (updated disconnected funcs)
 
 	systemVolumeDEC = Math.round(systemVolume);
 
@@ -2108,9 +2167,15 @@ function setActivity() {
 
 
 
+<<<<<<< HEAD
 // if (isDisOpen === true) {
 // 	var isDisOpenInterval = setInterval(afterSend, 5000);
 // 	console.log(`- LOG -- EXECUTED 'afterSend' -`);
+=======
+// if (isDisOpen == true) {
+var isDisOpenInterval = setInterval(afterSend, 5000);
+console.log(`- LOG -- EXECUTED 'afterSend' -`);
+>>>>>>> 0b57287 (updated disconnected funcs)
 // }
 
 const intervalId = setInterval(isDiscordRunning, 2000); // Run checkDiscordRunning every 5 seconds
@@ -2121,10 +2186,16 @@ async function isDiscordRunning() {
 		const outputGotten = stdout.trim().replace(/\D/g, ''); // Extract only digits
 
 		if (outputGotten.length > 10) {
+<<<<<<< HEAD
 			console.log(`- LOG -- DISCORD ID FOUND: ${outputGotten} -`);
 			if (!isDisOpen) {
 				isDisOpen = true;
 
+=======
+			// console.log(`- LOG -- DISCORD ID FOUND: ${outputGotten} -`);
+			if (!isDisOpen) {
+				isDisOpen = true;
+>>>>>>> 0b57287 (updated disconnected funcs)
 				// console.log(`- LOG -- 'isDisOpen' IS: ${isDisOpen} -`);
 			}
 		} else {
@@ -2141,6 +2212,7 @@ async function isDiscordRunning() {
 		isDisOpen = false;
 	}
 }
+<<<<<<< HEAD
 
 
 
@@ -2187,6 +2259,9 @@ if (!isDisOpen) {
 
 
 
+=======
+
+>>>>>>> 0b57287 (updated disconnected funcs)
 
 
 async function updateSongInfo() {

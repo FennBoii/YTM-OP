@@ -49,7 +49,6 @@ function updateSystemVolumeElement() {
 function updatePlayerVolumeElement() {
   const targetElement = document.querySelector('#right-content > ytmusic-settings-button');
   if (targetElement) {
-    // Create the system volume element if it doesn't exist
     let playerVolumeElement = document.getElementById('playerVolume');
     if (!playerVolumeElement) {
       playerVolumeElement = document.createElement('div');

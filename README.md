@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 [![Node.js CI](https://github.com/FennBoii/YTM-OP/actions/workflows/node.js.yml/badge.svg)](https://github.com/FennBoii/YTM-OP/actions/workflows/node.js.yml) ![Website](https://img.shields.io/website?up_message=site%20UP&down_message=site%20DOWN&url=https%3A%2F%2Fgetname.ytmopdata.net%2F&label=Token%20Page%20-&labelColor=%23ff00ff&link=https%3A%2F%2Fgetname.ytmopdata.net%2F) ![Known Vulnerabilities](https://snyk.io/test/github/FennBoii/YTM-OP/badge.svg)
 
@@ -47,3 +48,7 @@ Some stuff I've fixed / need to work on:
 - No self promotion anywhere (I like to let the consumer use the product however they please, ad-free!)
 
 </center>
+=======
+<center><i><h2>YTM-OP</i></h2></center>
+- this <b>underConstruction</b> branch will be for every time I work on this project to save the progress on. This will be updated very frequently.
+>>>>>>> 17a107e (updated readme)

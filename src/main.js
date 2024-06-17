@@ -3,6 +3,11 @@
 // 	// Add additional error handling logic as needed
 // });
 
+// const readline = require('readline');
+
+// readline.emitKeypressEvents(process.stdin);
+// process.stdin.setRawMode = true;
+
 // var scrapeWebContent = require('app.scrapeWebContent');
 /* eslint-disable no-inline-comments */
 /* eslint-disable complexity */
@@ -39,7 +44,6 @@ const { setTimeout } = require("timers/promises");
 
 const configUrl = 'https://raw.githubusercontent.com/FennBoii/YTM-OP/master/config.json';
 let configPath = path.resolve(os.homedir(), 'config.json');
-console.log(configPath);
 function refreshConfig() {
 	try {
 		// Try to read the config file from the specified path
@@ -109,8 +113,8 @@ function updateConfigFile(key, value) {
 /* ---------------------------------DEFINE FUNCTIONS--------------------------------- */
 refreshConfig();
 var publicPageURL;
-var thelink, VersionNumber, synctimeGET, systemVolume = 0, ToggleButtons = true, ChannelToggle = false, TogglePlaylist = true, ToggleArtist = true, volume = 0, artist, songUrl = "https://music.youtube.com", titleTwo = "", detailsTwo = "- Loading -", stateTwo = "- Loading -", ConnectDis = " [ Disconnected ]", detailsThree = "Default", channel = "https://music.youtube.com", error_bool = false, PlaylistCounter = "", ConnectionTitle = "", RealCountdown, CountdownTime, secondTitle = true, thirdTitle = true, textView = false, paused, imageicon, repeat, playlist, channelname, Explicit, join1, join2, timeNow = 1, timeMax, notPlayingDisconnect = false, notPlayingDisconnectText = "", buttonOne = false, buttonTwo = false, buttonThree = false, buttonFour = false, warningText = "", getNAME, TitleExit = "", quitText = "", connectCounter = 1, RealCountdownTitleBar = "", CountdownTimerVar = false, sysVol, LICKCHeck = "", playlistToggleVisible = true;
-var ToggArtAlb = false, configWindow, finalContactVar, GfinalContactVar, urlFinal, outputTest, title, ImageIcon, playlistname, FINALTHREEVAR, joinn1, joinn2, largeImageText, plaaylist, largeImageKey, details, state, ThirdEntry, qualities = 0, result, timeMaxMinus, startTimestamp, endTimestamp, stopTime = 0, timeoutDisco = 0, globalCounter = 0, imgVer = 0, globalDisconnect = false, theFinalowoNess = "Nada There is nothing YET NONEEEEE", systemVolumeDEC, url1, imageiconNOW, imageReplace2, isDiscordRunningVar = false, outputGotten;
+var VersionNumber, synctimeGET, systemVolume = 0, ToggleButtons = true, ChannelToggle = false, TogglePlaylist = true, ToggleArtist = true, volume = 0, artist, songUrl = "https://music.youtube.com", titleTwo = "", detailsTwo = "- Loading -", stateTwo = "- Loading -", ConnectDis = " [ Disconnected ]", detailsThree = "Default", channel = "https://music.youtube.com", error_bool = false, PlaylistCounter = "", ConnectionTitle = "", RealCountdown, CountdownTime, secondTitle = true, thirdTitle = true, paused, imageicon, repeat, playlist, channelname, Explicit, join1, join2, timeNow = 1, timeMax, notPlayingDisconnect = false, notPlayingDisconnectText = "", buttonOne = false, buttonTwo = false, buttonThree = false, buttonFour = false, warningText = "", TitleExit = "", quitText = "", connectCounter = 1, RealCountdownTitleBar = "", CountdownTimerVar = false;
+var ToggArtAlb = false, configWindow, urlFinal, title, playlistname, FINALTHREEVAR, joinn1, joinn2, largeImageText, plaaylist, largeImageKey, details, state, ThirdEntry, qualities = 0, result, timeMaxMinus, startTimestamp, endTimestamp, stopTime = 0, timeoutDisco = 0, globalCounter = 0, imgVer = 0, theFinalowoNess = "Nada There is nothing YET NONEEEEE", systemVolumeDEC, url1, imageiconNOW, imageReplace2, isDisOpen = false;
 // [ ------------------------------------------------------- ]
 // [ ------------------------------------------------------- ]
 
@@ -127,7 +131,7 @@ const resourcePath =
 function executeJavaScript(code) {
 	return new Promise((resolve, reject) => {
 		if (!win || !win.webContents) {
-			reject(new Error('Window or webContents is not initialized.'));
+			console.log(`- LOG -- NO WINDOW IS INITIALIZED -`)
 		} else {
 			win.webContents.executeJavaScript(code)
 				.then((data) => resolve(data))
@@ -136,46 +140,7 @@ function executeJavaScript(code) {
 	});
 }
 
-
-
-// fs.readFile("./currentPath.txt", 'utf-8', (err, data) => {
-//     if (err) {
-//         console.error(err);
-//         return;
-//     }
-
-//     const currentLocation = config.SETlocation;
-//     const newLocation = config.MOVElocation;
-
-//     if (newLocation && fs.existsSync(newLocation)) {
-//         fs.rename(currentLocation, newLocation, (err) => {
-//             if (err) {
-//                 console.error(err);
-//                 return;
-//             }
-
-//             config.SETlocation = newLocation; // Update parsedConfig, not the outer config
-//             fs.writeFile(config.SETlocation, JSON.stringify(config), (err) => {
-//                 if (err) {
-//                     console.error(err);
-//                     return;
-//                 }
-
-//                 console.log(`File moved from ${currentLocation} to ${newLocation}`);
-//             });
-//         });
-//     } else {
-// 		console.log("LOCATIONS");
-// 		console.log("-----------------");
-// 		console.log(config.SETlocation);
-// 		console.log(config.MOVElocation);
-// 		console.log("-----------------");
-//         console.error(`Invalid new location: ${newLocation}`);
-//     }
-// });
-
 function SETITSNAME() {
-	// console.log('-- Welcome Back ' + config.username + ' --');
 	console.log("-- " + config.username + " --");
 }
 
@@ -198,7 +163,6 @@ function checkSync() {
 				const response = await axios.get(`${baseURL}/updateTheLink.php`, {
 					params: theLinkData,
 				});
-				console.log('Update "thelink" response:', response.data);
 			} catch (error) {
 				console.error('Error updating "thelink":', error.message);
 			}
@@ -232,7 +196,6 @@ function checkSync() {
 				const linksCombined = linkWithoutTimeParam + timeParamValue;
 
 				if (songUrl == linksCombined) {
-					// Check the time difference
 					if (Math.abs(synctime - timeNow) < config.outOfSyncPlayingSong) {
 						console.log("This doesn't need to be synced again");
 					} else {
@@ -248,31 +211,25 @@ function checkSync() {
 			})
 			.catch((error) => {
 				if (error.response) {
-					// The request was made, but the server responded with an error status code
 					console.error(
 						"Server responded with status code:",
 						error.response.status
 					);
 					console.error("Response data:", error.response.data);
 				} else if (error.request) {
-					// The request was made, but no response was received
 					console.error("No response received from the server.");
 				} else {
-					// Something else went wrong
 					console.error("Error:", error.message);
 				}
 			});
 	} else {
-		console.log("rawerrrrrr~");
 	}
-	console.log("executed rawerr~");
 }
 
 function syncTimeSync() {
 	if (ConnectionTitle.includes("-- Sending --")) {
-		const baseURL = "https://getname.ytmopdata.net/changeSyncTime.php"; // Replace with your base URL
+		const baseURL = "https://getname.ytmopdata.net/changeSyncTime.php";
 
-		// Define the data for updating the "synctime" value
 		const syncTimeData = {
 			siteName: config.nameToken,
 			givenNameToken: config.givenNameToken,
@@ -285,7 +242,6 @@ function syncTimeSync() {
 				const response = await axios.get(baseURL, {
 					params: syncTimeData,
 				});
-				console.log('Update "synctime" response:', response.data);
 			} catch (error) {
 				console.error('Error updating "synctime":', error.message);
 			}
@@ -293,7 +249,7 @@ function syncTimeSync() {
 
 		updateSyncTime();
 	}
-	console.log("executed synctime");
+	console.log(`- LOG -- 'synctime' -`);
 }
 
 let win, settingsWin;
@@ -479,10 +435,6 @@ const menuTemplate = [
 			{
 				label: "Buttons",
 				submenu: [
-					// {
-					// 	label: '- Button Stats -',
-					// 	label:	PlaylistCounter,
-					// },
 					{
 						label: "ToggleButtonsOn",
 						click() {
@@ -642,7 +594,6 @@ const menuTemplate = [
 ];
 
 ipcMain.on('quit-app', () => {
-	// Quit the application
 	app.quit();
 	app.relaunch();
 });
@@ -653,19 +604,17 @@ ipcMain.on("load-config", (event) => {
 		"utf8",
 		(err, data) => {
 			if (err) {
-				// Handle the error
 				console.error("Error reading the config file", err);
 				return;
 			}
 			const config = JSON.parse(data);
-			console.log("Sending config data:", config); // Check the entire config object
+			console.log("Sending config data:", config);
 			event.sender.send("config-loaded", config);
 		}
 	);
-	console.log("executed load-Config");
+	console.log(`- LOG -- 'load-Config' -`);
 });
 
-// Listen for a request to save the updated config file
 ipcMain.on("save-config", (event, updatedConfig) => {
 	fs.writeFile(
 		configPath,
@@ -673,20 +622,17 @@ ipcMain.on("save-config", (event, updatedConfig) => {
 		"utf8",
 		(err) => {
 			if (err) {
-				// Handle error
 				return;
 			}
-			// Optionally, confirm that the file was saved
 			event.sender.send("config-saved", "success");
 		}
 	);
-	console.log("executed saveConfig");
+	console.log(`- LOG -- EXECUTED 'saveConfig' -`);
 });
 
 ipcMain.on("request-config", (event) => {
 	fs.readFile(configPath, "utf8", (err, data) => {
 		if (err) {
-			// Handle error, maybe send an error message back to renderer
 			console.error("Error reading the file", err);
 			event.reply("config-response", {
 				error: err.message,
@@ -697,7 +643,7 @@ ipcMain.on("request-config", (event) => {
 			data: JSON.parse(data),
 		});
 	});
-	console.log("executed request-Config");
+	console.log(`- LOG -- 'request-Config' -`);
 });
 
 const keyword = "Connected";
@@ -711,7 +657,7 @@ function focusElectronApp() {
 		win.show();
 		win.focus();
 	}
-	console.log("executed FocusElectronApp");
+	console.log(`- LOG -- EXECUTED 'FocusElectronApp' -`);
 }
 
 
@@ -734,13 +680,14 @@ const SimpleTemplate = [
 
 function createConfigWindow() {
 	configWindow = new BrowserWindow({
-		frame: false,
+		frame: true,
 		width: 800,
 		height: 600,
 		webPreferences: {
 			preload: path.join(__dirname, "preload.js"),
 			nodeIntegration: false,
 			contextIsolation: true,
+			sandbox: true,
 		},
 	});
 	const menu = Menu.buildFromTemplate(SimpleTemplate);
@@ -753,7 +700,7 @@ function createConfigWindow() {
 		Menu.setApplicationMenu(menu);
 	});
 
-	console.log("executed CreateConfigWindow")
+	console.log(`- LOG -- EXECUTED 'CreateConfigWindow -`);
 } //lower5
 
 function DiscordConnect() {
@@ -774,11 +721,10 @@ if (process.platform == "win64") {
 
 function createSettingsWindow() {
 	settingsWin = new BrowserWindow({
-		frame: false,
+		frame: true,
 		width: 800,
 		height: 700,
 		webPreferences: {
-			// preload: path.join(process.cwd(), 'src', 'preload.js'),
 			preload: path.join(__dirname, "preload.js"),
 		},
 	});
@@ -786,39 +732,36 @@ function createSettingsWindow() {
 	settingsWin.setResizable(true);
 	Menu.setApplicationMenu(menu);
 	settingsWin.setMenuBarVisibility(true);
-	console.log("executed createSettingsWindow");
+	console.log(`- LOG -- EXECUTED 'createSettingsWindow' -`);
 }
 
 function createPREWindow() {
 	win = new BrowserWindow({
-		frame: false,
+		frame: true,
 		width: 1200,
 		height: 800,
 		icon: "resources/assets/images/Youtube-Music-logo.png",
 		webPreferences: {
-			// preload: path.join(process.cwd(), 'src', 'preload.js'),
 			preload: path.join(__dirname, "../PRE/preload.js"),
 			nodeIntegration: true,
 			contextIsolation: true,
+			webSecurity: true,
 		},
 	});
 
 	win.loadFile("PRE/index.html");
 
-	// Listen for message from PRE app
 	ipcMain.on('key-exchange-successful', () => {
-		// Open the main window
 		createWindow();
 		if (!config.loadLastURL.includes("music")) {
 			win.loadURL("https://music.youtube.com/")
 		}
 	});
 	ipcMain.on('open-failed-url', () => {
-		// Open the main window
 		createWindow();
 		win.loadURL("https://getname.ytmopdata.net/")
 	});
-	console.log("executed createPREWindow");
+	console.log(`- LOG -- EXECUTED 'createPREWindow' -`);
 
 	globalShortcut.register('MediaPreviousTrack', (event) => {
 		if (!blockMediaKeys) {
@@ -850,10 +793,9 @@ function toggleBlockMediaKeys(block) {
 	blockMediaKeys = block;
 }
 
-function createWindow() { // lower0
-	// Create the browser window.
+function createWindow() { // lower
 	win = new BrowserWindow({
-		frame: false,
+		frame: true,
 		width: 1200,
 		height: 800,
 		icon: "resources/assets/images/Youtube-Music-logo.png",
@@ -909,52 +851,90 @@ function createWindow() { // lower0
 	});
 
 	win.webContents.on('before-input-event', (event, input) => {
-        if (input.type === 'keyDown' && /^[a-zA-Z]$/.test(input.key)) {
+		if (input.type === 'keyDown' && /^[a-zA-Z]$/.test(input.key)) {
 			let typedCharacters;
-            typedCharacters += input.key.toLowerCase();
-            if (typedCharacters.endsWith('coo')) {
-                console.log('"coo" typed!');
-                const progressContainer = win.webContents.executeJavaScript('document.getElementById("#progressContainer")');
-                progressContainer.classList.add('animate-background');
-                setTimeout(() => {
-                    progressContainer.classList.remove('animate-background');
-                }, 6000);
-                typedCharacters = '';
-            }
-        } else {
-            typedCharacters = '';
-        }
-    });
-
-	setInterval(() => {
-		win.webContents.send('changeYTLayout', imageReplace2);
-
-	}, 2000);
-
-	setInterval(() => {
-		// systemVolume++;
-		win.webContents.send('updateSystemVolume', "system vol:\n" + systemVolumeDEC);
-	}, 2000); // Update every 5 seconds
-
-	setInterval(() => {
-		// volume++;
-		win.webContents.send('updatePlayerVolume', "player vol:\n" + volume);
-	}, 2000); // Update every 5 seconds
-
-	// win.webContents.on("dom-ready", settingsHook);
+			typedCharacters += input.key.toLowerCase();
+			if (typedCharacters.endsWith('coo')) {
+				console.log('"coo" typed!');
+				const progressContainer = win.webContents.executeJavaScript('document.getElementById("#progressContainer")');
+				progressContainer.classList.add('animate-background');
+				setTimeout(() => {
+					progressContainer.classList.remove('animate-background');
+				}, 6000);
+				typedCharacters = '';
+			}
+		} else {
+			typedCharacters = '';
+		}
+	});
 	win.webContents.on("will-prevent-unload", (e) => e.preventDefault());
-	console.log("executed createWindow");
-
+	console.log(`- LOG -- EXECUTED CREATEWINDOW -`);
 }
 
+setInterval(() => {
+	win.webContents.send('changeYTLayout', imageReplace2);
+	// console.log(`- LOG -- EXECUTED 'changeYTLayout' -`)
+}, 2000);
 
+// FUNCTION TO GET SYSTEM VOLUME uwu
+setInterval(() => {
+	// systemVolume++;
+	// console.log(`- LOG -- RAN 'GETVOL' -`);
+	const executablePath = "C:/Program Files/YTM-OP/VolumeFind.exe";
 
+	const child = spawn(executablePath);
 
+	child.stdout.on("data", (data) => {
+		let secondString = data.slice(0, -2);
+		systemVolume = Math.floor(parseFloat(secondString));
+		// console.log(`- LOG -- GOT SYS VOL -`);
+	});
 
+	systemVolumeDEC = Math.round(systemVolume);
 
+	win.webContents.send('updateSystemVolume', "system vol:\n" + systemVolumeDEC);
+	// console.log(`- LOG -- EXECUTED 'updateSystemVolume' -`)
+}, 1000);
 
+let volumeOUTGET;
+// FUNCTION TO GET PLAUYER VOLUME owo
+setInterval(() => {
+	// volume++;
 
+	try {
+		const javascriptCode = `
+    (function() {
+        return new Promise((resolve) => {
+            const startTime = Date.now();
+            const interval = setInterval(() => {
+                const slider = document.querySelector('#volume-slider');
+                if (slider) {
+                    clearInterval(interval);
+                    resolve(slider.value); // Resolve with the slider's value
+                } else if (Date.now() - startTime > 3000) { // Timeout after 3 seconds
+                    clearInterval(interval);
+                    resolve(0); // Resolve with 0 if slider is not found
+                }
+            }, 500); // Check every 500ms
+        });
+    })();
+    `;
 
+		executeJavaScript(javascriptCode).then((volumeOUT) => {
+			// console.log(`- LOG -- GOT THE PLAYER VOL ELE ${volumeOUT} -`);
+			volumeOUTGET = volumeOUT;
+			win.webContents.send('updatePlayerVolume', "player vol:\n" + volumeOUT);
+		}).catch((error) => {
+			console.log(`- LOG -- GOT PLAYER VOL ERR, VOL: ${volume}, ERR: ${error} -`);
+		});
+	} catch (error) {
+		console.log(`- LOG -- GOT PROMISE ERR, VOL: ${volume}, ERR: ${error} -`);
+	}
+	// console.log(`- LOG -- EXECUTED 'updatePlayerVolume' -`)
+}, 2000);
+
+let intervalIdDisco;
+let aftersendStatus = false;
 
 app.on("ready", createPREWindow);
 app.on("ready", focusElectronApp);
@@ -963,7 +943,6 @@ app.on("ready", focusElectronApp);
 ipcMain.on("sendDataToMain", (event, dataToUpdate) => {
 	const filePath = path.join(configPath);
 
-	// Read the existing JSON file
 	fs.readFile(filePath, "utf8", (readErr, data) => {
 		if (readErr) {
 			console.error("Error reading file:", readErr);
@@ -974,16 +953,13 @@ ipcMain.on("sendDataToMain", (event, dataToUpdate) => {
 			return;
 		}
 
-		// Parse the existing data
 		let config = JSON.parse(data);
 
-		// Merge the new data with the existing data
 		let mergedData = {
 			...config,
 			...dataToUpdate,
 		};
 
-		// Write the updated object back to the file
 		fs.writeFile(
 			filePath,
 			JSON.stringify(mergedData, null, 2),
@@ -997,7 +973,6 @@ ipcMain.on("sendDataToMain", (event, dataToUpdate) => {
 					});
 				} else {
 					console.log("File updated with merged data successfully.");
-					// Send success response back to the renderer
 					event.sender.send("updateResponse", {
 						success: true,
 						message: "Data received and file updated",
@@ -1010,7 +985,7 @@ ipcMain.on("sendDataToMain", (event, dataToUpdate) => {
 			}
 		);
 	});
-	console.log("executed senddatatomain");
+	console.log(`- LOG -- 'senddatatomain' -`);
 	loadCurrentGivenURL();
 });
 
@@ -1018,12 +993,7 @@ function loadCurrentGivenURL() {
 	win.loadURL(config.loadLastURL);
 }
 
-let efyud = 0;
-if (efyud == 0) {
-	setTimeout(10000, reloadPage);
-	efyud += 1;
-	console.log("DIDMEDIDIT");
-}
+setTimeout(10000, reloadPage);
 function reloadPage() {
 	win.webContents.reloadIgnoringCache();
 }
@@ -1066,7 +1036,7 @@ async function getContent() {
 							if (element) {
 								clearInterval(interval);
 								resolve(element.title || 'None');
-							} else if (Date.now() - startTime > 1000) { // Timeout after 1 seconds
+							} else if (Date.now() - startTime > 3000) { // Timeout after 1 seconds
 								clearInterval(interval);
 								resolve('None'); // Resolve with 'None' instead of rejecting
 							}
@@ -1101,7 +1071,7 @@ async function getContent() {
 							if (element) {
 								clearInterval(interval);
 								resolve(element.title || 'None');
-							} else if (Date.now() - startTime > 1000) { // Timeout after 1 seconds
+							} else if (Date.now() - startTime > 3000) { // Timeout after 1 seconds
 								clearInterval(interval);
 								resolve('None'); // Resolve with 'None' instead of rejecting
 							}
@@ -1128,7 +1098,7 @@ async function getContent() {
 							if (element) {
 								clearInterval(interval);
 								resolve(element.getAttribute('aria-valuenow') || 'None');
-							} else if (Date.now() - startTime > 1000) { // Timeout after 1 seconds
+							} else if (Date.now() - startTime > 3000) { // Timeout after 1 seconds
 								clearInterval(interval);
 								resolve('None'); // Resolve with 'None' instead of rejecting
 							}
@@ -1154,7 +1124,7 @@ async function getContent() {
 									if (element) {
 										clearInterval(interval);
 										resolve(element.getAttribute('aria-valuemax') || 'None');
-									} else if (Date.now() - startTime > 1000) { // Timeout after 1 seconds
+									} else if (Date.now() - startTime > 3000) { // Timeout after 1 seconds
 										clearInterval(interval);
 										resolve('None'); // Resolve with 'None' instead of rejecting
 									}
@@ -1180,7 +1150,7 @@ async function getContent() {
 							if (element) {
 								clearInterval(interval);
 								resolve(element.title || 'None');
-							} else if (Date.now() - startTime > 1000) { // Timeout after 1 seconds
+							} else if (Date.now() - startTime > 3000) { // Timeout after 1 seconds
 								clearInterval(interval);
 								resolve('None'); // Resolve with 'None' instead of rejecting
 							}
@@ -1206,7 +1176,7 @@ async function getContent() {
 						if (element) {
 							clearInterval(interval);
 							resolve(element.title || 'None');
-						} else if (Date.now() - startTime > 1000) { // Timeout after 1 seconds
+						} else if (Date.now() - startTime > 3000) { // Timeout after 1 seconds
 							clearInterval(interval);
 							resolve('None'); // Resolve with 'None' instead of rejecting
 						}
@@ -1228,13 +1198,11 @@ async function getContent() {
 		if (win.webContents.getURL() != null) {
 			result = win.webContents.getURL();
 			// console.log("Load7-1");
-		}
-		if (result.includes("watch?v")) {
+		} else if (result.includes("watch?v")) {
 			songUrl = result;
-		}
-		if (!result) {
+		} else if (!result) {
 			// console.log("Load7-2");
-			return reject('Error grabbing song url');
+			return reject('- LOG -- ERROR GRABBING SONG URL -');
 		}
 
 
@@ -1249,7 +1217,7 @@ async function getContent() {
 						if (element) {
 							clearInterval(interval);
 							resolve(element.textContent || 'None');
-						} else if (Date.now() - startTime > 1000) { // Timeout after 1 seconds
+						} else if (Date.now() - startTime > 3000) { // Timeout after 1 seconds
 							clearInterval(interval);
 							resolve('None'); // Resolve with 'None' instead of rejecting
 						}
@@ -1277,7 +1245,7 @@ async function getContent() {
 							if (element) {
 								clearInterval(interval);
 								resolve(element.href);
-							} else if (Date.now() - startTime > 1000) { // Timeout after 1 seconds
+							} else if (Date.now() - startTime > 3000) { // Timeout after 1 seconds
 								clearInterval(interval);
 								resolve('https://google.com'); // Resolve with the default URL instead of rejecting
 							}
@@ -1304,18 +1272,18 @@ async function getContent() {
 		try {
 			const javascriptCode = `
 				(function() {
-					console.log('Script started for fetching channel'); // Log start
+					// console.log('Script started for fetching channel'); // Log start
 					return new Promise((resolve) => {
 						const startTime = Date.now();
 						const interval = setInterval(() => {
-							console.log('Checking for channel element...'); // Log each check
+							// console.log('Checking for channel element...'); // Log each check
 							const element = document.querySelector('#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(1)');
 							if (element) {
-								console.log('Channel element found:', element); // Log element found
+								// console.log('Channel element found:', element); // Log element found
 								clearInterval(interval);
 								resolve(element.href);
-							} else if (Date.now() - startTime > 1000) { // Timeout after 1 seconds
-								console.log('Timeout reached, channel element not found'); // Log timeout
+							} else if (Date.now() - startTime > 3000) { // Timeout after 1 seconds
+								// console.log('Timeout reached, channel element not found'); // Log timeout
 								clearInterval(interval);
 								resolve('https://google.com'); // Resolve with the default URL instead of rejecting
 							}
@@ -1342,18 +1310,18 @@ async function getContent() {
 		if (ChannelToggle == true) {
 			const javascriptCode = `
 				(function() {
-					console.log('Script started for fetching channel name (ChannelToggle == true)'); // Log start
+					// console.log('Script started for fetching channel name (ChannelToggle == true)'); // Log start
 					return new Promise((resolve) => {
 						const startTime = Date.now();
 						const interval = setInterval(() => {
-							console.log('Checking for channel name element...'); // Log each check
+							// console.log('Checking for channel name element...'); // Log each check
 							const element = document.querySelector('#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(1)');
 							if (element) {
-								console.log('Channel name element found:', element); // Log element found
+								// console.log('Channel name element found:', element); // Log element found
 								clearInterval(interval);
 								resolve(element.innerText);
-							} else if (Date.now() - startTime > 1000) { // Timeout after 1 seconds
-								console.log('Timeout reached, channel name element not found'); // Log timeout
+							} else if (Date.now() - startTime > 3000) { // Timeout after 1 seconds
+								// console.log('Timeout reached, channel name element not found'); // Log timeout
 								clearInterval(interval);
 								resolve('Unknown Channel'); // Resolve with a default value instead of rejecting
 							}
@@ -1364,25 +1332,24 @@ async function getContent() {
 			channelname = await executeJavaScript(javascriptCode);
 			if (channelname == "Unknown Channel") {
 				ToggleArtist = false;
-			}
-			if (channelname != "Unknown Channel") {
+			} else {
 				ToggleArtist = true;
 			}
 		} else if (ChannelToggle == false) {
 			const javascriptCode = `
 				(function() {
-					console.log('Script started for fetching channel name (ChannelToggle == false)'); // Log start
+					// console.log('Script started for fetching channel name (ChannelToggle == false)'); // Log start
 					return new Promise((resolve) => {
 						const startTime = Date.now();
 						const interval = setInterval(() => {
-							console.log('Checking for alternative channel name element...'); // Log each check
+							// console.log('Checking for alternative channel name element...'); // Log each check
 							const element = document.querySelector('#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > a:nth-child(1)');
 							if (element) {
-								console.log('Alternative channel name element found:', element); // Log element found
+								// console.log('Alternative channel name element found:', element); // Log element found
 								clearInterval(interval);
 								resolve(element.textContent);
-							} else if (Date.now() - startTime > 1000) { // Timeout after 1 seconds
-								console.log('Timeout reached, alternative channel name element not found'); // Log timeout
+							} else if (Date.now() - startTime > 3000) { // Timeout after 1 seconds
+								// console.log('Timeout reached, alternative channel name element not found'); // Log timeout
 								clearInterval(interval);
 								resolve('Unknown Channel'); // Resolve with a default value instead of rejecting
 							}
@@ -1396,8 +1363,7 @@ async function getContent() {
 			if (channelname == "Unknown Channel") {
 				// console.log("Load11-2");
 				ToggleArtist = false;
-			}
-			if (channelname != "Unknown Channel") {
+			} else {
 				ToggleArtist = true;
 			}
 		}
@@ -1413,7 +1379,7 @@ async function getContent() {
 						if (element) {
 							clearInterval(interval);
 							resolve(element.children.length || 'None');
-						} else if (Date.now() - startTime > 1000) { // Timeout after 1 seconds
+						} else if (Date.now() - startTime > 3000) { // Timeout after 1 seconds
 							clearInterval(interval);
 							resolve('None'); // Resolve with 'None' instead of rejecting
 						}
@@ -1438,7 +1404,7 @@ async function getContent() {
 							if (slider) {
 								clearInterval(interval);
 								resolve(slider.value); // Resolve with the slider's value
-							} else if (Date.now() - startTime > 1000) { // Timeout after 1 second
+							} else if (Date.now() - startTime > 3000) { // Timeout after 1 second
 								clearInterval(interval);
 								resolve(0); // Resolve with 0 if slider is not found
 							}
@@ -1467,7 +1433,7 @@ async function getContent() {
 						if (element) {
 							clearInterval(interval);
 							resolve(element.src || 'None');
-						} else if (Date.now() - startTime > 1000) { // Timeout after 1 seconds
+						} else if (Date.now() - startTime > 3000) { // Timeout after 1 seconds
 							clearInterval(interval);
 							resolve('None'); // Resolve with 'None' instead of rejecting
 						}
@@ -1481,26 +1447,15 @@ async function getContent() {
 			console.log("Script error, imageIconNOW:", error); // Log any errors
 		}
 
-		let imageReplace1 = imageiconNOW.replace("w60", "w4112");
-		imageReplace2 = imageReplace1.replace("h60", "h4112");
+		let imageReplace1 = "https://getname.ytmopdata.net?w60?h4122";
+		if (isDisOpen == false) {
+			imageReplace1 = "https://getname.ytmopdata.net?w60?h4122";
+		} else if (isDisOpen == true) {
+			imageReplace1 = imageiconNOW.replace("w60", "w4112");
+			imageReplace2 = imageReplace1.replace("h60", "h4112");
+		}
 
-		// Get Volume
-		// getVolume().then(volume => {
-		// 	console.log('Volume:', volume);
-		// }).catch(error => {
-		// 	// console.error('Error:', error);
-		// 	console.log("CAUGHT ERROR VOLUME");
-		// });
-
-		{/* <div class="lowerArrow" style="
-    width: 20px;
-    height: 20px;
-    color: #1c88e7;
-    display: block;
-    position: relative;
-    z-index: initial;
-    top: -200px;
-"> */}
+		// <---- Custom CSS Starts Here
 
 		// result = await executeJavaScript('document.getElementById(\'share-url\').value');
 		// if (!result) return '- d e p r e s s i o n -';
@@ -1529,14 +1484,11 @@ async function getContent() {
 
 		if ((TogglePlaylist == false) & (ToggleArtist == false)) {
 			PlaylistCounter = "playlist = false, artist = false";
-		}
-		if ((TogglePlaylist == true) & (ToggleArtist == false)) {
+		} else if ((TogglePlaylist == true) & (ToggleArtist == false)) {
 			PlaylistCounter = "playlist = true, artist = false";
-		}
-		if ((TogglePlaylist == false) & (ToggleArtist == true)) {
+		} else if ((TogglePlaylist == false) & (ToggleArtist == true)) {
 			PlaylistCounter = "playlist = false, artist = true";
-		}
-		if ((TogglePlaylist == true) & (ToggleArtist == true)) {
+		} else if ((TogglePlaylist == true) & (ToggleArtist == true)) {
 			PlaylistCounter = "playlist = true, artist = true";
 		}
 
@@ -1546,11 +1498,10 @@ async function getContent() {
 
 		if (CountdownTimerVar == true) {
 			RealCountdownTitleBar = " [ Countdown Till End: " + RealCountdown + " ]";
-		}
-
-		if (CountdownTimerVar == false) {
+		} else if (CountdownTimerVar == false) {
 			RealCountdownTitleBar = "";
 		}
+
 
 		if (buttonFour == true) {
 			if (timeNow == timeMaxMinus) {
@@ -1568,9 +1519,7 @@ async function getContent() {
 				app.quit();
 				console.log("SHUTDOWN TIME");
 			}
-		}
-
-		if (buttonThree == true) {
+		} else if (buttonThree == true) {
 			if (timeNow == timeMaxMinus) {
 				rpc.destroy();
 				ConnectDis = " [ Disconnected ]";
@@ -1586,9 +1535,7 @@ async function getContent() {
 				app.quit();
 				console.log("REBOOT TIME");
 			}
-		}
-
-		if (buttonTwo == true) {
+		} else if (buttonTwo == true) {
 			if (timeNow == timeMaxMinus) {
 				rpc.destroy();
 				ConnectDis = " [ Disconnected ]";
@@ -1607,9 +1554,7 @@ async function getContent() {
 				app.quit();
 				console.log("SLEEP TIME");
 			}
-		}
-
-		if (buttonOne == true) {
+		} else if (buttonOne == true) {
 			if (timeNow == timeMaxMinus) {
 				rpc.destroy();
 				ConnectDis = " [ Disconnected ]";
@@ -1624,9 +1569,7 @@ async function getContent() {
 		if (ToggArtAlb == false) {
 			join1 = Dash + channelname + Dash;
 			join2 = Dash + playlistname + Dash;
-		}
-
-		if (ToggArtAlb == true) {
+		} else if (ToggArtAlb == true) {
 			join2 = Dash + config.AlternateTopButtonValue + Dash;
 			join1 = Dash + config.AlternateBottomButtonValue + Dash;
 		}
@@ -1634,15 +1577,15 @@ async function getContent() {
 		let albumORsong = config.albumORsong;
 
 		if (albumORsong == "song") {
-			if (title && playlist) {
+			if (isDisOpen) {
 				updateConfigFile("loadLastURL", songUrl.toString());
 			}
 		} else if (albumORsong == "album") {
-			if (title && playlist) {
+			if (isDisOpen) {
 				updateConfigFile("loadLastURL", playlist.toString());
 			}
 		} else if (albumORsong == "default") {
-			if (title && playlist) {
+			if (isDisOpen) {
 				updateConfigFile("https://music.youtube.com/");
 			}
 		}
@@ -1657,20 +1600,6 @@ async function getContent() {
 		var expanse3 = "-";
 		var expanse4 = "-------------------------------------------";
 		var expanse5 = "-------------------------------------------";
-
-		const executablePath = "C:/Program Files/YTM-OP/VolumeFind.exe";
-
-		const child = spawn(executablePath);
-
-		child.stdout.on("data", (data) => {
-			let secondString = data.slice(0, -2);
-			systemVolume = Math.floor(parseFloat(secondString));
-		});
-
-		// Create Element Section
-		if (textView == true) {
-			document.createElement("textarea");
-		}
 
 		publicPageURL = win.webContents.getURL();
 
@@ -1701,10 +1630,9 @@ async function getContent() {
 			// expanse3,
 			// ToggleArtist,
 			// expanse4,
-			isDiscordRunningVar,
+			// expanse5,
 			globalCounter,
 			time: [timeNow, timeMax],
-			expanse5,
 			title,
 			titleTwo,
 			ThirdEntry,
@@ -1738,7 +1666,7 @@ async function getContent() {
 			urlFinal,
 			url1,
 			// finalURL,
-			// CountdownTimerVar, thelink, VersionNumber, synctimeGET, systemVolume, ToggleButtons, ChannelToggle, TogglePlaylist, ToggleArtist, volume, artist, songUrl, titleTwo, detailsTwo, stateTwo, ConnectDis, detailsThree, channel, error_bool, PlaylistCounter, ConnectionTitle, RealCountdown, CountdownTime, secondTitle, thirdTitle, textView, paused, imageicon, repeat, playlist, channelname, Explicit, join1, join2, timeNow, timeMax, notPlayingDisconnect, notPlayingDisconnectText, buttonOne, buttonTwo, buttonThree, buttonFour, warningText, getNAME, TitleExit, quitText, connectCounter, RealCountdownTitleBar, CountdownTimerVar, sysVol, LICKCHeck, playlistToggleVisible,
+			// CountdownTimerVar, thelink, VersionNumber, synctimeGET, systemVolume, ToggleButtons, ChannelToggle, TogglePlaylist, ToggleArtist, volume, artist, songUrl, titleTwo, detailsTwo, stateTwo, ConnectDis, detailsThree, channel, error_bool, PlaylistCounter, ConnectionTitle, RealCountdown, CountdownTime, secondTitle, thirdTitle, paused, imageicon, repeat, playlist, channelname, Explicit, join1, join2, timeNow, timeMax, notPlayingDisconnect, notPlayingDisconnectText, buttonOne, buttonTwo, buttonThree, buttonFour, warningText, getNAME, TitleExit, quitText, connectCounter, RealCountdownTitleBar, CountdownTimerVar, sysVol, LICKCHeck, playlistToggleVisible,
 			// ToggArtAlb, configWindow, finalContactVar, GfinalContactVar, urlFinal, outputTest, title, ImageIcon, playlistname, FINALTHREEVAR, joinn1, joinn2, largeImageText, plaaylist, largeImageKey, details, endTimestamp, startTimestamp
 			// LICKCHeck,
 			// synctimeGET,
@@ -1789,7 +1717,7 @@ async function reloadImageUrl() {
 					if (element) {
 						clearInterval(interval);
 						resolve(element.src || 'None');
-					} else if (Date.now() - startTime > 1000) { // Timeout after 1 seconds
+					} else if (Date.now() - startTime > 3000) { // Timeout after 1 seconds
 						clearInterval(interval);
 						resolve('None'); // Resolve with 'None' instead of rejecting
 					}
@@ -1821,28 +1749,20 @@ async function reloadImageUrl() {
 
 	try {
 		const response = await axios.get(`${baseURL}/webpageEdit.php`, { params: theLinkData });
-		// console.log('Update "thelink" response:', response.data);
-		// console.log("response:", response);
+		console.log('Update "thelink" response:', response.data);
+		console.log("response:", response);
 	} catch (error) {
 		console.error('Error updating "thelink":', error.message);
 	} //LOWER1
 	imgVer += 1;
+	console.error(`- LOG -- DID A THING -`);
 }
 
-
-console.log("TitleTwo Output:" + titleTwo.toString());
-
-getContent()
-	.then(data => {
-		console.log("SUCCESS" + data);
-	})
-	.catch(error => {
-		console.error("FAILED" + error);
-	});
+getContent();
 
 // eslint-disable-next-line no-inline-comments
 const clientId = config.discordID; /* 633709502784602133*/
-if (isDiscordRunningVar == true) {
+if (isDisOpen == true) {
 	DiscordRPC.register(clientId);
 }
 const rpc = new DiscordRPC.Client({ transport: 'ipc', }); // 10 seconds timeout
@@ -1878,8 +1798,7 @@ function setActivity() {
 	};
 	const now = new Date();
 
-	systemVolumeDEC = Math.round(systemVolume);
-	VersionNumber = `Player volume is at: ${volume}% System Volume is at: ${systemVolumeDEC}%`;
+	VersionNumber = `Player Volume is at: ${volume}% System Volume is at: ${systemVolumeDEC}%`;
 
 	if (CountdownTimerVar == true) {
 		if (RealCountdown >= 0 && RealCountdown < 360) {
@@ -1897,15 +1816,15 @@ function setActivity() {
 	if (title && CountdownTimerVar == false) {
 		warningText = "";
 		if (repeat.includes("off") && paused == "Pause") {
-			console.log("yayDONE1");
+			// console.log("yayDONE1");
 			ThirdEntry = "▶️ •";
 			qualities = 1;
 		} else if (repeat.includes("all") && paused == "Pause") {
-			console.log("yayDONE2");
+			// console.log("yayDONE2");
 			ThirdEntry = "🔁 •";
 			qualities = 2;
 		} else if (repeat.includes("one") && paused == "Pause") {
-			console.log("yayDONE3");
+			// console.log("yayDONE3");
 			ThirdEntry = "🔂 •";
 			qualities = 3;
 		}
@@ -1954,11 +1873,11 @@ function setActivity() {
 		let length = 256;
 		if (title.length > length) {
 			var NewTitle = title.substring(0, length);
-			console.log("CUT");
+			// console.log("CUT");
 		}
 		else {
 			NewTitle = `${title}`;
-			console.log("CUT-NOT");
+			// console.log("CUT-NOT");
 		}
 	}
 
@@ -1991,7 +1910,7 @@ function setActivity() {
 		detailsTwo = details;
 		stateTwo = state;
 	} else {
-		console.log("pausedTRUE");
+		// console.log("pausedTRUE");
 		startTimestamp = now - time[0] * 1000;
 		endTimestamp = startTimestamp + time[1] * 1000;
 		details = `${ThirdEntry} ${NewTitle} ${warningText}`;
@@ -2018,8 +1937,6 @@ function setActivity() {
 		}
 		state = `${NewerTitle} ${artistZRe || "Unknown"} ${star1} ${artist[1] || ""} ${star2} ${artist[2] || ""}`;
 
-		console.log("executed setLargeIconImage");
-
 		if (timeNow <= 3 && paused == "Pause") {
 			stopTime = Date.now();
 			reloadImageUrl();
@@ -2028,26 +1945,31 @@ function setActivity() {
 
 		if (timeNow >= 4) {
 			FINALTHREEVAR = theFinalowoNess;
-			console.log("I SET THE NEW VALUE");
 		}
 
 		if (title) { // LOWER3
 			if (repeat.includes("one")) {
 				largeImageText = VersionNumber;
-				// largeImageKey = FINALTHREEVAR;
-				largeImageKey = urlFinal;
+				if (artist[1] == undefined && artist[2] == undefined) {
+					largeImageKey = FINALTHREEVAR;
+				} else {
+					largeImageKey = urlFinal;
+				}
 			}
-			
+
 			if (repeat.includes("one") && paused == "Play") {
 				startTimestamp = 0;
 				endTimestamp = 0;
 			}
-			
+
 			if (repeat.includes("all")) {
 				largeImageText = VersionNumber;
-				// largeImageKey = FINALTHREEVAR;
-				largeImageKey = urlFinal;
-				
+				if (artist[1] == undefined && artist[2] == undefined) {
+					largeImageKey = FINALTHREEVAR;
+				} else {
+					largeImageKey = urlFinal;
+				}
+
 			}
 			if (repeat.includes("all") && paused == "Play") {
 				startTimestamp = 0;
@@ -2056,8 +1978,11 @@ function setActivity() {
 
 			if (repeat.includes("off")) {
 				largeImageText = VersionNumber;
-				// largeImageKey = FINALTHREEVAR;
-				largeImageKey = urlFinal;
+				if (artist[1] == undefined && artist[2] == undefined) {
+					largeImageKey = FINALTHREEVAR;
+				} else {
+					largeImageKey = urlFinal;
+				}
 			}
 			if (repeat.includes("off") && paused == "Play") {
 				startTimestamp = 0;
@@ -2065,12 +1990,9 @@ function setActivity() {
 			}
 		}
 
-		// SECTION FOR ALL WRITE-OUT DATA WITH THE TERMINAL -- CHECK HERE
+		// SECTION FOR ALL WRITE-OUT DATA WITH THE TERMINAL -- CHECK HERE -- LOWER 0
 		process.stdout.write("\x1Bc");
 		console.log("-- Here's Some Info Lovely --\n");
-		// console.log('');
-		// console.log('--', searchAbout, 'is Forming --\n');
-		// console.log('-- Love Is Forming --');
 		console.log(songInfo);
 		detailsTwo = details;
 		stateTwo = state;
@@ -2181,59 +2103,79 @@ function setActivity() {
 		}
 	}
 	if (endTimestamp) activity.endTimestamp = endTimestamp;
-	// function afterSend() {
-	if (isDiscordRunningVar == true) {
-		rpc.setActivity(activity);
-		console.log("DONE82")
-	}
-	// }
+	if (isDisOpen == true) rpc.setActivity(activity);
 }
 
 
 
+// if (isDisOpen === true) {
+// 	var isDisOpenInterval = setInterval(afterSend, 5000);
+// 	console.log(`- LOG -- EXECUTED 'afterSend' -`);
+// }
 
-
-
-
-
-
-let intervalId;
-let owoYE = 0;
+const intervalId = setInterval(isDiscordRunning, 2000); // Run checkDiscordRunning every 5 seconds
 
 async function isDiscordRunning() {
-	if (owoYE == 0) {
-		try {
-			const { stdout } = await exec('wmic process where name="Discord.exe" get ProcessId');
-			const outputGotten = stdout.trim().replace(/\D/g, ''); // Extract only digits
-			console.log(outputGotten);
-			let DIEEEEE = 0;
+	try {
+		const { stdout } = await exec('wmic process where name="Discord.exe" get ProcessId');
+		const outputGotten = stdout.trim().replace(/\D/g, ''); // Extract only digits
 
-			if (DIEEEEE == 0) {
-				if (outputGotten.length > 10) {
-					console.log("DISCORD IS OPEN");
-					owoYE += 1;
-					setTimeout(afterSend(), 5000); // Rerun the function after 5 seconds
-					console.log("Done32545723179864537567896453w4");
-					DIEEEEE += 1;
-					// clearInterval(intervalId); // Stop the interval once Discord is detected as running
-				}
-			} else {
-				console.log("DISCORD IS CLOSED");
-				isDiscordRunningVar = false;
+		if (outputGotten.length > 10) {
+			console.log(`- LOG -- DISCORD ID FOUND: ${outputGotten} -`);
+			if (!isDisOpen) {
+				isDisOpen = true;
+
+				// console.log(`- LOG -- 'isDisOpen' IS: ${isDisOpen} -`);
 			}
-		} catch (error) {
-			console.error('Error checking if Discord is running:', error);
-			isDiscordRunningVar = false; // Set the variable to false in case of an error
+		} else {
+			if (isDisOpen) {
+				// console.log(`- LOG -- DISCORD IS CLOSED -`);
+				afterRecieve();
+				// afterSend();
+				// setTimeout(2000, afterSend);
+				// console.log(`- LOG -- 'isDisOpen' IS: ${isDisOpen} -`);
+			}
 		}
+	} catch (error) {
+		console.error(`- LOG -- ERROR CHECKING DISCORD RUNNING -`);
+		isDisOpen = false;
 	}
 }
-function runDiscordCheck() {
-	intervalId = setTimeout(isDiscordRunning(), 5000); // Run checkDiscordRunning every 5 seconds
+
+
+
+
+
+
+
+if (!isDisOpen) {
+	intervalIdDisco = setInterval(() => {
+		if (!isDisOpen) {
+			// console.log(`- LOG -- AFTERCONNECTED -`);
+			if (isDisOpen) {
+				setTimeout(2000, afterSend);
+				clearInterval(intervalIdDisco);
+				console.log(`- LOG -- AFTERSEND SENT -`);
+				aftersendStatus = true;
+			}
+			process.stdout.write("\x1Bc");
+			console.log(`- / / :DISCONNECTED INFO: \\ \\ -`);
+			console.log(`- LOG -- DISCORD IS 'NOT' OPEN -`);
+			console.log(`- LOG -- SYSTEM VOL: '${systemVolumeDEC}' -`);
+			console.log(`- LOG -- PLAYER VOL: '${volumeOUTGET}' -`);
+			console.log(`- LOG -- ISDISOPEN INFO: '${isDisOpen}' -`);
+			console.log(`- LOG -- 'aftersendStatus' INFO: '${aftersendStatus}' -`);
+			// console.log(`- LOG -- ISDISOPEN INFO: '${}' -`);
+		}
+	}, 1000);
 }
 
-if (isDiscordRunningVar == false) {
-	runDiscordCheck();
-}
+// if (isDisOpen == true) {
+// 	// var isDisOpenInterval = setInterval(afterSend, 5000);
+// 	clearInterval(intervalIdDisco);
+// 	console.log(`- LOG -- AFTERSEND SENT -`);
+// 	aftersendStatus = true;
+// }
 
 
 
@@ -2244,10 +2186,7 @@ if (isDiscordRunningVar == false) {
 
 
 
-// Usage
-if (isDiscordRunningVar == false) {
-	isDiscordRunning();
-};
+
 
 
 async function updateSongInfo() {
@@ -2346,6 +2285,16 @@ async function updateSongInfo() {
 
 rpc.once("disconnected", (title) => {
 	rpc.destroy();
+	clearInterval(afterSend);
+	clearInterval(setActivity);
+	clearInterval(checkSync);
+	clearInterval(syncTimeSync);
+	clearInterval(updateSongInfo);
+	clearInterval(setPageName);
+	clearInterval(isDiscordRunning);
+	clearInterval(setLargeIconImage);
+	clearInterval(intervalId);
+
 	// reconnectTimer = setInterval(reconnect, 5e3);
 	ConnectDis = " [ Disconnected ]";
 });
@@ -2397,15 +2346,11 @@ function getNativeImage(filePath) {
 
 function setPageName() {
 
-	
-	if (artist && titleTwo) {
+
+	if (isDisOpen) {
 		if (buttonOne == true || buttonTwo == true || buttonThree == true || buttonFour == true) {
 			win.setTitle(
 				`${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}${notPlayingDisconnectText} ${config.username}`
-			);
-		} else {
-			win.setTitle(
-				`${titleTwo} - ${stateTwo}${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}${notPlayingDisconnectText} ${config.username}`
 			);
 		}
 	}
@@ -2430,7 +2375,19 @@ rpc.on("ready", () => {
 });
 
 function afterSend() {
-	rpc.login({ clientId });
-	setTimeout(afterSend, 10000); // Rerun the function after 5 seconds
-	isDiscordRunningVar = true;
+	if (isDisOpen) {
+		rpc.login({ clientId });
+		clearInterval(isDisOpenInterval);
+		console.log(`- LOG -- RAN 'afterSend' func -`);
+		clearInterval(intervalIdDisco);
+	}
+}
+
+function afterRecieve() {
+	if (!isDisOpen) {
+		rpc.destroy();
+		isDisOpen = false;
+		setInterval(isDisOpenInterval);
+		console.log(`- LOG -- RAN 'afterRecieve' func -`);
+	}
 }

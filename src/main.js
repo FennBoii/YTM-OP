@@ -40,6 +40,9 @@ const path = require("path");
 const { spawn, ChildProcess } = require("child_process");
 const { setTimeout } = require("timers/promises");
 
+function delay(ms) {
+	return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 
 const configUrl = 'https://raw.githubusercontent.com/FennBoii/YTM-OP/master/config.json';
@@ -110,7 +113,7 @@ function updateConfigFile(key, value) {
 refreshConfig();
 var publicPageURL;
 var VersionNumber, synctimeGET, systemVolume = 0, ToggleButtons = true, ChannelToggle = false, TogglePlaylist = true, ToggleArtist = true, volume = 0, artist, songUrl = "https://music.youtube.com", titleTwo = "", detailsTwo = "- Loading -", stateTwo = "- Loading -", ConnectDis = " [ Disconnected ]", detailsThree = "Default", channel = "https://music.youtube.com", error_bool = false, PlaylistCounter = "", ConnectionTitle = "", RealCountdown, CountdownTime, secondTitle = true, thirdTitle = true, paused, imageicon, repeat, playlist, channelname, Explicit, join1, join2, timeNow = 1, timeMax, notPlayingDisconnect = false, notPlayingDisconnectText = "", buttonOne = false, buttonTwo = false, buttonThree = false, buttonFour = false, warningText = "", TitleExit = "", quitText = "", connectCounter = 1, RealCountdownTitleBar = "", CountdownTimerVar = false;
-var ToggArtAlb = false, configWindow, urlFinal, title, playlistname, FINALTHREEVAR, joinn1, joinn2, largeImageText, plaaylist, largeImageKey, details, state, ThirdEntry, qualities = 0, result, timeMaxMinus, startTimestamp, endTimestamp, stopTime = 0, timeoutDisco = 0, globalCounter = 0, imgVer = 0, theFinalowoNess = "Nada There is nothing YET NONEEEEE", systemVolumeDEC, url1, imageiconNOW, imageReplace2, isDisOpen = false;
+var ToggArtAlb = false, configWindow, urlFinal, title, playlistname, FINALTHREEVAR, joinn1, joinn2, largeImageText, plaaylist, largeImageKey, details, state, ThirdEntry, qualities = 0, result, timeMaxMinus, startTimestamp, endTimestamp, stopTime = 0, timeoutDisco = 0, globalCounter = 0, imgVer = 0, theFinalowoNess = "Nada There is nothing YET NONEEEEE", systemVolumeDEC, url1, imageiconNOW, imageReplace2, isDisOpen = false, disconLog = true;
 // [ ------------------------------------------------------- ]
 // [ ------------------------------------------------------- ]
 
@@ -781,6 +784,39 @@ function createPREWindow() {
 		} else {
 			win.webContents.executeJavaScript('document.querySelector(\'#left-controls > div > tp-yt-paper-icon-button:nth-child(5)\').click()');
 		}
+	});
+	globalShortcut.register('VolumeUp', (event) => {
+		console.log(`- LOG -- VOLUME INCREASED -`);
+	});
+
+	globalShortcut.register('Alt+VolumeUp', (event) => {
+		console.log(`- LOG -- VOLUME INCREASED (with Alt) -`);
+	});
+
+	globalShortcut.register('VolumeDown', (event) => {
+		console.log(`- LOG -- VOLUME DECREASED -`);
+	});
+
+	globalShortcut.register('Alt+VolumeDown', (event) => {
+		console.log(`- LOG -- VOLUME DECREASED (with Alt) -`);
+	});
+
+	let muteCount = 0;
+	globalShortcut.register('VolumeMute', (event) => {
+		if (muteCount == 0) {
+			muteCount = 1;
+			console.log(`- LOG -- VOLUME MUTED -`);
+		} else if (muteCount == 1) {
+			console.log(`- LOG -- VOLUME UNMUTED -`);
+			muteCount = 0;
+		}
+		// console.log('VolumeMute');
+	});
+
+	// Register a global shortcut to handle mute button press
+	const muteShortcut = globalShortcut.register('MediaNextTrack', () => {
+		console.log('Mute button pressed on Windows');
+		mainWindow.webContents.send('mute-button-pressed');
 	});
 }
 
@@ -1629,6 +1665,7 @@ async function getContent() {
 			toggleBlockMediaKeys,
 			urlFinal,
 			url1,
+			isDisOpen,
 			// finalURL,
 			// CountdownTimerVar, thelink, VersionNumber, synctimeGET, systemVolume, ToggleButtons, ChannelToggle, TogglePlaylist, ToggleArtist, volume, artist, songUrl, titleTwo, detailsTwo, stateTwo, ConnectDis, detailsThree, channel, error_bool, PlaylistCounter, ConnectionTitle, RealCountdown, CountdownTime, secondTitle, thirdTitle, paused, imageicon, repeat, playlist, channelname, Explicit, join1, join2, timeNow, timeMax, notPlayingDisconnect, notPlayingDisconnectText, buttonOne, buttonTwo, buttonThree, buttonFour, warningText, getNAME, TitleExit, quitText, connectCounter, RealCountdownTitleBar, CountdownTimerVar, sysVol, LICKCHeck, playlistToggleVisible,
 			// ToggArtAlb, configWindow, finalContactVar, GfinalContactVar, urlFinal, outputTest, title, ImageIcon, playlistname, FINALTHREEVAR, joinn1, joinn2, largeImageText, plaaylist, largeImageKey, details, endTimestamp, startTimestamp
@@ -1791,7 +1828,7 @@ function setActivity() {
 		}
 
 		if (repeat.includes("off") && paused == "Play") {
-			console.log("bruhNO2")
+			// console.log("bruhNO2");
 			ThirdEntry = "⏸ •d";
 		}
 	}
@@ -2074,26 +2111,34 @@ function setActivity() {
 // 	console.log(`- LOG -- EXECUTED 'afterSend' -`);
 // }
 
-const intervalId = setInterval(isDiscordRunning, 2000); // Run checkDiscordRunning every 5 seconds
+const intervalId = setInterval(isDiscordRunning, 2000);
+
+var discoConnCount = 0;
+let isDiscoRunningStr;
 
 async function isDiscordRunning() {
 	try {
 		const { stdout } = await exec('wmic process where name="Discord.exe" get ProcessId');
-		const outputGotten = stdout.trim().replace(/\D/g, ''); // Extract only digits
+		const outputGotten = stdout.trim().replace(/\D/g, '');
 
-		if (outputGotten.length > 10) {
+		if (outputGotten.length > 10 && !isDisOpen) {
+			isDiscoRunningStr = `Discord Is Running`;
 			console.log(`- LOG -- DISCORD IS OPEN -`);
 			isDisOpen = true;
-			afterSend();
-			afterRecieve();
-			const clientId = config.discordID; /* 633709502784602133*/
-			if (isDisOpen) {
-				DiscordRPC.register(clientId);
+
+			if (discoConnCount == 0) {
+				let runDur = 20000;
+				console.log(`- LOG -- LAUNCHING 'afterRecieve' ${runDur / 1000}s -`);
+				let intervalIdquick1 = setInterval(() => {
+					clearInterval(intervalIdquick1);
+					console.log(`- LOG -- RUN FOR ${runDur / 1000} SECONDS`)
+					afterRecieve();
+				}, 20000); // RUN FOR 20 SECONDS
 			}
-			// console.log(`- LOG -- DISCORD ID FOUND: ${outputGotten} -`);
-			// console.log(`- LOG -- 'isDisOpen' IS: ${isDisOpen} -`);
-		} else {
+		} else if (outputGotten.length <= 10 && isDisOpen) { // Check if Discord is closed and was previously detected
+			isDiscoRunningStr = `Discord Is NOT Running`;
 			console.log(`- LOG -- DISCORD IS CLOSED -`);
+			isDisOpen = false;
 		}
 	} catch (error) {
 		console.error(`- LOG -- ERROR CHECKING DISCORD RUNNING -`);
@@ -2107,36 +2152,35 @@ async function isDiscordRunning() {
 
 
 
-if (!isDisOpen) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+if (disconLog) {
 	intervalIdDisco = setInterval(() => {
-		if (!isDisOpen) {
-			// console.log(`- LOG -- AFTERCONNECTED -`);
-			if (isDisOpen) {
-				setTimeout(2000, afterSend);
-				clearInterval(intervalIdDisco);
-				console.log(`- LOG -- AFTERSEND SENT -`);
-				aftersendStatus = true;
-			}
-			process.stdout.write("\x1Bc");
-			console.log(`- / / :DISCONNECTED INFO: \\ \\ -`);
-			console.log(`- LOG -- DISCORD IS 'NOT' OPEN -`);
-			console.log(`- LOG -- SYSTEM VOL: '${systemVolumeDEC}' -`);
-			console.log(`- LOG -- PLAYER VOL: '${volumeOUTGET}' -`);
-			console.log(`- LOG -- ISDISOPEN INFO: '${isDisOpen}' -`);
-			console.log(`- LOG -- 'aftersendStatus' INFO: '${aftersendStatus}' -`);
-			// console.log(`- LOG -- ISDISOPEN INFO: '${}' -`);
-		}
+		// console.log(`- LOG -- AFTERCONNECTED -`);
+		process.stdout.write("\x1Bc");
+		console.log(`- / / :DISCONNECTED INFO: \\ \\ -`);
+		console.log(`- LOG -- DISCORD IS 'NOT' OPEN -`);
+		console.log(`- LOG -- SYSTEM VOL IS: '${systemVolumeDEC}' -`);
+		console.log(`- LOG -- PLAYER VOL IS: '${volumeOUTGET}' -`);
+		console.log(`- LOG -- ISDISOPEN IS: '${isDisOpen}' -`);
+		console.log(`- LOG -- 'aftersendStatus' IS: '${aftersendStatus}' -`);
+		console.log(`- LOG -- 'isDiscoRunningStr' IS: '${isDiscoRunningStr}' -`);
+		console.log(`- LOG -- 'discoConnCount' IS: '${discoConnCount}' -`);
+		// console.log(`- LOG -- ISDISOPEN INFO: '${}' -`);
 	}, 1000);
 }
-
-// if (isDisOpen == true) {
-// 	// var isDisOpenInterval = setInterval(afterSend, 5000);
-// 	clearInterval(intervalIdDisco);
-// 	console.log(`- LOG -- AFTERSEND SENT -`);
-// 	aftersendStatus = true;
-// }
-
-
 
 
 
@@ -2250,7 +2294,7 @@ rpc.once("disconnected", (title) => {
 	clearInterval(syncTimeSync);
 	clearInterval(updateSongInfo);
 	clearInterval(setPageName);
-	clearInterval(isDiscordRunning);
+	// clearInterval(isDiscordRunning); DONT STOP DISCORD CHECK FROM HAPPENING NATE...
 	clearInterval(setLargeIconImage);
 	clearInterval(intervalId);
 
@@ -2328,13 +2372,15 @@ rpc.on("ready", () => {
 	//setInterval(fullSync, 1e3);
 	setInterval(updateSongInfo, 1e3);
 	setInterval(setPageName, 1e3);
-	setInterval(isDiscordRunning, 3e3);
+	// setInterval(isDiscordRunning, 3e3);
 	setTimeout(setLargeIconImage, 10000);
 	ConnectDis = " [ Connected ]";
 });
 
 function afterSend() {
 	if (isDisOpen) {
+		const clientId = config.discordID; /* 633709502784602133*/
+		DiscordRPC.register(clientId);
 		rpc.login({ clientId });
 		clearInterval(isDisOpenInterval);
 		console.log(`- LOG -- RAN 'afterSend' func -`);
@@ -2349,4 +2395,15 @@ function afterRecieve() {
 		setInterval(isDisOpenInterval);
 		console.log(`- LOG -- RAN 'afterRecieve' func -`);
 	}
+	if (isDisOpen) {
+		aftersendStatus = true;
+		// setTimeout(2000, afterSend);
+		console.log(`- LOG -- AFTERSEND SENT -`);
+		clearInterval(intervalIdDisco);
+		const clientId = config.discordID; /* 633709502784602133*/
+		DiscordRPC.register(clientId);
+		rpc.login({ clientId });
+		console.log(`- LOG -- STARTED DISCORDRPC CONNECTION -`);
+	}
+	console.log(`- LOG -- RAN FUNCTION 'afterRecieve' -`);
 }

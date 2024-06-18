@@ -46,26 +46,22 @@ const configUrl = 'https://raw.githubusercontent.com/FennBoii/YTM-OP/master/conf
 let configPath = path.resolve(os.homedir(), 'config.json');
 function refreshConfig() {
 	try {
-		// Try to read the config file from the specified path
 		config = JSON.parse(fs.readFileSync(configPath, "utf8"));
 	} catch (error) {
 		if (error.code === 'ENOENT') {
-			// File doesn't exist in the specified path, try default location
-			console.error('Config file not found in specified path:', configPath);
-			console.log('Attempting to read config file from default location...');
+			console.log(`- LOG -- UNABLE TO LOCATE CONFIG FILE: ${configPath} -`);
+			console.log(`- LOG -- TRYING ALTERNATE DIRECTORY -`);
 			configPath = path.resolve(os.homedir(), 'config.json');
 			try {
 				config = JSON.parse(fs.readFileSync(configPath, "utf8"));
 			} catch (defaultError) {
-				console.error('Error reading config file from default location:', defaultError);
-				console.log('Creating a new config file...');
-				// Create a new config file
+				console.log(`- LOG -- COULD NOT FIND CONFIG FILE: ${defaultError} -`);
+				console.log(`- LOG -- CREATING A NEW CONFIG FILE -`);
 				fs.writeFileSync(configPath, '{}');
 				config = {};
 			}
 		} else {
-			// Other error, log and rethrow
-			console.error('Error reading config file:', error);
+			console.log(`- LOG -- ERROR READING 'config' FILE: ${error}-`);
 			throw error;
 		}
 	}
@@ -131,7 +127,7 @@ const resourcePath =
 function executeJavaScript(code) {
 	return new Promise((resolve, reject) => {
 		if (!win || !win.webContents) {
-			console.log(`- LOG -- NO WINDOW IS INITIALIZED -`)
+			console.log(`- LOG -- NO WINDOW IS INITIALIZED -`);
 		} else {
 			win.webContents.executeJavaScript(code)
 				.then((data) => resolve(data))
@@ -164,7 +160,7 @@ function checkSync() {
 					params: theLinkData,
 				});
 			} catch (error) {
-				console.error('Error updating "thelink":', error.message);
+				console.log(`- LOG -- ERROR UPDATING 'theLink', ERR: ${error.message} -`);
 			}
 		}
 
@@ -243,7 +239,7 @@ function syncTimeSync() {
 					params: syncTimeData,
 				});
 			} catch (error) {
-				console.error('Error updating "synctime":', error.message);
+				console.log(`- LOG -- ERROR UPDATING 'synctime', ERR: ${error.message} -`);
 			}
 		}
 
@@ -930,7 +926,6 @@ setInterval(() => {
 	} catch (error) {
 		console.log(`- LOG -- GOT PROMISE ERR, VOL: ${volume}, ERR: ${error} -`);
 	}
-	// console.log(`- LOG -- EXECUTED 'updatePlayerVolume' -`)
 }, 2000);
 
 let intervalIdDisco;
@@ -1046,7 +1041,6 @@ async function getContent() {
 				`;
 
 			titleResult = await executeJavaScript(javascriptCode);
-			// console.log("Load0-1");
 			if (titleResult.length > 50) {
 				title = titleResult.substring(0, 50);
 				titleTwo = titleResult.substring(0, 49);
@@ -1055,12 +1049,10 @@ async function getContent() {
 				titleTwo = titleResult;
 			}
 		} catch (error) {
-			// console.log("Load0-2");
-			console.log("Script error, title:", error); // Log any errors
-			console.log("ERRORED title OBJECT");
+			console.log(`- LOG -- ERRORED 'titleResult' OBJECT -`);
 		}
 
-		// artist Name Get Element
+		// Artist Name Get Element
 		try {
 			const javascriptCode = `
 				(function() {
@@ -1081,13 +1073,11 @@ async function getContent() {
 			`;
 			let artiste = await executeJavaScript(javascriptCode);
 			artist = artiste.split(" • ")
-			// console.log("Load2-1");
 		} catch (error) {
-			// console.log("Load2-2");
-			console.log("Script error:", error); // Log any errors
+			console.log(`- LOG -- ERRORED 'artist' OBJECT -`);
 		}
 
-		// timeNow Name Get Element
+		// TimeNow Name Get Element
 		try {
 			const javascriptCode = `
 				(function() {
@@ -1109,11 +1099,10 @@ async function getContent() {
 			timeNow = await executeJavaScript(javascriptCode);
 			// console.log("Load3-1");
 		} catch (error) {
-			// console.log("Load3-2");
-			console.log("Script error:", error); // Log any errors
+			console.log(`- LOG -- ERRORED 'timeNow' OBJECT -`);
 		}
 
-		// timeMax Name Get Element
+		// TimeMax Name Get Element
 		try {
 			const javascriptCode = `
 						(function() {
@@ -1133,10 +1122,8 @@ async function getContent() {
 						})();
 					`;
 			timeMax = await executeJavaScript(javascriptCode);
-			// console.log("Load4-1");
 		} catch (error) {
-			// console.log("Load4-2");
-			console.log("Script error:", error); // Log any errors
+			console.log(`- LOG -- ERRORED 'timeMax' OBJECT -`);
 		}
 
 		// paused Name Get Element
@@ -1159,13 +1146,11 @@ async function getContent() {
 				})();
 			`;
 			paused = await executeJavaScript(javascriptCode);
-			// console.log("Load5-1");
 		} catch (error) {
-			// console.log("Load5-2");
-			console.log("Script error:", error); // Log any errors
+			console.log(`- LOG -- ERRORED 'paused' OBJECT -`);
 		}
 
-		// repeat Get Element
+		// repeat status Get Element
 		try {
 			const javascriptCode = `
 			(function() {
@@ -1186,23 +1171,18 @@ async function getContent() {
 			`;
 
 			repeat = await executeJavaScript(javascriptCode);
-			// console.log("Load6-1");
 		} catch (error) {
-			console.log("Script error, ImageIcon:", error); // Log any errors
-			console.log("ERRORED REPEAT OBJECT");
-			// console.log("Load6-2");
+			console.log(`- LOG -- ERRORED 'repeat' OBJECT -`);
 		}
 
 
 		// result = await executeJavaScript('document.querySelector(\'#movie_player > div.ytp-chrome-top > div.ytp-title > div > a\').href');
 		if (win.webContents.getURL() != null) {
 			result = win.webContents.getURL();
-			// console.log("Load7-1");
 		} else if (result.includes("watch?v")) {
 			songUrl = result;
 		} else if (!result) {
-			// console.log("Load7-2");
-			return reject('- LOG -- ERROR GRABBING SONG URL -');
+			return reject(`- LOG -- ERRORED 'songUrl' OBJECT -`);
 		}
 
 
@@ -1227,11 +1207,8 @@ async function getContent() {
 			`;
 
 			playlistname = await executeJavaScript(javascriptCode);
-			// console.log("Load8-1");
 		} catch (error) {
-			// console.log("Load8-2");
-			console.log("Script error:", error); // Log any errors
-			console.log("ERRORED playlistName OBJECT");
+			console.log(`- LOG -- ERRORED 'playlistname' OBJECT -`);
 		}
 
 		// Playlist URL Get Element
@@ -1255,17 +1232,13 @@ async function getContent() {
 				`;
 
 			playlist = await executeJavaScript(javascriptCode);
-			// console.log("Load9-1");
-			// Additional logic here...
 			if (playlist == "https://google.com") {
 				TogglePlaylist = false;
 			} else {
 				TogglePlaylist = true;
 			}
 		} catch (error) {
-			// console.log("Load9-2");
-			console.log("Script error:", error); // Log any errors
-			console.log("ERRORED playlist OBJECT");
+			console.log(`- LOG -- ERRORED 'timeMax' OBJECT -`);
 		}
 
 		// Channel Link Get Element
@@ -1292,7 +1265,7 @@ async function getContent() {
 				})();
 			`;
 			channel = await executeJavaScript(javascriptCode);
-			// console.log("Load10-1");
+
 			if (channel == "https://google.com") {
 				ToggleArtist = false;
 			}
@@ -1300,10 +1273,8 @@ async function getContent() {
 				ToggleArtist = true;
 			}
 		} catch (error) {
-			// console.log("Load10-2");
-			console.error("Script error for fetching channel:", error); // Log any errors
 			channel = "https://google.com/";
-			console.log("ERRORED channel OBJECT");
+			console.log(`- LOG -- ERRORED 'channel' OBJECT -`);
 		}
 
 		// Channel Name Get Element
@@ -1359,9 +1330,7 @@ async function getContent() {
 			`;
 
 			channelname = await executeJavaScript(javascriptCode);
-			// console.log("Load11-1");
 			if (channelname == "Unknown Channel") {
-				// console.log("Load11-2");
 				ToggleArtist = false;
 			} else {
 				ToggleArtist = true;
@@ -1388,10 +1357,8 @@ async function getContent() {
 			})();
 			`;
 			Explicit = await executeJavaScript(javascriptCode);
-			// console.log("Load12-1");
 		} catch (error) {
-			// console.log("Load12-2");
-			console.log("Script error:", error); // Log any errors
+			console.log(`- LOG -- ERRORED 'Explicit' OBJECT -`);
 		}
 
 		try {
@@ -1414,11 +1381,8 @@ async function getContent() {
 				`;
 
 			volume = await executeJavaScript(javascriptCode);
-			// console.log("Load13-1");
 		} catch (error) {
-			// console.log("Load13-2");
-			console.log("Script error:", error); // Log any errors
-			console.log("ERRORED volume OBJECT");
+			console.log(`- LOG -- ERRORED 'volume' OBJECT -`);
 		}
 
 
@@ -1444,13 +1408,13 @@ async function getContent() {
 
 			imageiconNOW = await executeJavaScript(javascriptCode);
 		} catch (error) {
-			console.log("Script error, imageIconNOW:", error); // Log any errors
+			console.log(`- LOG -- ERRORED 'imageiconNOW' OBJECT -`);
 		}
 
 		let imageReplace1 = "https://getname.ytmopdata.net?w60?h4122";
-		if (isDisOpen == false) {
+		if (!isDisOpen) {
 			imageReplace1 = "https://getname.ytmopdata.net?w60?h4122";
-		} else if (isDisOpen == true) {
+		} else if (isDisOpen) {
 			imageReplace1 = imageiconNOW.replace("w60", "w4112");
 			imageReplace2 = imageReplace1.replace("h60", "h4112");
 		}
@@ -1728,44 +1692,41 @@ async function reloadImageUrl() {
 
 		imageicon = await executeJavaScript(javascriptCode);
 	} catch (error) {
-		console.log("Script error, imageIcon:", error); // Log any errors
+		console.log(`- LOG -- ERRORED 'imageicon' OBJECT -`);
 	}
 
 
 	url1 = imageicon.replace("w60", "w4112");
 	urlFinal = url1.replace("h60", "h4112");
-	// console.log("urlFinal =", urlFinal);
 	let finalURL = encodeURIComponent(urlFinal);
 
-	const baseURL = 'https://getname.ytmopdata.net/webpageEdit.php'; // Replace with your base URL
+	const baseURL = 'https://getname.ytmopdata.net/webpageEdit.php';
 
 	const theLinkData = {
 		givenNameToken: config.givenNameToken,
-		randomToken: config.randomToken, // Replace with your token values
-		sitename: config.nameToken, // Replace with your siteName
+		randomToken: config.randomToken,
+		sitename: config.nameToken,
 		thelink: finalURL,
 		imgVer: imgVer,
 	};
 
 	try {
 		const response = await axios.get(`${baseURL}/webpageEdit.php`, { params: theLinkData });
-		console.log('Update "thelink" response:', response.data);
-		console.log("response:", response);
+		console.log(`- LOG -- DATA GOT 'theLink' RESPONSE: ${response.data} -`);
 	} catch (error) {
-		console.error('Error updating "thelink":', error.message);
+		console.log(`- LOG -- ERRORED UPDATING 'theLink' -`);
 	} //LOWER1
 	imgVer += 1;
-	console.error(`- LOG -- DID A THING -`);
 }
 
 getContent();
 
 // eslint-disable-next-line no-inline-comments
-const clientId = config.discordID; /* 633709502784602133*/
-if (isDisOpen == true) {
-	DiscordRPC.register(clientId);
-}
-const rpc = new DiscordRPC.Client({ transport: 'ipc', }); // 10 seconds timeout
+// const clientId = config.discordID; /* 633709502784602133*/
+// if (isDisOpen == true) {
+// 	DiscordRPC.register(clientId);
+// }
+const rpc = new DiscordRPC.Client({ transport: 'ipc', });
 
 
 let songInfo;
@@ -2121,20 +2082,18 @@ async function isDiscordRunning() {
 		const outputGotten = stdout.trim().replace(/\D/g, ''); // Extract only digits
 
 		if (outputGotten.length > 10) {
-			console.log(`- LOG -- DISCORD ID FOUND: ${outputGotten} -`);
-			if (!isDisOpen) {
-				isDisOpen = true;
-
-				// console.log(`- LOG -- 'isDisOpen' IS: ${isDisOpen} -`);
-			}
-		} else {
+			console.log(`- LOG -- DISCORD IS OPEN -`);
+			isDisOpen = true;
+			afterSend();
+			afterRecieve();
+			const clientId = config.discordID; /* 633709502784602133*/
 			if (isDisOpen) {
-				// console.log(`- LOG -- DISCORD IS CLOSED -`);
-				afterRecieve();
-				// afterSend();
-				// setTimeout(2000, afterSend);
-				// console.log(`- LOG -- 'isDisOpen' IS: ${isDisOpen} -`);
+				DiscordRPC.register(clientId);
 			}
+			// console.log(`- LOG -- DISCORD ID FOUND: ${outputGotten} -`);
+			// console.log(`- LOG -- 'isDisOpen' IS: ${isDisOpen} -`);
+		} else {
+			console.log(`- LOG -- DISCORD IS CLOSED -`);
 		}
 	} catch (error) {
 		console.error(`- LOG -- ERROR CHECKING DISCORD RUNNING -`);

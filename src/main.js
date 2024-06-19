@@ -112,8 +112,8 @@ function updateConfigFile(key, value) {
 /* ---------------------------------DEFINE FUNCTIONS--------------------------------- */
 refreshConfig();
 var publicPageURL;
-var VersionNumber, synctimeGET, systemVolume = 0, ToggleButtons = true, ChannelToggle = false, TogglePlaylist = true, ToggleArtist = true, volume = 0, artist, songUrl = "https://music.youtube.com", titleTwo = "", detailsTwo = "- Loading -", stateTwo = "- Loading -", ConnectDis = " [ Disconnected ]", detailsThree = "Default", channel = "https://music.youtube.com", error_bool = false, PlaylistCounter = "", ConnectionTitle = "", RealCountdown, CountdownTime, secondTitle = true, thirdTitle = true, paused, imageicon, repeat, playlist, channelname, Explicit, join1, join2, timeNow = 1, timeMax, notPlayingDisconnect = false, notPlayingDisconnectText = "", buttonOne = false, buttonTwo = false, buttonThree = false, buttonFour = false, warningText = "", TitleExit = "", quitText = "", connectCounter = 1, RealCountdownTitleBar = "", CountdownTimerVar = false;
-var ToggArtAlb = false, configWindow, urlFinal, title, playlistname, FINALTHREEVAR, joinn1, joinn2, largeImageText, plaaylist, largeImageKey, details, state, ThirdEntry, qualities = 0, result, timeMaxMinus, startTimestamp, endTimestamp, stopTime = 0, timeoutDisco = 0, globalCounter = 0, imgVer = 0, theFinalowoNess = "Nada There is nothing YET NONEEEEE", systemVolumeDEC, url1, imageiconNOW, imageReplace2, isDisOpen = false, disconLog = true;
+var VersionNumber, synctimeGET, systemVolume = 0, ToggleButtons = true, ChannelToggle = false, TogglePlaylist = true, ToggleArtist = true, volume = 0, artist, songUrl = "https://music.youtube.com", titleTwo = "", detailsTwo = "- Loading -", stateTwo = "- Loading -", ConnectDis = " [ Disconnected ]", detailsThree = "Default", channel = "https://music.youtube.com", error_bool = false, PlaylistCounter = "", ConnectionTitle = "", RealCountdown, CountdownTime, secondTitle = true, thirdTitle = true, paused, imageicon = "https://google.com/h60/w60", repeat, playlist, channelname, Explicit, join1, join2, timeNow = 1, timeMax, notPlayingDisconnect = false, notPlayingDisconnectText = "", buttonOne = false, buttonTwo = false, buttonThree = false, buttonFour = false, warningText = "", TitleExit = "", quitText = "", connectCounter = 1, RealCountdownTitleBar = "", CountdownTimerVar = false;
+var ToggArtAlb = false, configWindow, urlFinal, title, playlistname, FINALTHREEVAR, joinn1, joinn2, largeImageText, plaaylist, largeImageKey, details, state, ThirdEntry, qualities = 0, result, timeMaxMinus, startTimestamp, endTimestamp, stopTime = 0, timeoutDisco = 0, globalCounter = 0, imgVer = 0, theFinalowoNess = "Nada There is nothing YET NONEEEEE", systemVolumeDEC, url1, imageiconNOW, imageReplace2, isDisOpen = false, disconLog = true, decreasingTimerUp, decreasingTimerDown;
 // [ ------------------------------------------------------- ]
 // [ ------------------------------------------------------- ]
 
@@ -785,38 +785,91 @@ function createPREWindow() {
 			win.webContents.executeJavaScript('document.querySelector(\'#left-controls > div > tp-yt-paper-icon-button:nth-child(5)\').click()');
 		}
 	});
-	globalShortcut.register('VolumeUp', (event) => {
-		console.log(`- LOG -- VOLUME INCREASED -`);
-	});
 
 	globalShortcut.register('Alt+VolumeUp', (event) => {
 		console.log(`- LOG -- VOLUME INCREASED (with Alt) -`);
-	});
-
-	globalShortcut.register('VolumeDown', (event) => {
-		console.log(`- LOG -- VOLUME DECREASED -`);
 	});
 
 	globalShortcut.register('Alt+VolumeDown', (event) => {
 		console.log(`- LOG -- VOLUME DECREASED (with Alt) -`);
 	});
 
+	let runningDecreaseUp = 0;
+	let volumeDecVar = 0;
+	globalShortcut.register('VolumeUp', () => {
+		decreasingTimerUp = 50;
+
+		if (runningDecreaseUp == 0) {
+			var timerIntervalUp = setInterval(decrementAndCheckUp, 1);
+			decreasingTimerUp = 50;
+			runningDecreaseUp = 1;
+		} else {
+			decreasingTimerUp = 50;
+		}
+		volumeDecVar += 1250;
+
+
+		function decrementAndCheckUp() {
+			decreasingTimerUp -= 1;
+
+			if (decreasingTimerUp <= 0) {
+				runningDecreaseUp = 0;
+				clearInterval(timerIntervalUp);
+				setVolumeDecAddFin();
+				volumeDecVar = 0;
+			}
+		}
+	});
+
+
+	let runningDecreaseDown = 0;
+	globalShortcut.register('VolumeDown', () => {
+		decreasingTimerDown = 50;
+
+		if (runningDecreaseDown == 0) {
+			var timerIntervalDown = setInterval(decrementAndCheckDown, 1);
+			decreasingTimerDown = 50;
+			runningDecreaseDown = 1;
+		} else {
+			decreasingTimerDown = 50;
+		}
+		volumeDecVar -= 1250;
+
+
+		function decrementAndCheckDown() {
+			decreasingTimerDown -= 1;
+
+			if (decreasingTimerDown <= 0) {
+				runningDecreaseDown = 0;
+				clearInterval(timerIntervalDown);
+				setVolumeDecAddFin();
+				volumeDecVar = 0;
+			}
+		}
+	});
+
+	function setVolumeDecAddFin() {
+		// if (systemVolumeDEC == 0) {
+		// 	console.log(`- LOG -- VOLUME WAS 0 -`);
+		// 	exec(`"C:/Program Files/YTM-OP/nircmd.exe" mutesysvolume 1`);
+		// }
+		exec(`"C:/Program Files/YTM-OP/nircmd.exe" changesysvolume ${volumeDecVar} -`);
+		console.log(`- LOG -- SET THE VOLUME TO ${systemVolumeDEC} && ${volumeDecVar} -`);
+	}
+
+
 	let muteCount = 0;
 	globalShortcut.register('VolumeMute', (event) => {
 		if (muteCount == 0) {
-			muteCount = 1;
 			console.log(`- LOG -- VOLUME MUTED -`);
+			exec(`"C:/Program Files/YTM-OP/nircmd.exe" mutesysvolume 1`);
+			muteCount = 1;
 		} else if (muteCount == 1) {
 			console.log(`- LOG -- VOLUME UNMUTED -`);
+			exec(`"C:/Program Files/YTM-OP/nircmd.exe" mutesysvolume 0`);
 			muteCount = 0;
 		}
 		// console.log('VolumeMute');
-	});
-
-	// Register a global shortcut to handle mute button press
-	const muteShortcut = globalShortcut.register('MediaNextTrack', () => {
-		console.log('Mute button pressed on Windows');
-		mainWindow.webContents.send('mute-button-pressed');
 	});
 }
 
@@ -911,7 +964,7 @@ setInterval(() => {
 // FUNCTION TO GET SYSTEM VOLUME uwu
 setInterval(() => {
 	// systemVolume++;
-	// console.log(`- LOG -- RAN 'GETVOL' -`);
+	// console.log(`- LOG -- EXECUTED 'GETVOL' -`);
 	const executablePath = "C:/Program Files/YTM-OP/VolumeFind.exe";
 
 	const child = spawn(executablePath);
@@ -1574,22 +1627,6 @@ async function getContent() {
 			join1 = Dash + config.AlternateBottomButtonValue + Dash;
 		}
 
-		let albumORsong = config.albumORsong;
-
-		if (albumORsong == "song") {
-			if (isDisOpen) {
-				updateConfigFile("loadLastURL", songUrl.toString());
-			}
-		} else if (albumORsong == "album") {
-			if (isDisOpen) {
-				updateConfigFile("loadLastURL", playlist.toString());
-			}
-		} else if (albumORsong == "default") {
-			if (isDisOpen) {
-				updateConfigFile("https://music.youtube.com/");
-			}
-		}
-
 		// var newPlaylist = playlistname.split('music.')[1];
 		// var playlistnameTwo = `https://music.${newPlaylist}`;
 		// console.log(playlistnameTwo);
@@ -1706,6 +1743,22 @@ async function getContent() {
 	});
 }
 
+let albumORsong = config.albumORsong;
+
+if (albumORsong == "song") {
+	if (isDisOpen) {
+		updateConfigFile("loadLastURL", songUrl.toString());
+	}
+} else if (albumORsong == "album") {
+	if (isDisOpen) {
+		updateConfigFile("loadLastURL", playlist.toString());
+	}
+} else if (albumORsong == "default") {
+	if (isDisOpen) {
+		updateConfigFile("https://music.youtube.com/");
+	}
+}
+
 async function reloadImageUrl() {
 	// imageIcon Get Element
 	try {
@@ -1731,10 +1784,14 @@ async function reloadImageUrl() {
 	} catch (error) {
 		console.log(`- LOG -- ERRORED 'imageicon' OBJECT -`);
 	}
+}
 
-
-	url1 = imageicon.replace("w60", "w4112");
-	urlFinal = url1.replace("h60", "h4112");
+function setUserPageImage() {
+	console.log(`- LOG -- EXECUTED 'setUserPageImage' FUNC -`);
+	url1 = imageicon.replace("w60", "w1028");
+	urlFinal = url1.replace("h60", "h1028");
+	// url1 = imageicon.replace("w60", "w4112");
+	// urlFinal = url1.replace("h60", "h4112");
 	let finalURL = encodeURIComponent(urlFinal);
 
 	const baseURL = 'https://getname.ytmopdata.net/webpageEdit.php';
@@ -1748,13 +1805,15 @@ async function reloadImageUrl() {
 	};
 
 	try {
-		const response = await axios.get(`${baseURL}/webpageEdit.php`, { params: theLinkData });
+		const response = axios.get(`${baseURL}/webpageEdit.php`, { params: theLinkData });
 		console.log(`- LOG -- DATA GOT 'theLink' RESPONSE: ${response.data} -`);
 	} catch (error) {
 		console.log(`- LOG -- ERRORED UPDATING 'theLink' -`);
 	} //LOWER1
 	imgVer += 1;
 }
+
+setUserPageImage();
 
 getContent();
 
@@ -2133,7 +2192,7 @@ async function isDiscordRunning() {
 					clearInterval(intervalIdquick1);
 					console.log(`- LOG -- RUN FOR ${runDur / 1000} SECONDS`)
 					afterRecieve();
-				}, 20000); // RUN FOR 20 SECONDS
+				}, runDur); // RUN FOR 20 SECONDS
 			}
 		} else if (outputGotten.length <= 10 && isDisOpen) { // Check if Discord is closed and was previously detected
 			isDiscoRunningStr = `Discord Is NOT Running`;
@@ -2178,8 +2237,10 @@ if (disconLog) {
 		console.log(`- LOG -- 'aftersendStatus' IS: '${aftersendStatus}' -`);
 		console.log(`- LOG -- 'isDiscoRunningStr' IS: '${isDiscoRunningStr}' -`);
 		console.log(`- LOG -- 'discoConnCount' IS: '${discoConnCount}' -`);
+		console.log(`- LOG -- 'decreasingTimerUp' IS: '${decreasingTimerUp}' -`);
+		console.log(`- LOG -- 'decreasingTimerDown' IS: '${decreasingTimerDown}' -`);
 		// console.log(`- LOG -- ISDISOPEN INFO: '${}' -`);
-	}, 1000);
+	}, 250);
 }
 
 
@@ -2383,7 +2444,7 @@ function afterSend() {
 		DiscordRPC.register(clientId);
 		rpc.login({ clientId });
 		clearInterval(isDisOpenInterval);
-		console.log(`- LOG -- RAN 'afterSend' func -`);
+		console.log(`- LOG -- EXECUTED 'afterSend' func -`);
 		clearInterval(intervalIdDisco);
 	}
 }
@@ -2393,7 +2454,7 @@ function afterRecieve() {
 		rpc.destroy();
 		isDisOpen = false;
 		setInterval(isDisOpenInterval);
-		console.log(`- LOG -- RAN 'afterRecieve' func -`);
+		console.log(`- LOG -- EXECUTED 'afterRecieve' func -`);
 	}
 	if (isDisOpen) {
 		aftersendStatus = true;
@@ -2405,5 +2466,5 @@ function afterRecieve() {
 		rpc.login({ clientId });
 		console.log(`- LOG -- STARTED DISCORDRPC CONNECTION -`);
 	}
-	console.log(`- LOG -- RAN FUNCTION 'afterRecieve' -`);
+	console.log(`- LOG -- EXECUTED FUNCTION 'afterRecieve' -`);
 }

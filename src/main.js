@@ -797,6 +797,7 @@ function createPREWindow() {
 	let runningDecreaseUp = 0;
 	let volumeDecVar = 0;
 	globalShortcut.register('VolumeUp', () => {
+		callVolumeWindow();
 		decreasingTimerUp = 50;
 
 		if (runningDecreaseUp == 0) {
@@ -824,6 +825,7 @@ function createPREWindow() {
 
 	let runningDecreaseDown = 0;
 	globalShortcut.register('VolumeDown', () => {
+		callVolumeWindow();
 		decreasingTimerDown = 50;
 
 		if (runningDecreaseDown == 0) {
@@ -860,6 +862,7 @@ function createPREWindow() {
 
 	let muteCount = 0;
 	globalShortcut.register('VolumeMute', (event) => {
+		callVolumeWindow();
 		if (muteCount == 0) {
 			console.log(`- LOG -- VOLUME MUTED -`);
 			exec(`"C:/Program Files/YTM-OP/nircmd.exe" mutesysvolume 1`);
@@ -869,10 +872,36 @@ function createPREWindow() {
 			exec(`"C:/Program Files/YTM-OP/nircmd.exe" mutesysvolume 0`);
 			muteCount = 0;
 		}
-		// console.log('VolumeMute');
 	});
 }
 
+
+var ifVolOverlay = false;
+function callVolumeWindow() {
+	console.log(`- LOG -- EXECUTED 'callVolumeWindow' -`);
+	volWin = new BrowserWindow({
+		width: 800,  // Set your desired width
+		height: 600, // Set your desired height
+		frame: false,  // Frameless window
+		alwaysOnTop: true,  // Always on top of other windows
+		transparent: true,  // Transparent background
+		webPreferences: {
+			nodeIntegration: true,
+		},
+	});
+
+	volWin.loadFile('src/sysVol/volWin.html');
+	if (ifVolOverlay == false) {
+		ifVolOverlay = true;
+		let intervalIdquick1 = setInterval(() => {
+			clearInterval(intervalIdquick1);
+			volWin.close();
+		}, config.volWinDelay * 1000);
+	}
+	volWin.webContents.send('sysVolVar', systemVolumeDEC);
+	// ipcMain.on('update-text', (event, text) => {
+	// });
+};
 
 function toggleBlockMediaKeys(block) {
 	blockMediaKeys = block;
@@ -2190,7 +2219,7 @@ async function isDiscordRunning() {
 				console.log(`- LOG -- LAUNCHING 'afterRecieve' ${runDur / 1000}s -`);
 				let intervalIdquick1 = setInterval(() => {
 					clearInterval(intervalIdquick1);
-					console.log(`- LOG -- RUN FOR ${runDur / 1000} SECONDS`)
+					console.log(`- LOG -- RUN FOR ${runDur / 1000} SECONDS`);
 					afterRecieve();
 				}, runDur); // RUN FOR 20 SECONDS
 			}
@@ -2239,6 +2268,7 @@ if (disconLog) {
 		console.log(`- LOG -- 'discoConnCount' IS: '${discoConnCount}' -`);
 		console.log(`- LOG -- 'decreasingTimerUp' IS: '${decreasingTimerUp}' -`);
 		console.log(`- LOG -- 'decreasingTimerDown' IS: '${decreasingTimerDown}' -`);
+		console.log(`- LOG -- 'ifVolOverlay' IS: '${ifVolOverlay}' -`);
 		// console.log(`- LOG -- ISDISOPEN INFO: '${}' -`);
 	}, 250);
 }

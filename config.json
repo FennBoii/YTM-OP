@@ -9,5 +9,6 @@
   "albumORsong": "song",
   "randomToken": "",
   "nameToken": "",
-  "givenNameToken": ""
+  "givenNameToken": "",
+  "volWinDelay": "2"
 }

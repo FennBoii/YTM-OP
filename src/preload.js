@@ -77,7 +77,7 @@ function updatePlayerVolumeElement() {
 function changeYTLayoutElement() {
   const imageIcon = document.querySelector('#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.thumbnail-image-wrapper.style-scope.ytmusic-player-bar > img');
   const parentElement = document.querySelector('#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.thumbnail-image-wrapper.style-scope.ytmusic-player-bar');
-  document.body.style = "--paper-slider-knob-color: #f00";
+  // document.body.style = "--paper-slider-knob-color: #f00";
   if (parentElement) {
 
     imageIcon.style.display = "none";

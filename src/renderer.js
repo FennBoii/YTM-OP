@@ -3,6 +3,7 @@ window.api.send('load-config');
 
 var errorCatch = 0;
 
+
 // Listen for the config data from the main process
 window.api.receive('config-loaded', (configData) => {
     console.log("Received config data in renderer:", configData); // Log received data

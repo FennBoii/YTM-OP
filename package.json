@@ -110,6 +110,13 @@
 				"filter": [
 					"**/*"
 				]
+			},
+			{
+				"from": "src/sysVol/volWinImage.png",
+				"to": ".",
+				"filter": [
+					"**/*"
+				]
 			}
 		]
 	},

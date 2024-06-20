@@ -1,5 +1,9 @@
-import { ipcRenderer } from 'electron';
+window.api.send('PlsSendVolOwO');
 
-ipcRenderer.on('sysVolVar', (event, text) => {
-    document.getElementById('text').innerText = text;
+window.api.receive('getSysVolNow', (fetchedData) => {
+    let intervalIdquick = setInterval(() => {
+        clearInterval(intervalIdquick);
+        window.api.send('PlsSendVolOwO');
+    }, 250);
+    document.getElementById('text').innerText = fetchedData.toString();
 });

@@ -97,7 +97,7 @@ if (!fs.existsSync(configPath)) {
 let blockMediaKeys = false;
 var config = {};
 
-refreshConfig(); // Initialize config
+refreshConfig();
 
 function updateConfigFile(key, value) {
 	refreshConfig();
@@ -113,7 +113,7 @@ function updateConfigFile(key, value) {
 refreshConfig();
 var publicPageURL;
 var VersionNumber, synctimeGET, systemVolume = 0, ToggleButtons = true, ChannelToggle = false, TogglePlaylist = true, ToggleArtist = true, volume = 0, artist, songUrl = "https://music.youtube.com", titleTwo = "", detailsTwo = "- Loading -", stateTwo = "- Loading -", ConnectDis = " [ Disconnected ]", detailsThree = "Default", channel = "https://music.youtube.com", error_bool = false, PlaylistCounter = "", ConnectionTitle = "", RealCountdown, CountdownTime, secondTitle = true, thirdTitle = true, paused, imageicon = "https://google.com/h60/w60", repeat, playlist, channelname, Explicit, join1, join2, timeNow = 1, timeMax, notPlayingDisconnect = false, notPlayingDisconnectText = "", buttonOne = false, buttonTwo = false, buttonThree = false, buttonFour = false, warningText = "", TitleExit = "", quitText = "", connectCounter = 1, RealCountdownTitleBar = "", CountdownTimerVar = false;
-var ToggArtAlb = false, configWindow, urlFinal, title, playlistname, FINALTHREEVAR, joinn1, joinn2, largeImageText, plaaylist, largeImageKey, details, state, ThirdEntry, qualities = 0, result, timeMaxMinus, startTimestamp, endTimestamp, stopTime = 0, timeoutDisco = 0, globalCounter = 0, imgVer = 0, theFinalowoNess = "Nada There is nothing YET NONEEEEE", systemVolumeDEC, url1, imageiconNOW, imageReplace2, isDisOpen = false, disconLog = true, decreasingTimerUp, decreasingTimerDown;
+var ToggArtAlb = false, configWindow, urlFinal, title, playlistname, FINALTHREEVAR, joinn1, joinn2, largeImageText, plaaylist, largeImageKey, details, state, ThirdEntry, qualities = 0, result, timeMaxMinus, startTimestamp, endTimestamp, stopTime = 0, timeoutDisco = 0, globalCounter = 0, imgVer = 0, theFinalowoNess = "Nada There is nothing YET NONEEEEE", systemVolumeDEC, url1, imageiconNOW, imageReplace2, isDisOpen = false, disconLog = true, decreasingTimerUp, decreasingTimerDown, decreasingTimerOverlay;
 // [ ------------------------------------------------------- ]
 // [ ------------------------------------------------------- ]
 
@@ -877,31 +877,64 @@ function createPREWindow() {
 
 
 var ifVolOverlay = false;
+let runningDecreaseOverlay = 0;
 function callVolumeWindow() {
-	console.log(`- LOG -- EXECUTED 'callVolumeWindow' -`);
-	volWin = new BrowserWindow({
-		width: 800,  // Set your desired width
-		height: 600, // Set your desired height
-		frame: false,  // Frameless window
-		alwaysOnTop: true,  // Always on top of other windows
-		transparent: true,  // Transparent background
-		webPreferences: {
-			nodeIntegration: true,
-		},
-	});
-
-	volWin.loadFile('src/sysVol/volWin.html');
+	refreshConfig();
 	if (ifVolOverlay == false) {
 		ifVolOverlay = true;
-		let intervalIdquick1 = setInterval(() => {
-			clearInterval(intervalIdquick1);
-			volWin.close();
-		}, config.volWinDelay * 1000);
+		console.log(`- LOG -- EXECUTED 'callVolumeWindow' -`);
+		volWin = new BrowserWindow({
+			width: 800,
+			height: 600,
+			length: 650,
+			width: 200,
+			frame: false,
+			alwaysOnTop: true,
+			transparent: true,
+			webPreferences: {
+				preload: path.join(__dirname, "sysVol/preload.js"),
+			},
+		});
+
+
+
+
+		volWin.loadFile('src/sysVol/volWin.html');
+
 	}
-	volWin.webContents.send('sysVolVar', systemVolumeDEC);
-	// ipcMain.on('update-text', (event, text) => {
-	// });
+	decreasingTimerOverlay = config.volWinDelay * 100;
+
+	if (runningDecreaseOverlay == 0) {
+		var timerIntervalOverlay = setInterval(decrementAndCheckUp, 1);
+		decreasingTimerOverlay = config.volWinDelay * 100;
+		runningDecreaseOverlay = 1;
+	} else {
+		decreasingTimerOverlay = config.volWinDelay * 100;
+	}
+
+
+	function decrementAndCheckUp() {
+		decreasingTimerOverlay -= 1;
+
+		if (decreasingTimerOverlay <= 0) {
+			volWin.close();
+			runningDecreaseOverlay = 0;
+			clearInterval(timerIntervalOverlay);
+			// setVolumeDecAddFin();
+			ifVolOverlay = false;
+		}
+	}
 };
+
+
+ipcMain.on("PlsSendVolOwO", (event) => {
+	console.log(`- LOG -- SENT 'PlsSendVolOwO' FUNC -`);
+	event.sender.send("getSysVolNow", systemVolumeDEC);
+});
+
+// ipcMain.on("getSysVolNow", (event) => {
+// 	event.sender.send("sysVolVar", systemVolumeDEC);
+// });
 
 function toggleBlockMediaKeys(block) {
 	blockMediaKeys = block;
@@ -2268,9 +2301,10 @@ if (disconLog) {
 		console.log(`- LOG -- 'discoConnCount' IS: '${discoConnCount}' -`);
 		console.log(`- LOG -- 'decreasingTimerUp' IS: '${decreasingTimerUp}' -`);
 		console.log(`- LOG -- 'decreasingTimerDown' IS: '${decreasingTimerDown}' -`);
+		console.log(`- LOG -- 'decreasingTimerOverlay' IS: '${decreasingTimerOverlay}' -`);
 		console.log(`- LOG -- 'ifVolOverlay' IS: '${ifVolOverlay}' -`);
 		// console.log(`- LOG -- ISDISOPEN INFO: '${}' -`);
-	}, 250);
+	}, 500);
 }
 
 

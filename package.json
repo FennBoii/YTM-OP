@@ -1,7 +1,7 @@
 {
 	"name": "ytm-op",
-	"version": "1.0.8",
-	"description": "This is a Youtube Music Client with a Discord Rich Presense, janky VRChat OSC support and only if you know how to run it",
+	"version": "1.0.9",
+	"description": "This is a Youtube Music Client with a Discord Rich Presense",
 	"main": "src/main.js",
 	"scripts": {
 		"test": "electron .",
@@ -54,8 +54,8 @@
 			"target": "AppImage",
 			"icon": "resources/assets/build/linux/icon_2048x2048.png",
 			"synopsis": "ytm_op",
-			"description": "A small Electron app for YouTube Music which also integrates with Discord",
-			"maintainer": "Fennec_",
+			"description": "This is a Youtube Music Client with a Discord Rich Presens",
+			"maintainer": "FennBoii",
 			"category": "Music"
 		},
 		"directories": {
@@ -112,7 +112,7 @@
 				]
 			},
 			{
-				"from": "src/sysVol/volWinImage.png",
+				"from": "volWinImage.png",
 				"to": ".",
 				"filter": [
 					"**/*"
@@ -120,6 +120,13 @@
 			},
 			{
 				"from": "volWin.html",
+				"to": ".",
+				"filter": [
+					"**/*"
+				]
+			},
+			{
+				"from": "rendererSysVol.js",
 				"to": ".",
 				"filter": [
 					"**/*"
@@ -146,7 +153,7 @@
 		"loudness": "^0.4.2",
 		"minimist": "^1.2.8",
 		"mkdirp": "^3.0.1",
-		"node": "^22.3.0",
+		"node": "^20.15.0",
 		"node-addon-api": "^8.0.0",
 		"node-alsa-ctl": "^0.0.2",
 		"node-fetch": "^3.3.2",
@@ -162,7 +169,7 @@
 		"util": "^0.12.5"
 	},
 	"devDependencies": {
-		"electron": "^31.0.1",
+		"electron": "^31.0.2",
 		"electron-builder": "^24.6.4"
 	},
 	"repository": {

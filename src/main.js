@@ -892,14 +892,16 @@ function callVolumeWindow() {
 			alwaysOnTop: true,
 			transparent: true,
 			webPreferences: {
-				preload: path.join(__dirname, "sysVol/preload.js"),
+				preload: path.join(__dirname, "../sysVolpreload.js"),
+
+
 			},
 		});
 
 
 
 
-		volWin.loadFile('src/sysVol/volWin.html');
+		volWin.loadFile("C:/Program Files/YTM-OP/volWin.html");
 
 	}
 	decreasingTimerOverlay = config.volWinDelay * 100;

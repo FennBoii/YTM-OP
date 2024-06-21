@@ -16,3 +16,4 @@ contextBridge.exposeInMainWorld('electron', {
         console.log('The Preload file has been loaded.');
     }
 });
+    

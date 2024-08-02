@@ -1,0 +1,15 @@
+username: "[ Welcome Back, xxxx ]"
+outOfSyncPlayingSong: 2
+resyncSongUrl: 6000
+AlternateTopButtonValue: "Album"
+AlternateBottomButtonValue: "Arist"
+discordID: "835023222562095124"
+loadLastURL: "https://music.youtube.com/watch?v=1x3bF8BzzLg&list=PLLioGFSwCNUtK8pvZ55oMMBdP0havC6Zi"
+albumORsong: "song"
+randomToken: ""
+nameToken: ""
+givenNameToken: ""
+# 'state' properties can include SPECIFICALLY: '-titleTwo', '-'
+state: "-"
+# 'details' properties can include SPECIFICALLY: '-titleTwo', 
+details: ""

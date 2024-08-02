@@ -78,6 +78,7 @@ function changeYTLayoutElement() {
   const imageIcon = document.querySelector('#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.thumbnail-image-wrapper.style-scope.ytmusic-player-bar > img');
   const parentElement = document.querySelector('#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.thumbnail-image-wrapper.style-scope.ytmusic-player-bar');
   // document.body.style = "--paper-slider-knob-color: #f00";
+
   if (parentElement) {
 
     imageIcon.style.display = "none";
@@ -87,7 +88,7 @@ function changeYTLayoutElement() {
     parentElement.appendChild(imageIconREAL);
 
     let menuButtons = document.querySelector('#items > ytmusic-guide-entry-renderer:nth-child(1) > tp-yt-paper-item');
-
+    
     ipcRenderer.on('changeYTLayout', (event, imageUrl) => {
       imageIconREAL.src = imageUrl;
       imageIconREAL.style.position = "relative";
@@ -101,27 +102,40 @@ function changeYTLayoutElement() {
 
       const styleElement = document.createElement('style');
       styleElement.textContent = `
-          @keyframes colorChange {
-              0% { background-color: rgba(255, 0, 0, 1); }
-              10% { background-color: rgba(255, 154, 0, 1); }
-              20% { background-color: rgba(208, 222, 33, 1); }
-              30% { background-color: rgba(79, 220, 74, 1); }
-              40% { background-color: rgba(63, 218, 216, 1); }
-              50% { background-color: rgba(47, 201, 226, 1); }
-              60% { background-color: rgba(28, 127, 238, 1); }
-              70% { background-color: rgba(95, 21, 242, 1); }
-              80% { background-color: rgba(186, 12, 248, 1); }
-              90% { background-color: rgba(251, 7, 217, 1); }
-              100% { background-color: rgba(255, 0, 0, 1); }
-          }
-  
-          .animate-background {
-              animation: colorChange 6s infinite;
-          }
+        #daddysMilk {
+          transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+    
+        #daddysMilk:hover {
+          opacity: 0.3;
+          pointer-events: none;
+        }
       `;
       document.head.appendChild(styleElement);
 
-      imageIconREAL.classList.add('animate-background');
+      // const styleElement = document.createElement('style');
+      // styleElement.textContent = `
+      //     @keyframes colorChange {
+      //         0% { background-color: rgba(255, 0, 0, 1); }
+      //         10% { background-color: rgba(255, 154, 0, 1); }
+      //         20% { background-color: rgba(208, 222, 33, 1); }
+      //         30% { background-color: rgba(79, 220, 74, 1); }
+      //         40% { background-color: rgba(63, 218, 216, 1); }
+      //         50% { background-color: rgba(47, 201, 226, 1); }
+      //         60% { background-color: rgba(28, 127, 238, 1); }
+      //         70% { background-color: rgba(95, 21, 242, 1); }
+      //         80% { background-color: rgba(186, 12, 248, 1); }
+      //         90% { background-color: rgba(251, 7, 217, 1); }
+      //         100% { background-color: rgba(255, 0, 0, 1); }
+      //     }
+  
+      //     .animate-background {
+      //         animation: colorChange 6s infinite;
+      //     }
+      // `;
+      // document.head.appendChild(styleElement);
+
+      // imageIconREAL.classList.add('animate-background');
     });
 
 
@@ -132,8 +146,10 @@ function changeYTLayoutElement() {
     const sliderContainer = document.querySelector("#sliderContainer");
     const sliderBar = document.querySelector("#sliderBar");
     // const sliderBarKnob = document.getElementsByClassName("slider-knob-inner.style-scope.tp-yt-paper-slider");
-    const sliderBarKnob = document.querySelector('#sliderKnob > div');
+    const sliderBarKnob = document.querySelectorAll('#sliderKnobContainer')[1];
     const hoverVolumeSlider = document.querySelector('#volume-slider');
+    const progressContainer = document.querySelectorAll('#progressContainer')[2];
+    const sliderKnobContainer = document.querySelectorAll('#sliderKnobContainer')[2];
     const sliderVolumeKnob = document.querySelector('#volume-slider');
     const parentCenterDiv = document.createElement("div");
 
@@ -152,9 +168,17 @@ function changeYTLayoutElement() {
       // sliderVolumeKnob.style.top = "-1vh";
     // }
 
+    if (progressContainer) {
+      progressContainer.style.top = "-10px";
+    }
+
+    if (sliderKnobContainer) {
+      sliderKnobContainer.style.top = "-10px";
+    }
+
     if (sliderBarKnob) {
       sliderBarKnob.style.backgroundColor = 'red';
-      // sliderVolumeKnob.style.width = "5px";
+      sliderBarKnob.style.top = '13.5px';
     }
 
     if (hoverVolumeSlider) {
@@ -183,6 +207,7 @@ function changeYTLayoutElement() {
       progressBar.style.justifyContent = "center";
       progressBar.style.alignSelf = "center";
       progressBar.style.left = "0px";
+      progressBar.style.top = "10px";
       // parentPlayerBar.appendChild(newDivElement);
       // newDivElement.appendChild(parentPlayerBar);
       // progressBar.style.margin = "6.3vh";

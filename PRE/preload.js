@@ -3,22 +3,34 @@ const axios = require('axios');
 const path = require("path");
 const fs = require('fs');
 const os = require('os');
+const yaml = require('js-yaml')
 
 contextBridge.exposeInMainWorld('axios', axios);
 contextBridge.exposeInMainWorld('ipcRenderer', ipcRenderer);
 
-const configPath = path.resolve(os.homedir(), 'config.json');
+const configPath = path.resolve(os.homedir(), 'config.yaml');
 
 var config = {};
 
 function refreshConfig() {
-    config = JSON.parse(fs.readFileSync(configPath, "utf8"));
+    try {
+        const data = fs.readFileSync(configPath, "utf8");
+        config = yaml.load(data); // Use yaml.load to parse YAML
+    } catch (err) {
+        console.error("Error reading or parsing config file:", err);
+        config = {}; // Set config to an empty object on error
+    }
 }
 
 function updateConfigFile(key, value) {
     refreshConfig();
     config[key] = value;
-    fs.writeFileSync(configPath, JSON.stringify(config, null, 2), "utf8");
+    try {
+        const yamlData = yaml.dump(config); // Use yaml.dump to stringify YAML
+        fs.writeFileSync(configPath, yamlData, "utf8");
+    } catch (err) {
+        console.error("Error writing to config file:", err);
+    }
 }
 
 refreshConfig();

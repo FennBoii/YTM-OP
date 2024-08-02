@@ -21,6 +21,8 @@ const util = require('util');
 const localShortcut = require('electron-localshortcut');
 const exec = util.promisify(require('child_process').exec);
 const os = require('os');
+const yaml = require('js-yaml');
+const WebSocket = require('ws');
 const {
 	app,
 	Menu,
@@ -44,76 +46,66 @@ function delay(ms) {
 	return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+let configPath = path.resolve(os.homedir(), 'config.yaml');
+let config = {};
 
-const configUrl = 'https://raw.githubusercontent.com/FennBoii/YTM-OP/master/config.json';
-let configPath = path.resolve(os.homedir(), 'config.json');
+// Function to refresh the configuration
 function refreshConfig() {
-	try {
-		config = JSON.parse(fs.readFileSync(configPath, "utf8"));
-	} catch (error) {
-		if (error.code === 'ENOENT') {
-			console.log(`- LOG -- UNABLE TO LOCATE CONFIG FILE: ${configPath} -`);
-			console.log(`- LOG -- TRYING ALTERNATE DIRECTORY -`);
-			configPath = path.resolve(os.homedir(), 'config.json');
-			try {
-				config = JSON.parse(fs.readFileSync(configPath, "utf8"));
-			} catch (defaultError) {
-				console.log(`- LOG -- COULD NOT FIND CONFIG FILE: ${defaultError} -`);
-				console.log(`- LOG -- CREATING A NEW CONFIG FILE -`);
-				fs.writeFileSync(configPath, '{}');
-				config = {};
-			}
-		} else {
-			console.log(`- LOG -- ERROR READING 'config' FILE: ${error}-`);
-			throw error;
-		}
-	}
+    try {
+        config = yaml.load(fs.readFileSync(configPath, 'utf8'));
+        console.log(`- LOG -- REFRESHED CONFIG FILE -`);
+    } catch (error) {
+        if (error.code === 'ENOENT') {
+            console.log(`- LOG -- UNABLE TO LOCATE CONFIG FILE: ${configPath} -`);
+            console.log(`- LOG -- TRYING ALTERNATE DIRECTORY -`);
+            downloadDefaultConfig();
+        } else {
+            console.log(`- LOG -- ERROR READING 'config' FILE: ${error} -`);
+            throw error;
+        }
+    }
 }
 
+// Function to download and save the default configuration file
 function downloadDefaultConfig() {
-	axios.get('https://raw.githubusercontent.com/FennBoii/YTM-OP/master/config.json')
-		.then(response => {
-			// Convert response.data to a string
-			const dataString = JSON.stringify(response.data);
-
-			// Write the string data to the local config file
-			fs.writeFileSync(configPath, dataString);
-			console.log('Default config file downloaded successfully.');
-			app.quit();
-			app.relaunch();
-		})
-		.catch(error => {
-			console.error('Failed to download default config file:', error);
-		});
+    axios.get('https://raw.githubusercontent.com/FennBoii/YTM-OP/underConstruction/config.yaml')
+        .then(response => {
+            const data = response.data;
+            fs.writeFileSync(configPath, data, 'utf8');
+            console.log('Default config file downloaded successfully.');
+            // Reload the configuration after downloading
+            refreshConfig();
+        })
+        .catch(error => {
+            console.error('Failed to download default config file:', error);
+        });
 }
 
+// Check if the configuration file exists and download it if not
 if (!fs.existsSync(configPath)) {
-	// Download the default config file if it doesn't exist
-	downloadDefaultConfig();
+    downloadDefaultConfig();
 } else {
-	console.log('Config file already exists.');
+    console.log('Config file already exists.');
+    refreshConfig();  // Initialize config if the file exists
 }
 
-let blockMediaKeys = false;
-var config = {};
-
-refreshConfig();
-
+// Function to update the configuration file
 function updateConfigFile(key, value) {
-	refreshConfig();
-	config[key] = value;
-	fs.writeFileSync(configPath, JSON.stringify(config, null, 2), "utf8");
+    refreshConfig();
+    config[key] = value;
+	const yamlStr = yaml.dump(config);
+    fs.writeFileSync(configPath, yamlStr, 'utf8');
 }
 
-
-
-
+// Variable to block media keys
+let blockMediaKeys = false;
 
 /* ---------------------------------DEFINE FUNCTIONS--------------------------------- */
 refreshConfig();
 var publicPageURL;
-var VersionNumber, synctimeGET, systemVolume = 0, ToggleButtons = true, ChannelToggle = false, TogglePlaylist = true, ToggleArtist = true, volume = 0, artist, songUrl = "https://music.youtube.com", titleTwo = "", detailsTwo = "- Loading -", stateTwo = "- Loading -", ConnectDis = " [ Disconnected ]", detailsThree = "Default", channel = "https://music.youtube.com", error_bool = false, PlaylistCounter = "", ConnectionTitle = "", RealCountdown, CountdownTime, secondTitle = true, thirdTitle = true, paused, imageicon = "https://google.com/h60/w60", repeat, playlist, channelname, Explicit, join1, join2, timeNow = 1, timeMax, notPlayingDisconnect = false, notPlayingDisconnectText = "", buttonOne = false, buttonTwo = false, buttonThree = false, buttonFour = false, warningText = "", TitleExit = "", quitText = "", connectCounter = 1, RealCountdownTitleBar = "", CountdownTimerVar = false;
-var ToggArtAlb = false, configWindow, urlFinal, title, playlistname, FINALTHREEVAR, joinn1, joinn2, largeImageText, plaaylist, largeImageKey, details, state, ThirdEntry, qualities = 0, result, timeMaxMinus, startTimestamp, endTimestamp, stopTime = 0, timeoutDisco = 0, globalCounter = 0, imgVer = 0, theFinalowoNess = "Nada There is nothing YET NONEEEEE", systemVolumeDEC, url1, imageiconNOW, imageReplace2, isDisOpen = false, disconLog = true, decreasingTimerUp, decreasingTimerDown, decreasingTimerOverlay;
+var VersionNumber, synctimeGET, systemVolume = 0, ToggleButtons = true, ChannelToggle = false, TogglePlaylist = true, ToggleArtist = true, volume = 0, artist, songUrl = "https://music.youtube.com", titleTwo = "", detailsTwo = '', stateTwo = '', ConnectDis = " [ Disconnected ]", detailsThree = "Default", channel = "https://music.youtube.com", error_bool = false, PlaylistCounter = "", ConnectionTitle = "", RealCountdown, CountdownTime, secondTitle = true, thirdTitle = true, paused, imageicon = "https://google.com/h60/w60", repeat, playlist, channelname, Explicit, join1, join2, timeNow = 1, timeMax, notPlayingDisconnect = false, notPlayingDisconnectText = "", buttonOne = false, buttonTwo = false, buttonThree = false, buttonFour = false, warningText = "", TitleExit = "", quitText = "", connectCounter = 1, RealCountdownTitleBar = "", CountdownTimerVar = false;
+var ToggArtAlb = false, configWindow, urlFinal, title, playlistname, FINALTHREEVAR, joinn1, joinn2, largeImageText, plaaylist, largeImageKey, details, state, ThirdEntry, qualities = 0, result, timeMaxMinus, startTimestamp, endTimestamp, stopTime = 0, timeoutDisco = 0, globalCounter = 0, imgVer = 0, theFinalowoNess = "Nada There is nothing YET NONEEEEE", systemVolumeDEC, url1, imageiconNOW, imageReplace2, isDisOpen = false, disconLog = true, decreasingTimerUp, decreasingTimerDown, decreasingTimerOverlay, playingFrom;
+var albumORsong = config.albumORsong;
 // [ ------------------------------------------------------- ]
 // [ ------------------------------------------------------- ]
 
@@ -139,117 +131,10 @@ function executeJavaScript(code) {
 	});
 }
 
-function SETITSNAME() {
-	console.log("-- " + config.username + " --");
-}
-
+console.log("-- " + config.username + " --");
 process.stdout.write("\x1Bc");
-setTimeout(SETITSNAME, 600);
 
-function checkSync() {
-	if (ConnectionTitle.includes("-- Sending --")) {
-		const baseURL = "https://getname.ytmopdata.net/changeTheLink.php";
 
-		const theLinkData = {
-			siteName: config.nameToken,
-			givenNameToken: config.givenNameToken,
-			randomToken: config.randomToken,
-			thelink: songUrl.toString(),
-		};
-
-		async function updateTheLink() {
-			try {
-				const response = await axios.get(`${baseURL}/updateTheLink.php`, {
-					params: theLinkData,
-				});
-			} catch (error) {
-				console.log(`- LOG -- ERROR UPDATING 'theLink', ERR: ${error.message} -`);
-			}
-		}
-
-		updateTheLink();
-
-	} else if (ConnectionTitle.includes("-- Recieving --")) {
-		const phpScriptURL = "https://getname.ytmopdata.net/token_verifier.php";
-
-		const queryParameters = {
-			siteName: config.nameToken,
-			givenNameToken: config.givenNameToken,
-			randomToken: config.randomToken,
-		};
-
-		axios.get(phpScriptURL, {
-			params: queryParameters,
-		})
-			.then((response) => {
-				const { thelink, synctime } = response.data;
-				synctimeGET = response.data.synctime;
-
-				const timeParamStart = thelink.indexOf("&t=") + 3;
-				const timeParamValue = thelink.substring(timeParamStart);
-
-				const linkWithoutTimeParam = thelink.slice(
-					0,
-					thelink.indexOf("&t=") + 3
-				);
-				const linksCombined = linkWithoutTimeParam + timeParamValue;
-
-				if (songUrl == linksCombined) {
-					if (Math.abs(synctime - timeNow) < config.outOfSyncPlayingSong) {
-						console.log("This doesn't need to be synced again");
-					} else {
-						win.webContents.executeJavaScript(
-							`document.getElementsByTagName('video')[0].currentTime = ${synctime}`
-						);
-						console.log("syncedTime");
-					}
-				} else {
-					win.loadURL(thelink);
-					console.log("Reloaded for some reason");
-				}
-			})
-			.catch((error) => {
-				if (error.response) {
-					console.error(
-						"Server responded with status code:",
-						error.response.status
-					);
-					console.error("Response data:", error.response.data);
-				} else if (error.request) {
-					console.error("No response received from the server.");
-				} else {
-					console.error("Error:", error.message);
-				}
-			});
-	} else {
-	}
-}
-
-function syncTimeSync() {
-	if (ConnectionTitle.includes("-- Sending --")) {
-		const baseURL = "https://getname.ytmopdata.net/changeSyncTime.php";
-
-		const syncTimeData = {
-			siteName: config.nameToken,
-			givenNameToken: config.givenNameToken,
-			randomToken: config.randomToken,
-			synctime: timeNow,
-		};
-
-		async function updateSyncTime() {
-			try {
-				const response = await axios.get(baseURL, {
-					params: syncTimeData,
-				});
-			} catch (error) {
-				console.log(`- LOG -- ERROR UPDATING 'synctime', ERR: ${error.message} -`);
-			}
-		}
-
-		updateSyncTime();
-	}
-	console.log(`- LOG -- 'synctime' -`);
-}
 
 let win, settingsWin;
 const menuTemplate = [
@@ -261,6 +146,7 @@ const menuTemplate = [
 				click() {
 					reloadImageUrl();
 					setLargeIconImage();
+					imgVer += 1;
 				},
 			},
 			{
@@ -568,6 +454,12 @@ const menuTemplate = [
 							clipboard.writeText(win.webContents.getURL());
 						},
 					},
+					{
+						label: "Copy SongImageURL",
+						click() {
+							clipboard.writeText(urlFinal);
+						},
+					},
 				],
 			},
 		],
@@ -598,51 +490,70 @@ ipcMain.on('quit-app', () => {
 });
 
 ipcMain.on("load-config", (event) => {
-	fs.readFile(
-		path.join(configPath),
-		"utf8",
-		(err, data) => {
-			if (err) {
-				console.error("Error reading the config file", err);
-				return;
-			}
-			const config = JSON.parse(data);
-			console.log("Sending config data:", config);
-			event.sender.send("config-loaded", config);
-		}
-	);
-	console.log(`- LOG -- 'load-Config' -`);
+    fs.readFile(
+        path.join(configPath),
+        "utf8",
+        (err, data) => {
+            if (err) {
+                console.error("Error reading the config file", err);
+                return;
+            }
+            try {
+                // const config = yaml.load(data); // Use yaml.load to parse YAML
+                // console.log("Sending config data:", config);
+                console.log("Sending config data:", data);
+                event.sender.send("config-loaded", data);
+            } catch (parseErr) {
+                console.error("Error parsing YAML", parseErr);
+            }
+        }
+    );
+    console.log(`- LOG -- 'load-Config' -`);
 });
 
 ipcMain.on("save-config", (event, updatedConfig) => {
-	fs.writeFile(
-		configPath,
-		JSON.stringify(updatedConfig, null, 2),
-		"utf8",
-		(err) => {
-			if (err) {
-				return;
-			}
-			event.sender.send("config-saved", "success");
-		}
-	);
-	console.log(`- LOG -- EXECUTED 'saveConfig' -`);
+    try {
+        const yamlData = updatedConfig; // Use yaml.dump to stringify YAML
+        fs.writeFile(
+            configPath,
+            yamlData,
+            "utf8",
+            (err) => {
+                if (err) {
+                    console.error("Error saving the config file", err);
+                    return;
+                }
+                event.sender.send("config-saved", "success");
+            }
+        );
+    } catch (stringifyErr) {
+        console.error("Error converting to YAML", stringifyErr);
+    }
+    console.log(`- LOG -- EXECUTED 'saveConfig' -`);
 });
 
 ipcMain.on("request-config", (event) => {
-	fs.readFile(configPath, "utf8", (err, data) => {
-		if (err) {
-			console.error("Error reading the file", err);
-			event.reply("config-response", {
-				error: err.message,
-			});
-			return;
-		}
-		event.reply("config-response", {
-			data: JSON.parse(data),
-		});
-	});
-	console.log(`- LOG -- 'request-Config' -`);
+    fs.readFile(configPath, "utf8", (err, data) => {
+        if (err) {
+            console.error("Error reading the file", err);
+            event.reply("config-response", {
+                error: err.message,
+            });
+            return;
+        }
+        try {
+            const config = yaml.load(data); // Use yaml.load to parse YAML
+            event.reply("config-response", {
+                data: config,
+            });
+        } catch (parseErr) {
+            console.error("Error parsing YAML", parseErr);
+            event.reply("config-response", {
+                error: parseErr.message,
+            });
+        }
+    });
+    console.log(`- LOG -- 'request-Config' -`);
 });
 
 const keyword = "Connected";
@@ -879,7 +790,6 @@ function createPREWindow() {
 var ifVolOverlay = false;
 let runningDecreaseOverlay = 0;
 function callVolumeWindow() {
-	refreshConfig();
 	if (ifVolOverlay == false) {
 		ifVolOverlay = true;
 		console.log(`- LOG -- EXECUTED 'callVolumeWindow' -`);
@@ -952,8 +862,6 @@ function createWindow() { // lower
 			preload: path.join(__dirname, "preload.js"),
 		},
 	});
-
-	let albumORsong = config.albumORsong;
 
 	if (albumORsong == "song") {
 		win.loadURL(config.loadLastURL);
@@ -1089,52 +997,71 @@ app.on("ready", focusElectronApp);
 
 
 ipcMain.on("sendDataToMain", (event, dataToUpdate) => {
-	const filePath = path.join(configPath);
+    const filePath = path.join(configPath);
 
-	fs.readFile(filePath, "utf8", (readErr, data) => {
-		if (readErr) {
-			console.error("Error reading file:", readErr);
-			event.sender.send("updateResponse", {
-				success: false,
-				error: readErr.message,
-			});
-			return;
-		}
+    fs.readFile(filePath, "utf8", (readErr, data) => {
+        if (readErr) {
+            console.error("Error reading file:", readErr);
+            event.sender.send("updateResponse", {
+                success: false,
+                error: readErr.message,
+            });
+            return;
+        }
 
-		let config = JSON.parse(data);
+        let config;
+        try {
+            config = yaml.load(data); // Use yaml.load to parse YAML
+        } catch (parseErr) {
+            console.error("Error parsing YAML:", parseErr);
+            event.sender.send("updateResponse", {
+                success: false,
+                error: parseErr.message,
+            });
+            return;
+        }
 
-		let mergedData = {
-			...config,
-			...dataToUpdate,
-		};
+        let mergedData = {
+            ...config,
+            ...dataToUpdate,
+        };
 
-		fs.writeFile(
-			filePath,
-			JSON.stringify(mergedData, null, 2),
-			"utf8",
-			(writeErr) => {
-				if (writeErr) {
-					console.error("Error writing to file:", writeErr);
-					event.sender.send("updateResponse", {
-						success: false,
-						error: writeErr.message,
-					});
-				} else {
-					console.log("File updated with merged data successfully.");
-					event.sender.send("updateResponse", {
-						success: true,
-						message: "Data received and file updated",
-					});
-					event.sender.send("configData", {
-						success: true,
-						config: mergedData,
-					});
-				}
-			}
-		);
-	});
-	console.log(`- LOG -- 'senddatatomain' -`);
-	loadCurrentGivenURL();
+        try {
+            const yamlData = mergedData; // Use yaml.dump to stringify YAML
+            fs.writeFile(
+                filePath,
+                yamlData,
+                "utf8",
+                (writeErr) => {
+                    if (writeErr) {
+                        console.error("Error writing to file:", writeErr);
+                        event.sender.send("updateResponse", {
+                            success: false,
+                            error: writeErr.message,
+                        });
+                    } else {
+                        console.log("File updated with merged data successfully.");
+                        event.sender.send("updateResponse", {
+                            success: true,
+                            message: "Data received and file updated",
+                        });
+                        event.sender.send("configData", {
+                            success: true,
+                            config: mergedData,
+                        });
+                    }
+                }
+            );
+        } catch (stringifyErr) {
+            console.error("Error converting to YAML:", stringifyErr);
+            event.sender.send("updateResponse", {
+                success: false,
+                error: stringifyErr.message,
+            });
+        }
+    });
+    console.log(`- LOG -- 'senddatatomain' -`);
+    loadCurrentGivenURL();
 });
 
 function loadCurrentGivenURL() {
@@ -1514,6 +1441,7 @@ async function getContent() {
 			console.log(`- LOG -- ERRORED 'Explicit' OBJECT -`);
 		}
 
+		// Get player volume live
 		try {
 			const javascriptCode = `
 				(function() {
@@ -1564,10 +1492,35 @@ async function getContent() {
 			console.log(`- LOG -- ERRORED 'imageiconNOW' OBJECT -`);
 		}
 
+		// get playing from Name
+		try {
+			const javascriptCode = `
+					(function() {
+						return new Promise((resolve) => {
+							const startTime = Date.now();
+							const interval = setInterval(() => {
+								const element = document.querySelector('#tab-renderer > div > ytmusic-queue-header-renderer > div.container-name.style-scope.ytmusic-queue-header-renderer > yt-formatted-string.subtitle.style-scope.ytmusic-queue-header-renderer');
+								if (element) {
+									clearInterval(interval);
+									resolve(element.innerHTML || 'None');
+								} else if (Date.now() - startTime > 3000) { // Timeout after 1 seconds
+									clearInterval(interval);
+									resolve('None'); // Resolve with 'None' instead of rejecting
+								}
+							}, 500); // Check every 500ms
+						});
+					})();
+				`;
+
+			playingFrom = await executeJavaScript(javascriptCode);
+		} catch (error) {
+			console.log(`- LOG -- ERRORED 'get playing from name' OBJECT -`);
+		}
+
 		let imageReplace1 = "https://getname.ytmopdata.net?w60?h4122";
-		if (!isDisOpen) {
+		if (!isDisOpen == true) {
 			imageReplace1 = "https://getname.ytmopdata.net?w60?h4122";
-		} else if (isDisOpen) {
+		} else if (isDisOpen == true) {
 			imageReplace1 = imageiconNOW.replace("w60", "w4112");
 			imageReplace2 = imageReplace1.replace("h60", "h4112");
 		}
@@ -1705,6 +1658,7 @@ async function getContent() {
 		publicPageURL = win.webContents.getURL();
 
 		globalCounter += 1;
+		VersionNumber += 1;
 
 		return resolve({
 			// VersionNumber,
@@ -1732,6 +1686,8 @@ async function getContent() {
 			// ToggleArtist,
 			// expanse4,
 			// expanse5,
+			'playing from:': playingFrom,
+			ConnectionTitle,
 			globalCounter,
 			time: [timeNow, timeMax],
 			title,
@@ -1807,22 +1763,6 @@ async function getContent() {
 	});
 }
 
-let albumORsong = config.albumORsong;
-
-if (albumORsong == "song") {
-	if (isDisOpen) {
-		updateConfigFile("loadLastURL", songUrl.toString());
-	}
-} else if (albumORsong == "album") {
-	if (isDisOpen) {
-		updateConfigFile("loadLastURL", playlist.toString());
-	}
-} else if (albumORsong == "default") {
-	if (isDisOpen) {
-		updateConfigFile("https://music.youtube.com/");
-	}
-}
-
 async function reloadImageUrl() {
 	// imageIcon Get Element
 	try {
@@ -1860,6 +1800,7 @@ function setUserPageImage() {
 
 	const baseURL = 'https://getname.ytmopdata.net/webpageEdit.php';
 
+
 	const theLinkData = {
 		givenNameToken: config.givenNameToken,
 		randomToken: config.randomToken,
@@ -1874,18 +1815,27 @@ function setUserPageImage() {
 	} catch (error) {
 		console.log(`- LOG -- ERRORED UPDATING 'theLink' -`);
 	} //LOWER1
-	imgVer += 1;
+	imgVer + 1;
 }
 
-setUserPageImage();
-
-getContent();
+getContent()
+	.then(data => {
+		console.log("SUCCESS" + data);
+	})
+	.catch(error => {
+		console.error("FAILED" + error);
+	});
 
 // eslint-disable-next-line no-inline-comments
-// const clientId = config.discordID; /* 633709502784602133*/
-// if (isDisOpen == true) {
-// 	DiscordRPC.register(clientId);
-// }
+const clientId = config.discordID; /* 633709502784602133*/
+let initialized = false;
+
+if (!initialized) {
+	initialized = true;
+	if (isDisOpen == true) {
+		DiscordRPC.register(clientId);
+	}
+}
 const rpc = new DiscordRPC.Client({ transport: 'ipc', });
 
 
@@ -2060,6 +2010,7 @@ function setActivity() {
 
 		if (timeNow <= 3 && paused == "Pause") {
 			stopTime = Date.now();
+			imgVer += 1;
 			reloadImageUrl();
 			setLargeIconImage();
 		}
@@ -2117,6 +2068,25 @@ function setActivity() {
 		console.log(songInfo);
 		detailsTwo = details;
 		stateTwo = state;
+
+		let albumORsong = config.albumORsong;
+		let albumORsongURL = config.loadLastURL;
+
+		if (albumORsong == "song") {
+			if (title && playlist) {
+				updateConfigFile("loadLastURL", win.webContents.getURL());
+			}
+		} else if (albumORsong == "album") {
+			if (title && playlist) {
+				updateConfigFile("loadLastURL", playlist.toString());
+			}
+		} else if (albumORsong == "default") {
+			if (title && playlist) {
+				updateConfigFile("https://music.youtube.com/");
+			}
+		}
+		console.log(albumORsong);
+		console.log(albumORsongURL);
 	}
 
 	if (error_bool == true) {
@@ -2163,10 +2133,12 @@ function setActivity() {
 					{
 						label: `${joinn2}`,
 						url: plaaylist,
+						style: 5,
 					},
 					{
 						label: `${joinn1}`,
 						url: channel,
+						style: 5,
 					},
 				],
 				instance: true,
@@ -2183,6 +2155,7 @@ function setActivity() {
 					{
 						label: `${joinn1}`,
 						url: channel,
+						style: 5,
 					},
 				],
 				instance: true,
@@ -2199,6 +2172,7 @@ function setActivity() {
 					{
 						label: `${joinn2}`,
 						url: plaaylist,
+						style: 5,
 					},
 				],
 				instance: true,
@@ -2225,6 +2199,56 @@ function setActivity() {
 	}
 	if (endTimestamp) activity.endTimestamp = endTimestamp;
 	if (isDisOpen == true) rpc.setActivity(activity);
+
+	let wsSend; // Declare variables outside of the scope to allow reassignment
+	let wsReceive;
+
+	if (ConnectionTitle.includes("Sending")) {
+		const wsSend = new WebSocket(`wss://getname.ytmopdata.net/${config.nameToken}`);
+		wsSend.onopen = function (event) {
+			console.log(`-- LOG - WEBSOCKET CONNECTION SUCCEDDED -`);
+			wsSend.send(theFinalowoNess);
+		};
+
+		// wsSend.onmessage = function (event) {
+		// 	console.log(`-- LOG - MESSAGE RECIEVED ${event.data} -`);
+		// };
+
+		wsSend.onclose = function (event) {
+			console.log(`-- LOG -- WEBSOCKET CONNECTION LOST: ${event.code}\n ${event.reason} -`);
+			setTimeout(function () {
+				console.error(`-- LOG - RECONNECTING WEBSOCKET -`);
+				wsSend = new WebSocket(`wss://getname.ytmopdata.net/${config.nameToken}`);
+			}, 5000);
+		};
+
+		wsSend.onerror = function (error) {
+			console.error(`-- LOG -- WEBSOCKET ERROR: ${error} -`);
+		};
+	} else if (ConnectionTitle.includes("Recieving")) {
+		const WebSocket = require('ws');
+		const wsRecieve = new WebSocket(`wss://getname.ytmopdata.net/${config.nameToken}`);
+		wsRecieve.onopen = function (event) {
+			console.log(`-- LOG - WEBSOCKET CONNECTION SUCCEDDED -`);
+		};
+
+		wsRecieve.onmessage = function (event) {
+			console.log(`-- LOG - MESSAGE RECEIVED ${event.data} -`);
+		};
+
+		wsRecieve.onclose = function (event) {
+			console.log(`-- LOG -- WEBSOCKET CONNECTION LOST: ${event.code}\n ${event.reason} -`);
+			setTimeout(function () {
+				console.log('Reconnecting...');
+				console.error(`-- LOG - RECONNECTING WEBSOCKET -`);
+				wsRecieve = new WebSocket(`wss://getname.ytmopdata.net/${config.nameToken}`);
+			}, 1000);
+		};
+
+		wsRecieve.onerror = function (error) {
+			console.error(`-- LOG -- WEBSOCKET ERROR: ${error} -`);
+		};
+	}
 }
 
 
@@ -2244,13 +2268,13 @@ async function isDiscordRunning() {
 		const { stdout } = await exec('wmic process where name="Discord.exe" get ProcessId');
 		const outputGotten = stdout.trim().replace(/\D/g, '');
 
-		if (outputGotten.length > 10 && !isDisOpen) {
+		if (outputGotten.length > 10 && !isDisOpen == true) {
 			isDiscoRunningStr = `Discord Is Running`;
 			console.log(`- LOG -- DISCORD IS OPEN -`);
 			isDisOpen = true;
 
 			if (discoConnCount == 0) {
-				let runDur = 20000;
+				let runDur = 2000;
 				console.log(`- LOG -- LAUNCHING 'afterRecieve' ${runDur / 1000}s -`);
 				let intervalIdquick1 = setInterval(() => {
 					clearInterval(intervalIdquick1);
@@ -2258,7 +2282,7 @@ async function isDiscordRunning() {
 					afterRecieve();
 				}, runDur); // RUN FOR 20 SECONDS
 			}
-		} else if (outputGotten.length <= 10 && isDisOpen) { // Check if Discord is closed and was previously detected
+		} else if (outputGotten.length <= 10 && isDisOpen == true) { // Check if Discord is closed and was previously detected
 			isDiscoRunningStr = `Discord Is NOT Running`;
 			console.log(`- LOG -- DISCORD IS CLOSED -`);
 			isDisOpen = false;
@@ -2417,8 +2441,8 @@ rpc.once("disconnected", (title) => {
 	rpc.destroy();
 	clearInterval(afterSend);
 	clearInterval(setActivity);
-	clearInterval(checkSync);
-	clearInterval(syncTimeSync);
+	// setInterval(checkSync, config.resyncSongUrl);
+	// clearInterval(syncTimeSync);
 	clearInterval(updateSongInfo);
 	clearInterval(setPageName);
 	// clearInterval(isDiscordRunning); DONT STOP DISCORD CHECK FROM HAPPENING NATE...
@@ -2430,9 +2454,6 @@ rpc.once("disconnected", (title) => {
 });
 
 function reconnect() {
-	rpc = new DiscordRPC.Client({
-		transport: "ipc",
-	});
 	DiscordRPC.register(clientId);
 	rpc
 		.login({
@@ -2475,12 +2496,14 @@ function getNativeImage(filePath) {
 }
 
 function setPageName() {
-
-
-	if (isDisOpen) {
+	if (isDisOpen == true) {
 		if (buttonOne == true || buttonTwo == true || buttonThree == true || buttonFour == true) {
 			win.setTitle(
 				`${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}${notPlayingDisconnectText} ${config.username}`
+			);
+		} else {
+			win.setTitle(
+				`${titleTwo} - ${stateTwo}${ConnectDis}${TitleExit}${ConnectionTitle}${RealCountdownTitleBar}${notPlayingDisconnectText} ${config.username}`
 			);
 		}
 	}
@@ -2494,35 +2517,49 @@ rpc.on("ready", () => {
 	setActivity();
 	setInterval(setActivity, 1e3);
 	// setInterval(reloadImageUrl, 5e3);
-	setInterval(checkSync, config.resyncSongUrl);
-	setInterval(syncTimeSync, 1e8);
+	// setInterval(syncTimeSync, 1e8);
 	//setInterval(fullSync, 1e3);
 	setInterval(updateSongInfo, 1e3);
 	setInterval(setPageName, 1e3);
 	// setInterval(isDiscordRunning, 3e3);
 	setTimeout(setLargeIconImage, 10000);
+	setInterval(setUserPageImage, 2000);
 	ConnectDis = " [ Connected ]";
 });
 
 function afterSend() {
-	if (isDisOpen) {
-		const clientId = config.discordID; /* 633709502784602133*/
-		DiscordRPC.register(clientId);
-		rpc.login({ clientId });
+	const clientId = config.discordID;
+
+	// Function to attempt connecting to Discord RPC
+	function connectRPC() {
+		try {
+			DiscordRPC.register(clientId);
+			rpc.login({ clientId }).catch(err => {
+				console.error('Failed to login:', err);
+			});
+			console.log('- LOG -- EXECUTED "afterSend" func -');
+			clearInterval(intervalIdDisco);
+		} catch (error) {
+			console.error('Error connecting to Discord RPC:', error);
+			setTimeout(connectRPC, 5000);
+		}
+	}
+
+	// Call the connection function initially
+	if (isDisOpen == true) {
+		connectRPC();
 		clearInterval(isDisOpenInterval);
-		console.log(`- LOG -- EXECUTED 'afterSend' func -`);
-		clearInterval(intervalIdDisco);
 	}
 }
 
 function afterRecieve() {
-	if (!isDisOpen) {
+	if (!isDisOpen == true) {
 		rpc.destroy();
 		isDisOpen = false;
 		setInterval(isDisOpenInterval);
 		console.log(`- LOG -- EXECUTED 'afterRecieve' func -`);
 	}
-	if (isDisOpen) {
+	if (isDisOpen == true) {
 		aftersendStatus = true;
 		// setTimeout(2000, afterSend);
 		console.log(`- LOG -- AFTERSEND SENT -`);

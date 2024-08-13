@@ -17,6 +17,64 @@ contextBridge.exposeInMainWorld('electron', {
   }
 });
 
+
+function updatePlayerVolumeElement() {
+  const targetElement = document.querySelector('#right-content > ytmusic-settings-button');
+  if (targetElement) {
+    let playerVolumeElement = document.getElementById('playerVolume');
+    if (!playerVolumeElement) {
+      playerVolumeElement = document.createElement('div');
+      playerVolumeElement.id = 'playerVolume';
+      targetElement.appendChild(playerVolumeElement);
+    }
+    
+    // Listen for playerVolume updates from the main process
+    ipcRenderer.on('updatePlayerVolume', (event, playerVolume) => {
+      playerVolumeElement.textContent = playerVolume;
+      playerVolumeElement.style.backgroundColor = 'green';
+      playerVolumeElement.style.textAlign = 'center';
+      playerVolumeElement.style.outline = 'double 2px #ffffff';
+      playerVolumeElement.style.width = 'min-content';
+      playerVolumeElement.style.left = '10px';
+      playerVolumeElement.style.width = '40px';
+      playerVolumeElement.style.position = 'relative';
+      // playerVolumeElement.style.display = 'grid';
+    });
+    
+    // Stop checking for the element once it's created
+    clearInterval(checkIntervalPlayer);
+  }
+}
+
+function updateConfigUpdatesElement() {
+  const targetElement = document.querySelector('#right-content > ytmusic-settings-button');
+  if (targetElement) {
+    let configUpdatesElement = document.getElementById('configUpdates');
+    if (!configUpdatesElement) {
+      configUpdatesElement = document.createElement('div');
+      configUpdatesElement.id = 'configUpdates';
+      targetElement.appendChild(configUpdatesElement);
+    }
+    
+    // Listen for playerVolume updates from the main process
+    ipcRenderer.on('updateConfigUpdates', (event, statusColor) => {
+      configUpdatesElement.style.backgroundColor = statusColor;
+      configUpdatesElement.style.textAlign = 'center';
+      configUpdatesElement.style.width = '8px';
+      configUpdatesElement.style.height = '8px';
+      configUpdatesElement.style.left = '148px';
+      configUpdatesElement.style.top = '10px';
+      configUpdatesElement.style.position = 'relative';
+      configUpdatesElement.style.borderRadius = '28px';
+      configUpdatesElement.style.zIndex = '1';
+      // playerVolumeElement.style.display = 'grid';
+    });
+
+    // Stop checking for the element once it's created
+    clearInterval(updateStatusConfig);
+  }
+}
+
 function updateSystemVolumeElement() {
   const targetElement = document.querySelector('#right-content > ytmusic-settings-button');
   if (targetElement) {
@@ -35,7 +93,7 @@ function updateSystemVolumeElement() {
       systemVolumeElement.style.textAlign = 'center';
       systemVolumeElement.style.outline = 'double 2px #ffffff';
       systemVolumeElement.style.width = 'min-content';
-      systemVolumeElement.style.left = '12px';
+      systemVolumeElement.style.left = '14px';
       systemVolumeElement.style.width = '40px';
       systemVolumeElement.style.position = 'relative';
       // systemVolumeElement.style.display = 'grid';
@@ -46,33 +104,6 @@ function updateSystemVolumeElement() {
   }
 }
 
-function updatePlayerVolumeElement() {
-  const targetElement = document.querySelector('#right-content > ytmusic-settings-button');
-  if (targetElement) {
-    let playerVolumeElement = document.getElementById('playerVolume');
-    if (!playerVolumeElement) {
-      playerVolumeElement = document.createElement('div');
-      playerVolumeElement.id = 'playerVolume';
-      targetElement.appendChild(playerVolumeElement);
-    }
-
-    // Listen for playerVolume updates from the main process
-    ipcRenderer.on('updatePlayerVolume', (event, playerVolume) => {
-      playerVolumeElement.textContent = playerVolume;
-      playerVolumeElement.style.backgroundColor = 'green';
-      playerVolumeElement.style.textAlign = 'center';
-      playerVolumeElement.style.outline = 'double 2px #ffffff';
-      playerVolumeElement.style.width = 'min-content';
-      playerVolumeElement.style.left = '10px';
-      playerVolumeElement.style.width = '40px';
-      playerVolumeElement.style.position = 'relative';
-      // playerVolumeElement.style.display = 'grid';
-    });
-
-    // Stop checking for the element once it's created
-    clearInterval(checkIntervalPlayer);
-  }
-}
 
 function changeYTLayoutElement() {
   const imageIcon = document.querySelector('#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.thumbnail-image-wrapper.style-scope.ytmusic-player-bar > img');
@@ -239,6 +270,7 @@ function changeYTLayoutElement() {
 }
 
 // Check for the target element every 100 milliseconds
+const updateStatusConfig = setInterval(updateConfigUpdatesElement, 100); //100
 const checkIntervalPlayer = setInterval(updatePlayerVolumeElement, 100); //100
 const checkIntervalSystem = setInterval(updateSystemVolumeElement, 100); //100
 const changeYTLayout = setInterval(changeYTLayoutElement, 100); //1000

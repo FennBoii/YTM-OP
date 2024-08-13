@@ -1,26 +1,33 @@
 const WebSocket = require('ws');
 let ws;
-let messageCount = 0;
+let messageRecievedCount = 0;
+let messageSentCount = 0;
 
 function connectWebSocket() {
     ws = new WebSocket(`wss://getname.ytmopdata.net/FennBoii`);
 
     ws.onopen = function (event) {
-        console.log(`- LOG -- CONNECTED TO WEBSOCKET-`);
+        console.log(`- LOG -- CONNECTED TO WEBSOCKET: '${FennBoii}' -`);
+        setInterval(() => {
+            messageSentCount += 1;
+            ws.send("owo");
+            console.log("send owo");
+        }, 1000);
     };
 
     ws.onmessage = function (event) {
-        messageCount + 1;
+        messageRecievedCount += 1;
         console.log(`- LOG - MESSAGE RECIEVED - ${event.data} -`);
         if (event.data === 'ping') {
             console.log(`- LOG -- SENDING 'pong' MESSAGE BACK -`);
+            messageSentCount += 1;
             ws.send('pong');
         }
     };
 
     ws.onclose = function (event) {
         // ${event.code} - ${event.reason}
-        console.log(`- LOG -- CONNECTION CLOSED (${messageCount} - MESSAGES) -`);
+        console.log(`- LOG -- CONNECTION CLOSED 'R-(${messageRecievedCount})' -- 'S-(${messageSentCount})' -`);
         reconnectWebSocket();
     };
     
@@ -35,7 +42,7 @@ function reconnectWebSocket() {
 }
 
 process.on('SIGINT', () => {
-    console.log(`- LOG -- CONNECTION CLOSED (${messageCount} - MESSAGES) -`);
+    console.log(`- LOG -- CONNECTION CLOSED 'R-(${messageRecievedCount})' -- 'S-(${messageSentCount})' -`);
     process.exit();
 });
 

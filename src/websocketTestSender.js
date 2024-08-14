@@ -3,6 +3,8 @@ let ws;
 let messageRecievedCount = 0;
 let messageSentCount = 0;
 
+var FennBoii = `FennBoii`;
+
 function connectWebSocket() {
     ws = new WebSocket(`wss://getname.ytmopdata.net/FennBoii`);
 

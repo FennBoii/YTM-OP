@@ -104,9 +104,14 @@ let blockMediaKeys = false;
 refreshConfig();
 var publicPageURL;
 var VersionNumber, synctimeGET, systemVolume = 0, ToggleButtons = true, ChannelToggle = false, TogglePlaylist = true, ToggleArtist = true, volume = 0, artist, songUrl = "https://music.youtube.com", titleTwo = "", detailsTwo = '', stateTwo = '', ConnectDis = " [ Disconnected ]", detailsThree = "Default", channel = "https://music.youtube.com", error_bool = false, PlaylistCounter = "", ConnectionTitle = "", RealCountdown, CountdownTime, secondTitle = true, thirdTitle = true, paused, imageicon = "https://google.com/h60/w60", repeat, playlist, channelname, Explicit, join1, join2, timeNow = 1, timeMax, notPlayingDisconnect = false, notPlayingDisconnectText = "", buttonOne = false, buttonTwo = false, buttonThree = false, buttonFour = false, warningText = "", TitleExit = "", quitText = "", connectCounter = 1, RealCountdownTitleBar = "", CountdownTimerVar = false;
-var ToggArtAlb = false, configWindow, urlFinal, title, playlistname, FINALTHREEVAR, joinn1, joinn2, largeImageText, plaaylist, largeImageKey, details, state, ThirdEntry, qualities = 0, result, timeMaxMinus, startTimestamp, endTimestamp, stopTime = 0, timeoutDisco = 0, globalCounter = 0, imgVer = 0, theFinalowoNess = "Nada There is nothing YET NONEEEEE", systemVolumeDEC, url1, imageiconNOW, imageReplace2, isDisOpen = false, disconLog = true, decreasingTimerUp, decreasingTimerDown, decreasingTimerOverlay, playingFrom, wsSend = false, wsReceive = false;
+var ToggArtAlb = false, configWindow, urlFinal, title, playlistname, FINALTHREEVAR, joinn1, joinn2, largeImageText, plaaylist, largeImageKey, details, state, ThirdEntry, qualities = 0, result, timeMaxMinus, startTimestamp, endTimestamp, stopTime = 0, timeoutDisco = 0, globalCounter = 0, imgVer = 0, theFinalowoNess = "Nada There is nothing YET NONEEEEE", systemVolumeDEC, url1, imageiconNOW, imageReplace2, isDisOpen = false, disconLog = true, decreasingTimerUp, decreasingTimerDown, decreasingTimerOverlay, playingFrom, wsSend = false, wsReceive = false, getCurrentSongUrl;
 var albumORsong = config.albumORsong;
 
+var theTimeNowGot;
+var sendCurrentUrl = false;
+var nextSongCounter = 1;
+var messageReceivedCount = 0;
+var messageSentCount = 0;
 var globalWS;
 // [ ------------------------------------------------------- ]
 // [ ------------------------------------------------------- ]
@@ -161,6 +166,12 @@ const menuTemplate = [
 						notPlayingDisconnect = true;
 						notPlayingDisconnectText = " [ PausDiscon Enabled ]";
 					}
+				},
+			},
+			{
+				label: "Send Current Url",
+				click() {
+					sendCurrentUrl = true;
 				},
 			},
 			{
@@ -394,9 +405,9 @@ const menuTemplate = [
 						},
 					},
 					{
-						label: "Recieving",
+						label: "Receiving",
 						click() {
-							ConnectionTitle = " [ -- Recieving -- ]";
+							ConnectionTitle = " [ -- Receiving -- ]";
 						},
 					},
 				],
@@ -1515,6 +1526,31 @@ async function getContent() {
 		}
 
 
+		// getCurrentSongUrl
+		try {
+			const javascriptCode = `
+					(function() {
+						return new Promise((resolve) => {
+							const startTime = Date.now();
+							const interval = setInterval(() => {
+								const element = document.querySelector('head > meta:nth-child(20)');
+								if (element) {
+									clearInterval(interval);
+									resolve(element.content || 'None');
+								} else if (Date.now() - startTime > 3000) { // Timeout after 1 seconds
+									clearInterval(interval);
+									resolve('None'); // Resolve with 'None' instead of rejecting
+								}
+							}, 500); // Check every 500ms
+						});
+					})();
+				`;
+
+			getCurrentSongUrl = await executeJavaScript(javascriptCode);
+		} catch (error) {
+			console.log(`- LOG -- ERRORED 'getCurrentSongUrl' OBJECT -`);
+		}
+
 		// getImageURLNOW
 		try {
 			const javascriptCode = `
@@ -1760,8 +1796,8 @@ async function getContent() {
 			joinn1,
 			channel,
 			artistStuff: [artist[0], artist[1], artist[2]],
-			stopTime,
-			timeoutDisco,
+			// stopTime,
+			// timeoutDisco,
 			notPlayingDisconnect,
 			connectCounter,
 			imgVer,
@@ -1771,6 +1807,9 @@ async function getContent() {
 			urlFinal,
 			url1,
 			isDisOpen,
+			nextSongCounter,
+			getCurrentSongUrl,
+			theTimeNowGot,
 			// finalURL,
 			// CountdownTimerVar, thelink, VersionNumber, synctimeGET, systemVolume, ToggleButtons, ChannelToggle, TogglePlaylist, ToggleArtist, volume, artist, songUrl, titleTwo, detailsTwo, stateTwo, ConnectDis, detailsThree, channel, error_bool, PlaylistCounter, ConnectionTitle, RealCountdown, CountdownTime, secondTitle, thirdTitle, paused, imageicon, repeat, playlist, channelname, Explicit, join1, join2, timeNow, timeMax, notPlayingDisconnect, notPlayingDisconnectText, buttonOne, buttonTwo, buttonThree, buttonFour, warningText, getNAME, TitleExit, quitText, connectCounter, RealCountdownTitleBar, CountdownTimerVar, sysVol, LICKCHeck, playlistToggleVisible,
 			// ToggArtAlb, configWindow, finalContactVar, GfinalContactVar, urlFinal, outputTest, title, ImageIcon, playlistname, FINALTHREEVAR, joinn1, joinn2, largeImageText, plaaylist, largeImageKey, details, endTimestamp, startTimestamp
@@ -1839,7 +1878,7 @@ async function reloadImageUrl() {
 }
 
 function setUserPageImage() {
-	console.log(`- LOG -- EXECUTED 'setUserPageImage' FUNC -`);
+	// console.log(`- LOG -- EXECUTED 'setUserPageImage' FUNC -`);
 	url1 = imageicon.replace("w60", "w1028");
 	urlFinal = url1.replace("h60", "h1028");
 	// url1 = imageicon.replace("w60", "w4112");
@@ -1859,7 +1898,7 @@ function setUserPageImage() {
 
 	try {
 		const response = axios.get(`${baseURL}/webpageEdit.php`, { params: theLinkData });
-		console.log(`- LOG -- DATA GOT 'theLink' RESPONSE: ${response.data} -`);
+		// console.log(`- LOG -- DATA GOT 'theLink' RESPONSE: ${response.data} -`);
 	} catch (error) {
 		console.log(`- LOG -- ERRORED UPDATING 'theLink' -`);
 	} //LOWER1
@@ -1945,17 +1984,17 @@ function setActivity() {
 
 		if (repeat.includes("off") && paused == "Play") {
 			// console.log("bruhNO2");
-			ThirdEntry = "⏸ •d";
+			ThirdEntry = "⏸ •";
 		}
 	}
 
 	if (paused == 'Play' && qualities == 1 && CountdownTimerVar == false) {
 		console.log("SetACTbru")
-		ThirdEntry = "⏸ •a";
+		ThirdEntry = "⏸ •";
 	} else if (paused == 'Play' && qualities == 2 && CountdownTimerVar == false) {
-		ThirdEntry = "⏸ •b";
+		ThirdEntry = "⏸ •";
 	} else if (paused == 'Play' && qualities == 3 && CountdownTimerVar == false) {
-		ThirdEntry = "⏸ •c";
+		ThirdEntry = "⏸ •";
 	}
 
 	if (paused == 'Pause' && notPlayingDisconnect == true && connectCounter == 0) {
@@ -2074,8 +2113,6 @@ function setActivity() {
 			setLargeIconImage();
 		}
 
-		let nextSongCounter = 0;
-
 		if (timeNow == 0) {
 			nextSongCounter = 0;
 		}
@@ -2085,8 +2122,7 @@ function setActivity() {
 			if (nextSongCounter == 0) {
 				if (wsSend) {
 					nextSongCounter += 1;
-					globalWS.send('NEXT SONG');
-					globalWS.send();
+					globalWS.send('SNS');
 				}
 			}
 		}
@@ -2293,97 +2329,173 @@ function setActivity() {
 	// let wsSend = null;
 	// let wsReceive = null;
 
-	// Counts for messages
-	let messageReceivedCount = 0;
-	let messageSentCount = 0;
-
-	// Constants for WebSocket connection and reconnection delays
-	const RECONNECT_DELAY = 5000; // Delay for reconnecting
-	const MESSAGE_SEND_INTERVAL = 1000; // Interval for sending messages
+	const RECONNECT_DELAY = 5000;
+	const MESSAGE_SEND_INTERVAL = 500;
 
 	// Function to initialize and manage WebSocket for sending messages
 	function setupSendWebSocket() {
-		if (ConnectionTitle.includes('Sending')) {
-			if (!wsSend || wsSend.readyState === WebSocket.CLOSED) {
-				wsSend = new WebSocket(`wss://getname.ytmopdata.net/${config.nameToken}`);
-				globalWS = wsSend;
-				console.log("WebSocket send connected");
+		if (!wsSend || wsSend.readyState === WebSocket.CLOSED) {
+			wsSend = new WebSocket(`wss://getname.ytmopdata.net/${config.nameToken}`);
+			globalWS = wsSend;
 
-				wsSend.onopen = function (event) {
-					console.log(`RUNNING SENDING CONNECTED INTERNAL: ${event}`);
-					messageSentCount += 1;
-					wsSend.send(theFinalowoNess);
-
-					// Start sending messages every second
-					setInterval(() => {
-						if (wsSend.readyState === WebSocket.OPEN) {
-							messageSentCount += 1;
-							wsSend.send(theFinalowoNess);
-						}
-					}, MESSAGE_SEND_INTERVAL);
-				};
-
-				wsSend.onclose = function (event) {
-					console.log(`- LOG -- CONNECTION CLOSED 'R-(${messageReceivedCount})' -- 'S-(${messageSentCount})' -`);
-					wsSend = null; // Reset to allow reconnecting
-					setTimeout(() => {
-						console.error(`-- LOG - RECONNECTING WEBSOCKET -`);
-						setupSendWebSocket();
-					}, RECONNECT_DELAY);
-				};
-
-				wsSend.onerror = function (error) {
-					console.error(`-- LOG -- WEBSOCKET ERROR: ${error} -`);
-				};
-			}
-		} else {
-			console.log("WebSocket send already connected");
-		}
-	}
-
-	// Function to initialize and manage WebSocket for receiving messages
-	function setupReceiveWebSocket() {
-		if (ConnectionTitle.includes('Recieving')) {
-			if (!wsSend || wsSend.readyState === WebSocket.CLOSED) {
-				wsSend = new WebSocket(`wss://getname.ytmopdata.net/${config.nameToken}`);
-				globalWS = wsSend;
-				console.log("WebSocket send connected");
+			wsSend.onopen = function (event) {
+				console.log(`RUNNING SENDING CONNECTED INTERNAL: ${event}`);
+				messageSentCount += 1;
+				wsSend.send(theFinalowoNess);
 
 				wsReceive.onmessage = function (event) {
 					messageReceivedCount += 1;
-					console.log(`-- LOG - MESSAGE RECEIVED ${event.data} -`);
+					console.log(`- LOG - MESSAGE RECEIVED - ${event.data} -`);
+
+					if (event.data.includes(`WHATSURURL`)) {
+						globalWS.send(`THISISMYURL:${getCurrentSongUrl}`)
+					}
+
+					if (sendCurrentUrl == true) {
+						globalWS.send(`CURRENTURL:${win.webContents.getURL()}`);
+
+						sendCurrentUrl = false;
+					}
 				};
 
-				wsSend.onclose = function (event) {
-					console.log(`- LOG -- CONNECTION CLOSED 'R-(${messageReceivedCount})' -- 'S-(${messageSentCount})' -`);
-					wsSend = null;
-					setTimeout(() => {
-						console.error(`-- LOG - RECONNECTING WEBSOCKET -`);
-						setupSendWebSocket();
-					}, RECONNECT_DELAY);
-				};
+				setInterval(() => {
+					if (wsSend.readyState === WebSocket.OPEN) {
+						messageSentCount += 1;
+						wsSend.send(`SYNCMOMENT:${timeNow}`);
+						wsSend.send(`SYNCURL:${getCurrentSongUrl}`);
+					}
+				}, MESSAGE_SEND_INTERVAL);
+			};
 
-				wsSend.onerror = function (error) {
-					console.error(`-- LOG -- WEBSOCKET ERROR: ${error} -`);
-				};
-			}
+			wsSend.onclose = function (event) {
+				console.log(`- LOG -- CONNECTION CLOSED 'R-(${messageReceivedCount})' -- 'S-(${messageSentCount})' -`);
+				wsSend = null;
+				setTimeout(() => {
+					console.error(`-- LOG - RECONNECTING WEBSOCKET -`);
+					setupSendWebSocket();
+				}, RECONNECT_DELAY);
+			};
+
+			wsSend.onerror = function (error) {
+				console.error(`-- LOG -- WEBSOCKET ERROR: ${error} -`);
+			};
 		} else {
-			console.log("WebSocket send already connected");
+			console.log(`- LOG -- WEBSOCKET CURRENTLY CONNECTED 'sending' -`);
 		}
 	}
 
-	// Main function to determine which WebSocket setup function to call
+	function setupReceiveWebSocket() {
+		if (!wsReceive || wsReceive.readyState === WebSocket.CLOSED) {
+			wsReceive = new WebSocket(`wss://getname.ytmopdata.net/${config.nameToken}`);
+			globalWS = wsReceive;
+
+			wsReceive.onopen = function (event) {
+				messageReceivedCount += 1;
+				console.log(`CONNECTED TO WEBSOCKET FROM RECEIVING`);
+			};
+
+			wsReceive.onmessage = function (event) {
+				messageReceivedCount += 1;
+				console.log(`- LOG - MESSAGE RECEIVED - ${event.data} -`);
+
+				if (event.data.includes('SYNCMOMENT')) {
+					let value = event.data.toString();
+					let parts = value.split('SYNCMOMENT:');
+					if (parts.length > 1) {
+						let finalExtract = parts[1].trim();
+						console.log('Extracted value:', finalExtract);
+						theTimeNowGot = finalExtract;
+					} else {
+						console.log('SYNCMOMENT delimiter not found');
+					}
+				}
+
+				if (event.data.includes('SYNCURL')) {
+					let value = event.data.toString();
+					if (value == win.webContents.getURL) {
+						console.log(`- LOG -- WHY LOAD AT ALL? -`)
+					} else {
+						let parts = value.split('SYNCURL:');
+						if (parts.length > 1) {
+							let finalExtract = parts[1].trim();
+							console.log('Extracted value:', finalExtract);
+
+							// Function to handle URL update with delay
+							function handleURLUpdate() {
+								if (finalExtract == getCurrentSongUrl) {
+									console.log(`- LOG -- WONT LOAD YET, NO REASON, URLS MATCH -`);
+								} else {
+									console.log('URLS are DIFFERENT:', finalExtract, getCurrentSongUrl);
+									let onceCall = setInterval(() => {
+										win.webContents.loadURL(finalExtract);
+										handleURLUpdate();
+										clearInterval(onceCall);
+									}, 6000);
+								}
+							}
+
+							handleURLUpdate();
+						} else {
+							console.log('SYNCURL delimiter not found');
+						}
+					}
+				}
+
+				if (event.data == `NSN`) {
+					win.webContents.executeJavaScript(
+						`document.querySelector('#left-controls > div > tp-yt-paper-icon-button.next-button.style-scope.ytmusic-player-bar').click()`
+					);
+					console.log("nextSong");
+					globalWS.send(`WHATSURURL`);
+				}
+
+				if (theTimeNowGot != undefined) {
+					if (Math.abs(theTimeNowGot - timeNow) < config.outOfSyncPlayingSong) {
+						console.log(`- LOG -- NO RESYNCING NEEDED -`);
+					} else {
+						win.webContents.executeJavaScript(
+							`document.getElementsByTagName('video')[0].currentTime = ${theTimeNowGot}`
+						);
+						console.log("syncedTime");
+					}
+				}
+
+				if (event.data === 'ping') {
+					console.log(`- LOG -- SENDING 'pong' MESSAGE BACK -`);
+					messageSentCount += 1;
+					ws.send('pong');
+				}
+			};
+
+			wsReceive.onclose = function (event) {
+				console.log(`- LOG -- CONNECTION CLOSED 'R-(${messageReceivedCount})' -- 'S-(${messageSentCount})' -`);
+				wsReceive = null;
+				setTimeout(() => {
+					console.error(`-- LOG - RECONNECTING WEBSOCKET -`);
+					setupSendWebSocket();
+				}, RECONNECT_DELAY);
+			};
+
+			wsReceive.onerror = function (error) {
+				console.error(`-- LOG -- WEBSOCKET ERROR: ${error} -`);
+			};
+		} else {
+			console.log(`- LOG -- WEBSOCKET CURRENTLY CONNECTED 'receiving' -`);
+		}
+	}
+
 	function manageWebSocketConnections() {
 		if (ConnectionTitle.includes("Sending")) {
-			console.log(`RUNNING SENDING ${wsSend}`);
+			// console.log(`RUNNING SENDING ${wsSend}`);
+			console.log(`RUNNING SENDING`);
 			setupSendWebSocket();
 		} else if (ConnectionTitle.includes("Receiving")) {
-			console.log("RUNNING RECEIVING");
+			// console.log(`RUNNING RECEIVING ${wsReceive}`);
+			console.log(`RUNNING RECEIVING`);
 			setupReceiveWebSocket();
 		}
 	}
 
-	// Call the main function based on your logic or event triggers
 	manageWebSocketConnections();
 
 }
@@ -2596,7 +2708,7 @@ function reconnect() {
 	DiscordRPC.register(clientId);
 	win.webContents.send('updateConfigUpdates', "#00FF00");
 	rpc.login({ clientId })
-	.then(() => {
+		.then(() => {
 			clearInterval(reconnectTimer);
 			ConnectDis = " [ Connected ]";
 			console.log("-- Connected --");

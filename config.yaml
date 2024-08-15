@@ -5,8 +5,8 @@ AlternateTopButtonValue: Album
 AlternateBottomButtonValue: Artist
 discordID: '835023222562095124'
 albumORsong: album
-websocketName: FennBoii
+websocketName:
 state: '-'
 details: ''
 specificTime: 'Y'
-loadLastURL: https://music.youtube.com/watch?v=rpgjUXfbF2s&list=LM
+loadLastURL: https://music.youtube.com/watch?list=LM&v=y4OrzvAtTHU

@@ -2,18 +2,15 @@
 
 [![Node.js CI](https://github.com/FennBoii/YTM-OP/actions/workflows/node.js.yml/badge.svg)](https://github.com/FennBoii/YTM-OP/actions/workflows/node.js.yml) ![Website](https://img.shields.io/website?up_message=site%20UP&down_message=site%20DOWN&url=https%3A%2F%2Fgetname.ytmopdata.net%2F&label=Token%20Page%20-&labelColor=%23ff00ff&link=https%3A%2F%2Fgetname.ytmopdata.net%2F) ![Known Vulnerabilities](https://snyk.io/test/github/FennBoii/YTM-OP/badge.svg)
 
-<h4>THERE MAY BE A FEW ERRORS WHEN CLOSING AND MAYBE SOME DURING, I AM WORKING ON THESE JUST RESTART THE CLIENT OR ADD THE ISSUES TO "ISSUES" TAB</h4>
+<h4>THERE ARE ONLY A SMALL OR COUPLE ERRORS RIGHT NOW, I AM WORKING ON THEM</h4>
+<h4>UPDATE NOT YET RELEASED, DID UPDATE THE 'underConstruction' BRANCH</h4>
 
 # YTM-OP
-## This project is a self project meaning I have been working on this just for me but your allowed to use this however you see fit.
+## This project is a youtube music client meant to include features such as music syncing, Discord RPC, and end power options. It includes other features but work may be slow. Thank you for being a part of this project <3.
 
-
-* Summary: This is a Youtube Music Client Wrapper with, a Discord Rich Presence, client connectivity, and (Not implimented yet) VRChat OSC support (to be added soon).
-<center>
-<hr />
 <center>How to setup client syncing<br />
 <center>- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</center></center><br />
-<i>It's a lot simpler than ever before, load up the player and put in your name. This will be used for communicating with my web server. Once you press the button to insert all keys, the player automatically reloads itself and your done! Everything is automated. If you want to make it easy, send the person ur json file and replace it in ur </i><b>%home%</b> <i>directory. Done :3</i>
+<i>It's too easy now, load up the player and you'll see my "Token" page (if your ID doesn't match already), simply put in ANY name. This will be used for communicating with my web server as well as other clients. Once you press the button to insert your single ID, the player automatically reloads itself and when you see it load the home page, your done! Everything is automated apart from you enabling syncing (sending or receiving). If you want to make it easy, just tell the person your ID and once they add it, your done. :3</i>
 <hr />
 </center>
 Some stuff I've fixed / need to work on:
@@ -34,17 +31,22 @@ Some stuff I've fixed / need to work on:
 - ~~Add a function to be able to add your own discord activity through a text file for the clientID and also maybe images~~
 
 ***Features***
-- Added a feature that allows the client to act a little like spotify in the sense that it disconnects when your song is paused and connects when its playing.. I haven't really tested this fully but it works for now. It's called "Not Playing Disconnect" in the Utils. UNSTABLE CURRENTLY
-- Allows you to enable and disable discord buttons <s>(Still kinda janky)</s>
-- Has options for "Quitting the application", "Sleeping your PC", "Restarting your PC", and "Shutting down your PC" after the song ends.
-- Easy customizability and more to come in the future.
-
-- *If you find that a video doesn't work for the activity on discord, or shows 'undefined', you can open the Utils menu and click on buttons and turn the buttons off. If that doesn't work you can click on buttons once again and click on the 'toggle channel'. (toggling channel just makes the element which gets the artist, change). These methods should fix any video problems you may have with the activity. Remember, when watching a video or a song without an album accompanying it or the artist doesn't have a clickable link to their page, you can toggle all buttons off. This disables the elements which get the buttons and usually fixes things. Sometimes when playing videos though the artist does have a clickable link and in that case just toggle the artist. Simple!*
-
-- Continuous updates (Its not daily but its also not monthly)
-- Your able to Send and receive song data between clients! (mostly synced listening, updates soon)
+- Added a feature that allows the client to act a little like spotify in the sense that it disconnects when your song is paused and connects when its playing.. I haven't really tested this fully but it works for now. It's called "Not Playing Disconnect" in the Utils (a little unstable).
+- Allows you to connect and disconnect discord rpc buttons as well as for "Quitting the application", "Sleeping your PC", "Restarting your PC", and "Shutting down your PC" after the song ends.
+- Easy customization and more to come in the future.
+- Continuous updates (Its not daily but its also not monthly) within the 'underConstruction' branch.
+- Your able to Send and receive song data between clients! (0.2s delay synced listening, updates soon)
 - 100% safe and free! No extras are added that weren't made for the client
 - Uses little Resources (Less than 11% of cpu) (recommended use on localdisk C:// because read/write)
 - No self promotion anywhere (I like to let the consumer use the product however they please, ad-free!)
-
+ 
+ ***How Client Connecting Works***
+ - First when you load my page within the YTM-OP client, it loads the default index.html page.
+ - When you submit a name, when it fully fades out and starts loading, my php file runs and does multiple things:
+	 - It gets your name and inserts it into the conf file for apache2.
+	 - Then it runs a command to reload my websocket service to add your ID to it.
+	 - Then it runs another command to restart the website hosting service on the server.
+	 - Once that all completes, it loads the create.php file's index.html page which is what shows you your created ID to be copied or loaded into your client.
+ - When you add your ID to the client, it doesnt communicate just yet with my site, you have to go to the 'Utils' menu and click 'Websocket Connections' and then either Sending or Recieving which then connects to the websocket.
+ - If your wondering how the websocket connects to both clients and sends the data, it does this with client mapping. It gets your connected client and adds it to the clientMAP (this is only sessionary meaning when you disconnect, it removes you from the map) and whoever is the sender, sends the data to the websocket and it determines whether you are the sender or reciever and redirects the traffic accordingly, meaning if there are 5 clients connected and one sender (making 6), all clients inside of the map will get the message that the 6th client sends, this way it allows real-time syncing and communication to happen to all the connected clients allowing them to listen to the master's music instantly as every update happens!
 </center>

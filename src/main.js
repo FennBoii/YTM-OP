@@ -107,6 +107,8 @@ var VersionNumber, synctimeGET, systemVolume = 0, ToggleButtons = true, ChannelT
 var ToggArtAlb = false, configWindow, urlFinal, title, playlistname, FINALTHREEVAR, joinn1, joinn2, largeImageText, plaaylist, largeImageKey, details, state, ThirdEntry, qualities = 0, result, timeMaxMinus, startTimestamp, endTimestamp, stopTime = 0, timeoutDisco = 0, globalCounter = 0, imgVer = 0, theFinalowoNess = "Nada There is nothing YET NONEEEEE", systemVolumeDEC, url1, imageiconNOW, imageReplace2, isDisOpen = false, disconLog = true, decreasingTimerUp, decreasingTimerDown, decreasingTimerOverlay, playingFrom, wsSend = false, wsReceive = false, getCurrentSongUrl;
 var albumORsong = config.albumORsong;
 
+var countDownLoadAgain = 10;
+var finalExtractNow;
 var theTimeNowGot;
 var sendCurrentUrl = false;
 var nextSongCounter = 1;
@@ -390,7 +392,7 @@ const menuTemplate = [
 				],
 			},
 			{
-				label: "Incoming Connections",
+				label: "Websocket Connections",
 				submenu: [
 					{
 						label: "None",
@@ -596,7 +598,7 @@ const SimpleTemplate = [
 	{
 		label: "Go to your info site",
 		click() {
-			shell.openExternal('https://getname.ytmopdata.net/userRedirects/' + config.nameToken + "/" + config.nameToken + ".html");
+			shell.openExternal('https://getname.ytmopdata.net/userRedirects/' + config.websocketName + "/" + config.websocketName + ".html");
 		},
 	},
 ];
@@ -1533,10 +1535,10 @@ async function getContent() {
 						return new Promise((resolve) => {
 							const startTime = Date.now();
 							const interval = setInterval(() => {
-								const element = document.querySelector('head > meta:nth-child(20)');
+								const element = document.querySelector('#movie_player > div.ytp-chrome-top > div.ytp-title > div > a');
 								if (element) {
 									clearInterval(interval);
-									resolve(element.content || 'None');
+									resolve(element.href || 'None');
 								} else if (Date.now() - startTime > 3000) { // Timeout after 1 seconds
 									clearInterval(interval);
 									resolve('None'); // Resolve with 'None' instead of rejecting
@@ -1547,8 +1549,16 @@ async function getContent() {
 				`;
 
 			getCurrentSongUrl = await executeJavaScript(javascriptCode);
+			// let extract1 = await executeJavaScript(javascriptCode);
+			// let extract2 = extract1.indexOf('&t=');
+			// getCurrentSongUrl = extract1 !== -1 ? extract1.substring(0, extract1) : extract1;
+			// if (extract2 !== -1) {
+			// 	getCurrentSongUrl = extract1.substring(0, extract2);
+			// } else {
+			// 	getCurrentSongUrl = extract1;
+			// }
 		} catch (error) {
-			console.log(`- LOG -- ERRORED 'getCurrentSongUrl' OBJECT -`);
+			console.log(`- LOG -- ERRORED 'getCurrentSongUrl' OBJECT: ${error} -`);
 		}
 
 		// getImageURLNOW
@@ -1809,6 +1819,8 @@ async function getContent() {
 			isDisOpen,
 			nextSongCounter,
 			getCurrentSongUrl,
+			finalExtractNow,
+			countDownLoadAgain,
 			theTimeNowGot,
 			// finalURL,
 			// CountdownTimerVar, thelink, VersionNumber, synctimeGET, systemVolume, ToggleButtons, ChannelToggle, TogglePlaylist, ToggleArtist, volume, artist, songUrl, titleTwo, detailsTwo, stateTwo, ConnectDis, detailsThree, channel, error_bool, PlaylistCounter, ConnectionTitle, RealCountdown, CountdownTime, secondTitle, thirdTitle, paused, imageicon, repeat, playlist, channelname, Explicit, join1, join2, timeNow, timeMax, notPlayingDisconnect, notPlayingDisconnectText, buttonOne, buttonTwo, buttonThree, buttonFour, warningText, getNAME, TitleExit, quitText, connectCounter, RealCountdownTitleBar, CountdownTimerVar, sysVol, LICKCHeck, playlistToggleVisible,
@@ -1889,9 +1901,9 @@ function setUserPageImage() {
 
 
 	const theLinkData = {
-		givenNameToken: config.givenNameToken,
+		givenwebsocketName: config.givenwebsocketName,
 		randomToken: config.randomToken,
-		sitename: config.nameToken,
+		sitename: config.websocketName,
 		thelink: finalURL,
 		imgVer: imgVer,
 	};
@@ -1918,7 +1930,7 @@ const clientId = config.discordID; /* 633709502784602133*/
 if (isDisOpen == true) {
 	DiscordRPC.register(clientId);
 }
-const rpc = new DiscordRPC.Client({ transport: 'ipc', });
+var rpc = new DiscordRPC.Client({ transport: 'ipc', });
 
 
 let songInfo;
@@ -1926,7 +1938,8 @@ let songInfo;
 function setLargeIconImage() {
 	// Use stopTime here
 	if (title) {
-		theFinalowoNess = "https://getname.ytmopdata.net/userRedirects/" + config.nameToken + "/" + config.nameToken + ".png" + '?timestamp=' + stopTime.toString().substring(0, 8) + globalCounter.toString() + '?songName=' + encodeURIComponent(artist[0].toString().substring(3, 0)) + '?v=' + imgVer;
+		theFinalowoNess = "https://getname.ytmopdata.net/userRedirects/" + config.websocketName + "/" + config.websocketName + ".png" + '?timestamp=' + stopTime.toString().substring(0, 8) + globalCounter.toString() + '?songName=' + encodeURIComponent(artist[0].toString().substring(3, 0)) + '?v=' + imgVer;
+
 	}
 }
 
@@ -2053,8 +2066,10 @@ function setActivity() {
 		NewerTitle = `🅴`;
 	}
 
+	let countInto = 0;
 	if (!title & !artist) {
-		console.log("pausedFALSE");
+		console.log(`loading into YTMusic (${countInto}s)...`);
+		countInto += 1;
 		largeImageKey =
 			"https://i.postimg.cc/XNPqqY9f/owo.jpg"; /* https://i.postimg.cc/Y9zgFMdS/uwu.webp */
 		largeImageText = "VersionNumberDed"; // ----------------------------- //
@@ -2335,7 +2350,7 @@ function setActivity() {
 	// Function to initialize and manage WebSocket for sending messages
 	function setupSendWebSocket() {
 		if (!wsSend || wsSend.readyState === WebSocket.CLOSED) {
-			wsSend = new WebSocket(`wss://getname.ytmopdata.net/${config.nameToken}`);
+			wsSend = new WebSocket(`wss://getname.ytmopdata.net/${config.websocketName}`);
 			globalWS = wsSend;
 
 			wsSend.onopen = function (event) {
@@ -2359,7 +2374,7 @@ function setActivity() {
 				};
 
 				setInterval(() => {
-					if (wsSend.readyState === WebSocket.OPEN) {
+					if (globalWS.readyState === WebSocket.OPEN) {
 						messageSentCount += 1;
 						wsSend.send(`SYNCMOMENT:${timeNow}`);
 						wsSend.send(`SYNCURL:${getCurrentSongUrl}`);
@@ -2386,7 +2401,7 @@ function setActivity() {
 
 	function setupReceiveWebSocket() {
 		if (!wsReceive || wsReceive.readyState === WebSocket.CLOSED) {
-			wsReceive = new WebSocket(`wss://getname.ytmopdata.net/${config.nameToken}`);
+			wsReceive = new WebSocket(`wss://getname.ytmopdata.net/${config.websocketName}`);
 			globalWS = wsReceive;
 
 			wsReceive.onopen = function (event) {
@@ -2412,34 +2427,28 @@ function setActivity() {
 
 				if (event.data.includes('SYNCURL')) {
 					let value = event.data.toString();
-					if (value == win.webContents.getURL) {
-						console.log(`- LOG -- WHY LOAD AT ALL? -`)
-					} else {
-						let parts = value.split('SYNCURL:');
-						if (parts.length > 1) {
-							let finalExtract = parts[1].trim();
-							console.log('Extracted value:', finalExtract);
+					let parts = value.split('SYNCURL:');
 
-							// Function to handle URL update with delay
-							function handleURLUpdate() {
-								if (finalExtract == getCurrentSongUrl) {
-									console.log(`- LOG -- WONT LOAD YET, NO REASON, URLS MATCH -`);
-								} else {
-									console.log('URLS are DIFFERENT:', finalExtract, getCurrentSongUrl);
-									let onceCall = setInterval(() => {
-										win.webContents.loadURL(finalExtract);
-										handleURLUpdate();
-										clearInterval(onceCall);
-									}, 6000);
-								}
-							}
+					if (parts.length > 1) {
+						let finalExtractNow = parts[1].trim();
 
-							handleURLUpdate();
+						if (finalExtractNow === getCurrentSongUrl) {
+							console.log('- LOG -- WONT LOAD YET, NO REASON, URLS MATCH -');
 						} else {
-							console.log('SYNCURL delimiter not found');
+							console.log('URLS are DIFFERENT:', finalExtractNow, getCurrentSongUrl);
+							countDownLoadAgain -= 1;
+
+							if (countDownLoadAgain <= 0) {
+								win.webContents.loadURL(finalExtractNow);
+								countDownLoadAgain = 10; // Reset the counter
+								console.log(`- LOG - MINUS 1 -`);
+							}
 						}
+					} else {
+						console.log('SYNCURL delimiter not found');
 					}
 				}
+
 
 				if (event.data == `NSN`) {
 					win.webContents.executeJavaScript(
@@ -2685,15 +2694,15 @@ async function updateSongInfo() {
 }
 
 rpc.once("disconnected", (title) => {
-	win.webContents.send('updateConfigUpdates', "#007aFF");
 	rpc.destroy();
+	win.webContents.send('updateConfigUpdates', "#007aFF");
 	clearInterval(afterSend);
 	clearInterval(setActivity);
 	// setInterval(checkSync, config.resyncSongUrl);
 	// clearInterval(syncTimeSync);
 	clearInterval(updateSongInfo);
 	clearInterval(setPageName);
-	// clearInterval(isDiscordRunning); DONT STOP DISCORD CHECK FROM HAPPENING NATE...
+	// clearInterval(isDiscordRunning); DONT STOP DISCORD CHECK FROM HAPPENING NATE... WHAT IS THIS SUPPOSED TO MEAN PAST NATE??
 	clearInterval(setLargeIconImage);
 	clearInterval(intervalId);
 
@@ -2706,8 +2715,7 @@ function reconnect() {
 		transport: "ipc",
 	});
 	DiscordRPC.register(clientId);
-	win.webContents.send('updateConfigUpdates', "#00FF00");
-	rpc.login({ clientId })
+	rpc.login({ clientId }).catch(console.error)
 		.then(() => {
 			clearInterval(reconnectTimer);
 			ConnectDis = " [ Connected ]";
@@ -2737,6 +2745,7 @@ function reconnect() {
 			}
 		});
 }
+
 
 function getNativeImage(filePath) {
 	return nativeImage.createFromPath(
@@ -2771,19 +2780,6 @@ app.on('will-quit', () => {
 	globalShortcut.unregisterAll();
 });
 
-
-rpc.on('error', (error) => {
-	console.error('WebSocket error:', error);
-});
-
-rpc.on('warn', (info) => {
-	console.warn('WebSocket warning:', info);
-});
-
-rpc.on('disconnect', (event) => {
-	console.log('Disconnected:', event);
-});
-
 rpc.on("ready", () => {
 	setActivity();
 	setInterval(setActivity, 1e3);
@@ -2799,11 +2795,10 @@ rpc.on("ready", () => {
 });
 
 function afterSend() {
-	DiscordRPC.register(clientId);
 	rpc.login({ clientId })
-	// setTimeout(afterSend, 10000); // Rerun the function after 5 seconds
-	isDiscordRunningVar = true;
+	// setTimeout(afterSend, 5000); // Rerun the function after 5 seconds
 	clearInterval(intervalIdDisco);
+	isDiscordRunningVar = true;
 }
 
 function afterRecieve() {

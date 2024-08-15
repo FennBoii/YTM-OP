@@ -81,12 +81,11 @@ function downloadDefaultConfig() {
 		});
 }
 
-// Check if the configuration file exists and download it if not
 if (!fs.existsSync(configPath)) {
 	downloadDefaultConfig();
 } else {
 	console.log('Config file already exists.');
-	refreshConfig();  // Initialize config if the file exists
+	refreshConfig();
 }
 
 // Function to update the configuration file
@@ -115,6 +114,7 @@ var nextSongCounter = 1;
 var messageReceivedCount = 0;
 var messageSentCount = 0;
 var globalWS;
+var	discordTimer = 20000;
 // [ ------------------------------------------------------- ]
 // [ ------------------------------------------------------- ]
 
@@ -1024,68 +1024,41 @@ ipcMain.on("sendDataToMain", (event, dataToUpdate) => {
 	const filePath = path.join(configPath);
 
 	fs.readFile(filePath, "utf8", (readErr, data) => {
-		if (readErr) {
-			console.error("Error reading file:", readErr);
-			event.sender.send("updateResponse", {
-				success: false,
-				error: readErr.message,
-			});
-			return;
-		}
+		if (readErr) return sendError("Error reading file:", readErr);
 
 		let config;
 		try {
-			config = yaml.load(data); // Use yaml.load to parse YAML
+			config = yaml.load(data);
 		} catch (parseErr) {
-			console.error("Error parsing YAML:", parseErr);
-			event.sender.send("updateResponse", {
-				success: false,
-				error: parseErr.message,
-			});
-			return;
+			return sendError("Error parsing YAML:", parseErr);
 		}
 
-		let mergedData = {
-			...config,
-			...dataToUpdate,
-		};
+		const mergedData = { ...config, ...dataToUpdate };
 
 		try {
-			const yamlData = yaml.dump(mergedData); // Use yaml.dump to stringify YAML
-			fs.writeFile(
-				filePath,
-				yamlData,
-				"utf8",
-				(writeErr) => {
-					if (writeErr) {
-						console.error("Error writing to file:", writeErr);
-						event.sender.send("updateResponse", {
-							success: false,
-							error: writeErr.message,
-						});
-					} else {
-						console.log("File updated with merged data successfully.");
-						event.sender.send("updateResponse", {
-							success: true,
-							message: "Data received and file updated",
-						});
-						event.sender.send("configData", {
-							success: true,
-							config: mergedData,
-						});
-					}
+			const yamlData = yaml.dump(mergedData);
+			fs.writeFile(filePath, yamlData, "utf8", (writeErr) => {
+				if (writeErr) return sendError("Error writing to file:", writeErr);
+
+				console.log("File updated with merged data successfully.");
+				event.sender.send("updateResponse", { success: true, message: "Data received and file updated" });
+				event.sender.send("configData", { success: true, config: mergedData });
+				if (event.sender.send("configData")) {
+					updateConfigFile(10, resyncSongUrl);
 				}
-			);
-		} catch (stringifyErr) {
-			console.error("Error converting to YAML:", stringifyErr);
-			event.sender.send("updateResponse", {
-				success: false,
-				error: stringifyErr.message,
 			});
+		} catch (stringifyErr) {
+			sendError("Error converting to YAML:", stringifyErr);
 		}
 	});
-	console.log(`- LOG -- 'senddatatomain' -`);
+
+	console.log(`- LOG -- 'sendDataToMain' -`);
 	loadCurrentGivenURL();
+
+	function sendError(message, err) {
+		console.error(message, err);
+		event.sender.send("updateResponse", { success: false, error: err.message });
+	}
 });
 
 function loadCurrentGivenURL() {
@@ -1943,6 +1916,7 @@ function setLargeIconImage() {
 	}
 }
 
+let OnlySendOnce = 0;
 // eslint-disable-next-line complexity
 function setActivity() {
 	if (!rpc || !win) {
@@ -2066,10 +2040,7 @@ function setActivity() {
 		NewerTitle = `🅴`;
 	}
 
-	let countInto = 0;
 	if (!title & !artist) {
-		console.log(`loading into YTMusic (${countInto}s)...`);
-		countInto += 1;
 		largeImageKey =
 			"https://i.postimg.cc/XNPqqY9f/owo.jpg"; /* https://i.postimg.cc/Y9zgFMdS/uwu.webp */
 		largeImageText = "VersionNumberDed"; // ----------------------------- //
@@ -2349,6 +2320,20 @@ function setActivity() {
 
 	// Function to initialize and manage WebSocket for sending messages
 	function setupSendWebSocket() {
+
+		if (timeNow > 2) {
+			OnlySendOnce = 0;
+			console.log(`- LOG -- TIMENOW MORE THAN 2 -`);
+		}
+
+		if (OnlySendOnce == 0) {
+			if (timeNow < 2) {
+				globalWS.send(`SONGURLNOWLIVE:${getCurrentSongUrl}`);
+				console.log(`- LOG -- I SENT URL NOW -`);
+				OnlySendOnce += 1;
+			}
+		}
+
 		if (!wsSend || wsSend.readyState === WebSocket.CLOSED) {
 			wsSend = new WebSocket(`wss://getname.ytmopdata.net/${config.websocketName}`);
 			globalWS = wsSend;
@@ -2357,18 +2342,14 @@ function setActivity() {
 				console.log(`RUNNING SENDING CONNECTED INTERNAL: ${event}`);
 				messageSentCount += 1;
 				wsSend.send(theFinalowoNess);
+				
 
 				wsReceive.onmessage = function (event) {
 					messageReceivedCount += 1;
-					console.log(`- LOG - MESSAGE RECEIVED - ${event.data} -`);
-
-					if (event.data.includes(`WHATSURURL`)) {
-						globalWS.send(`THISISMYURL:${getCurrentSongUrl}`)
-					}
+					// console.log(`- LOG - MESSAGE RECEIVED - ${event.data} -`);
 
 					if (sendCurrentUrl == true) {
 						globalWS.send(`CURRENTURL:${win.webContents.getURL()}`);
-
 						sendCurrentUrl = false;
 					}
 				};
@@ -2377,7 +2358,6 @@ function setActivity() {
 					if (globalWS.readyState === WebSocket.OPEN) {
 						messageSentCount += 1;
 						wsSend.send(`SYNCMOMENT:${timeNow}`);
-						wsSend.send(`SYNCURL:${getCurrentSongUrl}`);
 					}
 				}, MESSAGE_SEND_INTERVAL);
 			};
@@ -2411,56 +2391,37 @@ function setActivity() {
 
 			wsReceive.onmessage = function (event) {
 				messageReceivedCount += 1;
-				console.log(`- LOG - MESSAGE RECEIVED - ${event.data} -`);
+				// console.log(`- LOG - MESSAGE RECEIVED - ${event.data} -`);
 
 				if (event.data.includes('SYNCMOMENT')) {
 					let value = event.data.toString();
 					let parts = value.split('SYNCMOMENT:');
 					if (parts.length > 1) {
 						let finalExtract = parts[1].trim();
-						console.log('Extracted value:', finalExtract);
+						// console.log('Extracted value:', finalExtract);
 						theTimeNowGot = finalExtract;
 					} else {
 						console.log('SYNCMOMENT delimiter not found');
 					}
 				}
 
-				if (event.data.includes('SYNCURL')) {
+				if (event.data.includes('SONGURLNOWLIVE')) {
 					let value = event.data.toString();
-					let parts = value.split('SYNCURL:');
+					let parts = value.split('SONGURLNOWLIVE:');
 
 					if (parts.length > 1) {
 						let finalExtractNow = parts[1].trim();
 
-						if (finalExtractNow === getCurrentSongUrl) {
-							console.log('- LOG -- WONT LOAD YET, NO REASON, URLS MATCH -');
-						} else {
-							console.log('URLS are DIFFERENT:', finalExtractNow, getCurrentSongUrl);
-							countDownLoadAgain -= 1;
-
-							if (countDownLoadAgain <= 0) {
-								win.webContents.loadURL(finalExtractNow);
-								countDownLoadAgain = 10; // Reset the counter
-								console.log(`- LOG - MINUS 1 -`);
-							}
-						}
+						win.webContents.loadURL(finalExtractNow);
+						console.log(`- LOG -- LOADED URL FROM 'WHATSURURL' -`)
 					} else {
 						console.log('SYNCURL delimiter not found');
 					}
 				}
 
-
-				if (event.data == `NSN`) {
-					win.webContents.executeJavaScript(
-						`document.querySelector('#left-controls > div > tp-yt-paper-icon-button.next-button.style-scope.ytmusic-player-bar').click()`
-					);
-					console.log("nextSong");
-					globalWS.send(`WHATSURURL`);
-				}
-
 				if (theTimeNowGot != undefined) {
 					if (Math.abs(theTimeNowGot - timeNow) < config.outOfSyncPlayingSong) {
-						console.log(`- LOG -- NO RESYNCING NEEDED -`);
+						// console.log(`- LOG -- NO RESYNCING NEEDED -`);
 					} else {
 						win.webContents.executeJavaScript(
 							`document.getElementsByTagName('video')[0].currentTime = ${theTimeNowGot}`
@@ -2530,13 +2491,12 @@ async function isDiscordRunning() {
 			isDisOpen = true;
 
 			if (discoConnCount == 0) {
-				let runDur = 2000;
-				console.log(`- LOG -- LAUNCHING 'afterRecieve' ${runDur / 1000}s -`);
+				console.log(`- LOG -- LAUNCHING 'afterRecieve' ${discordTimer * 1000}s -`);
 				let intervalIdquick1 = setInterval(() => {
 					clearInterval(intervalIdquick1);
-					console.log(`- LOG -- RUN FOR ${runDur / 1000} SECONDS`);
+					console.log(`- LOG -- COUNTDOWN TO CONNECT TO DISCORD ${discordTimer * 1000} SECONDS`);
 					setTimeout(afterSend(), 5000); // Rerun the function after 5 seconds
-				}, runDur); // RUN FOR 20 SECONDS
+				}, discordTimer * 1000); // RUN FOR 20 SECONDS
 			}
 		} else if (outputGotten.length <= 10 && isDisOpen == true) { // Check if Discord is closed and was previously detected
 			isDiscoRunningStr = `Discord Is NOT Running`;

@@ -114,7 +114,6 @@ var nextSongCounter = 1;
 var messageReceivedCount = 0;
 var messageSentCount = 0;
 var globalWS;
-var	discordTimer = 20000;
 // [ ------------------------------------------------------- ]
 // [ ------------------------------------------------------- ]
 
@@ -2491,12 +2490,12 @@ async function isDiscordRunning() {
 			isDisOpen = true;
 
 			if (discoConnCount == 0) {
-				console.log(`- LOG -- LAUNCHING 'afterRecieve' ${discordTimer * 1000}s -`);
+				console.log(`- LOG -- LAUNCHING 'afterRecieve' ${config.delayBeforeLunchingDiscord * 1000}s -`);
 				let intervalIdquick1 = setInterval(() => {
 					clearInterval(intervalIdquick1);
-					console.log(`- LOG -- COUNTDOWN TO CONNECT TO DISCORD ${discordTimer * 1000} SECONDS`);
+					console.log(`- LOG -- (${config.delayBeforeLunchingDiscord}s) COUNTDOWN FINISHED, CONNECTING TO DISCORD... `);
 					setTimeout(afterSend(), 5000); // Rerun the function after 5 seconds
-				}, discordTimer * 1000); // RUN FOR 20 SECONDS
+				}, config.delayBeforeLunchingDiscord * 1000); // RUN FOR 20 SECONDS
 			}
 		} else if (outputGotten.length <= 10 && isDisOpen == true) { // Check if Discord is closed and was previously detected
 			isDiscoRunningStr = `Discord Is NOT Running`;

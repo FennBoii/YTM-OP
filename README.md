@@ -1,8 +1,9 @@
+**Client syncing is REALLY quick as of now and it's fully updated as of now. Enjoy :3 (build it with the underConstruction branch)**
+
 <h2>CHECK OUT THE 'underConstruction' BRANCH</h2>
 
 [![Node.js CI](https://github.com/FennBoii/YTM-OP/actions/workflows/node.js.yml/badge.svg)](https://github.com/FennBoii/YTM-OP/actions/workflows/node.js.yml) ![Website](https://img.shields.io/website?up_message=site%20UP&down_message=site%20DOWN&url=https%3A%2F%2Fgetname.ytmopdata.net%2F&label=Token%20Page%20-&labelColor=%23ff00ff&link=https%3A%2F%2Fgetname.ytmopdata.net%2F) ![Known Vulnerabilities](https://snyk.io/test/github/FennBoii/YTM-OP/badge.svg)
 
-<h4>THERE ARE ONLY A SMALL OR COUPLE ERRORS RIGHT NOW, I AM WORKING ON THEM</h4>
 <h4>UPDATE NOT YET RELEASED, DID UPDATE THE 'underConstruction' BRANCH</h4>
 
 # YTM-OP

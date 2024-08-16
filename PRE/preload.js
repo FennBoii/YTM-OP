@@ -14,11 +14,29 @@ const yamlConfigUrl  = "https://raw.githubusercontent.com/FennBoii/YTM-OP/underC
 
 var config = {};
 
-async function refreshConfig() {
+refreshConfig();
+
+function refreshConfig() {
+	try {
+		config = yaml.load(fs.readFileSync(configPath, 'utf8'));
+		// console.log(`- LOG -- REFRESHED CONFIG FILE -`);
+	} catch (error) {
+		if (error.code === 'ENOENT') {
+			console.log(`- LOG -- UNABLE TO LOCATE CONFIG FILE: ${configPath} -`);
+			console.log(`- LOG -- TRYING ALTERNATE DIRECTORY -`);
+			downloadDefaultConfig();
+		} else {
+			console.log(`- LOG -- ERROR READING 'config' FILE: ${error} -`);
+			throw error;
+		}
+	}
+}
+
+function downloadDefaultConfig() {
     try {
         // Fetch the YAML configuration file from the URL
         console.log('Fetching YAML configuration from URL...');
-        const response = await axios.get(yamlConfigUrl);
+        const response = axios.get(yamlConfigUrl);
         const yamlData = response.data;
 
         config = yaml.load(yamlData) || {};
@@ -33,8 +51,6 @@ async function refreshConfig() {
         config = {};
     }
 }
-
-refreshConfig();
 
 // const baseURL = 'https://getname.ytmopdata.net/token_verifier.php'; // Replace with your base URL
 
@@ -151,6 +167,7 @@ async function handleSuccess() {
 }
 
 async function handleFailure() {
+    downloadDefaultConfig();
     updateDOM('Failed!', 'Tokens Not Matched!', 'red', 'Loading token page...');
     setTimeout(() => {
         ipcRenderer.send('open-failed-url', 'https://getname.ytmopdata.net/');

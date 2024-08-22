@@ -1,4 +1,5 @@
 **Client syncing is REALLY quick as of now and it's fully updated as of now. Enjoy :3 (build it with the underConstruction branch)**
+<h3>Did not know my site was broken, I fixed it right now SORRY</h3>
 
 <h2>CHECK OUT THE 'underConstruction' BRANCH</h2>
 

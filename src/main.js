@@ -39,12 +39,17 @@ const {
 const fs = require("fs");
 const axios = require("axios");
 const path = require("path");
-const { spawn, ChildProcess } = require("child_process");
-const { setTimeout } = require("timers/promises");
+const {
+	spawn,
+	ChildProcess
+} = require("child_process");
+const {
+	setTimeout
+} = require("timers/promises");
 
-function delay(ms) {
-	return new Promise(resolve => setTimeout(resolve, ms));
-}
+// function delay(ms) {
+// 	return new Promise(resolve => setTimeout(resolve, ms));
+// }
 
 let configPath = path.resolve(os.homedir(), 'config.yaml');
 let config = {};
@@ -102,8 +107,50 @@ let blockMediaKeys = false;
 /* ---------------------------------DEFINE FUNCTIONS--------------------------------- */
 refreshConfig();
 var publicPageURL;
-var VersionNumber, synctimeGET, systemVolume = 0, ToggleButtons = true, ChannelToggle = false, TogglePlaylist = true, ToggleArtist = true, volume = 0, artist, songUrl = "https://music.youtube.com", titleTwo = "", detailsTwo = '', stateTwo = '', ConnectDis = " [ Disconnected ]", detailsThree = "Default", channel = "https://music.youtube.com", error_bool = false, PlaylistCounter = "", ConnectionTitle = "", RealCountdown, CountdownTime, secondTitle = true, thirdTitle = true, paused, imageicon = "https://google.com/h60/w60", repeat, playlist, channelname, Explicit, join1, join2, timeNow = 1, timeMax, notPlayingDisconnect = false, notPlayingDisconnectText = "", buttonOne = false, buttonTwo = false, buttonThree = false, buttonFour = false, warningText = "", TitleExit = "", quitText = "", connectCounter = 1, RealCountdownTitleBar = "", CountdownTimerVar = false;
-var ToggArtAlb = false, configWindow, urlFinal, title, playlistname, FINALTHREEVAR, joinn1, joinn2, largeImageText, plaaylist, largeImageKey, details, state, ThirdEntry, qualities = 0, result, timeMaxMinus, startTimestamp, endTimestamp, stopTime = 0, timeoutDisco = 0, globalCounter = 0, imgVer = 0, theFinalowoNess = "Nada There is nothing YET NONEEEEE", systemVolumeDEC, url1, imageiconNOW, imageReplace2, isDisOpen = false, disconLog = true, decreasingTimerUp, decreasingTimerDown, decreasingTimerOverlay, playingFrom, wsSend = false, wsReceive = false, getCurrentSongUrl;
+var VersionNumber, synctimeGET, systemVolume = 0,
+	ToggleButtons = true,
+	ChannelToggle = false,
+	TogglePlaylist = true,
+	ToggleArtist = true,
+	volume = 0,
+	artist, songUrl = "https://music.youtube.com",
+	titleTwo = "",
+	detailsTwo = '',
+	stateTwo = '',
+	ConnectDis = " [ Disconnected ]",
+	detailsThree = "Default",
+	channel = "https://music.youtube.com",
+	error_bool = false,
+	PlaylistCounter = "",
+	ConnectionTitle = "",
+	RealCountdown, CountdownTime, secondTitle = true,
+	thirdTitle = true,
+	paused, imageicon = "https://google.com/h60/w60",
+	repeat, playlist, channelname, Explicit, join1, join2, timeNow = 1,
+	timeMax, notPlayingDisconnect = false,
+	notPlayingDisconnectText = "",
+	buttonOne = false,
+	buttonTwo = false,
+	buttonThree = false,
+	buttonFour = false,
+	warningText = "",
+	TitleExit = "",
+	quitText = "",
+	connectCounter = 1,
+	RealCountdownTitleBar = "",
+	CountdownTimerVar = false;
+var ToggArtAlb = false,
+	configWindow, urlFinal, title, playlistname, FINALTHREEVAR, joinn1, joinn2, largeImageText, plaaylist, largeImageKey, details, state, ThirdEntry, qualities = 0,
+	result, timeMaxMinus, startTimestamp, endTimestamp, stopTime = 0,
+	timeoutDisco = 0,
+	globalCounter = 0,
+	imgVer = 0,
+	theFinalowoNess = "Nada There is nothing YET NONEEEEE",
+	systemVolumeDEC, url1, imageiconNOW, imageReplace2, isDisOpen = false,
+	disconLog = true,
+	decreasingTimerUp, decreasingTimerDown, decreasingTimerOverlay, playingFrom, wsSend = false,
+	wsReceive = false,
+	getCurrentSongUrl;
 var albumORsong = config.albumORsong;
 
 var countDownLoadAgain = 10;
@@ -145,11 +192,9 @@ process.stdout.write("\x1Bc");
 
 
 let win, settingsWin;
-const menuTemplate = [
-	{
+const menuTemplate = [{
 		label: "Utils",
-		submenu: [
-			{
+		submenu: [{
 				label: "RefreshImage",
 				click() {
 					reloadImageUrl();
@@ -177,8 +222,7 @@ const menuTemplate = [
 			},
 			{
 				label: "Sites",
-				submenu: [
-					{
+				submenu: [{
 						label: "Go to YTM-OP Site",
 						click() {
 							win.loadURL("https://getname.ytmopdata.net/");
@@ -208,8 +252,7 @@ const menuTemplate = [
 			},
 			{
 				label: "Connection",
-				submenu: [
-					{
+				submenu: [{
 						label: "-- Connect --",
 						click() {
 							if (connectCounter == 0) {
@@ -245,8 +288,7 @@ const menuTemplate = [
 			},
 			{
 				label: "On End Power Options",
-				submenu: [
-					{
+				submenu: [{
 						label: "Quit Application",
 						click() {
 							if (buttonOne == false) {
@@ -333,8 +375,7 @@ const menuTemplate = [
 			},
 			{
 				label: "Buttons",
-				submenu: [
-					{
+				submenu: [{
 						label: "ToggleButtonsOn",
 						click() {
 							ToggleButtons = true;
@@ -392,8 +433,7 @@ const menuTemplate = [
 			},
 			{
 				label: "Websocket Connections",
-				submenu: [
-					{
+				submenu: [{
 						label: "None",
 						click() {
 							ConnectionTitle = "";
@@ -415,8 +455,7 @@ const menuTemplate = [
 			},
 			{
 				label: "Extra",
-				submenu: [
-					{
+				submenu: [{
 						role: "Reload",
 					},
 					{
@@ -585,8 +624,7 @@ function focusElectronApp() {
 }
 
 
-const SimpleTemplate = [
-	{
+const SimpleTemplate = [{
 		label: "Close Config Window",
 		click() {
 			configWindow.close();
@@ -654,7 +692,7 @@ function createSettingsWindow() {
 	});
 	settingsWin.setMinimumSize(300, 300);
 	settingsWin.setResizable(true);
-	Menu.setApplicationMenu(menu);
+	Menu.setApplicationMenu(Menu);
 	settingsWin.setMenuBarVisibility(true);
 	console.log(`- LOG -- EXECUTED 'createSettingsWindow' -`);
 }
@@ -686,38 +724,6 @@ function createPREWindow() {
 		win.loadURL("https://getname.ytmopdata.net/")
 	});
 	console.log(`- LOG -- EXECUTED 'createPREWindow' -`);
-
-	globalShortcut.register('MediaPreviousTrack', (event) => {
-		if (!blockMediaKeys) {
-			win.webContents.executeJavaScript('document.querySelector(\'#left-controls > div > tp-yt-paper-icon-button.previous-button.style-scope.ytmusic-player-bar\').click()');
-		} else {
-			win.webContents.executeJavaScript('document.querySelector(\'#left-controls > div > tp-yt-paper-icon-button:nth-child(2)\').click()');
-		}
-	});
-
-	globalShortcut.register('MediaPlayPause', (event) => {
-		if (!blockMediaKeys) {
-			win.webContents.executeJavaScript('document.querySelector(\'#play-pause-button\').click()');
-		} else {
-			win.webContents.executeJavaScript('document.querySelector(\'#play-pause-button\').click()');
-		}
-	});
-
-	globalShortcut.register('MediaNextTrack', (event) => {
-		if (!blockMediaKeys) {
-			win.webContents.executeJavaScript('document.querySelector(\'#left-controls > div > tp-yt-paper-icon-button.next-button.style-scope.ytmusic-player-bar\').click()');
-		} else {
-			win.webContents.executeJavaScript('document.querySelector(\'#left-controls > div > tp-yt-paper-icon-button:nth-child(5)\').click()');
-		}
-	});
-
-	globalShortcut.register('Alt+VolumeUp', (event) => {
-		console.log(`- LOG -- VOLUME INCREASED (with Alt) -`);
-	});
-
-	globalShortcut.register('Alt+VolumeDown', (event) => {
-		console.log(`- LOG -- VOLUME DECREASED (with Alt) -`);
-	});
 
 	let runningDecreaseUp = 0;
 	let volumeDecVar = 0;
@@ -803,15 +809,16 @@ function createPREWindow() {
 
 var ifVolOverlay = false;
 let runningDecreaseOverlay = 0;
+let volWin;
+
 function callVolumeWindow() {
 	if (ifVolOverlay == false) {
 		ifVolOverlay = true;
 		console.log(`- LOG -- EXECUTED 'callVolumeWindow' -`);
 		volWin = new BrowserWindow({
-			width: 800,
+			width: 800, // was 200
 			height: 600,
 			length: 650,
-			width: 200,
 			frame: false,
 			alwaysOnTop: true,
 			transparent: true,
@@ -895,7 +902,9 @@ function createWindow() { // lower
 	win.on("close", async () => {
 		let tempInfo = await getContent().catch(console.log);
 		// eslint-disable-next-line no-unused-vars
-		var { time } = tempInfo || {
+		var {
+			time
+		} = tempInfo || {
 			time: 1,
 			paused: undefined,
 		};
@@ -921,9 +930,43 @@ function createWindow() { // lower
 
 	});
 
+	globalShortcut.register('MediaPreviousTrack', (event) => {
+		if (!blockMediaKeys) {
+			win.webContents.executeJavaScript('document.querySelector(\'#left-controls > div > tp-yt-paper-icon-button.previous-button.style-scope.ytmusic-player-bar\').click()');
+		} else {
+			win.webContents.executeJavaScript('document.querySelector(\'#left-controls > div > tp-yt-paper-icon-button:nth-child(2)\').click()');
+		}
+	});
+
+	globalShortcut.register('MediaPlayPause', (event) => {
+		if (!blockMediaKeys) {
+			win.webContents.executeJavaScript('document.querySelector(\'#play-pause-button\').click()');
+		} else {
+			win.webContents.executeJavaScript('document.querySelector(\'#play-pause-button\').click()');
+		}
+	});
+
+	globalShortcut.register('MediaNextTrack', (event) => {
+		if (!blockMediaKeys) {
+			win.webContents.executeJavaScript('document.querySelector(\'#left-controls > div > tp-yt-paper-icon-button.next-button.style-scope.ytmusic-player-bar\').click()');
+		} else {
+			win.webContents.executeJavaScript('document.querySelector(\'#left-controls > div > tp-yt-paper-icon-button:nth-child(5)\').click()');
+		}
+	});
+
+	globalShortcut.register('Alt+VolumeUp', (event) => {
+		console.log(`- LOG -- VOLUME INCREASED (with Alt) -`);
+	});
+
+	globalShortcut.register('Alt+VolumeDown', (event) => {
+		console.log(`- LOG -- VOLUME DECREASED (with Alt) -`);
+	});
+
+	let typedCharacters;
+
 	win.webContents.on('before-input-event', (event, input) => {
 		if (input.type === 'keyDown' && /^[a-zA-Z]$/.test(input.key)) {
-			let typedCharacters;
+			typedCharacters;
 			typedCharacters += input.key.toLowerCase();
 			if (typedCharacters.endsWith('coo')) {
 				console.log('"coo" typed!');
@@ -1032,7 +1075,10 @@ ipcMain.on("sendDataToMain", (event, dataToUpdate) => {
 			return sendError("Error parsing YAML:", parseErr);
 		}
 
-		const mergedData = { ...config, ...dataToUpdate };
+		const mergedData = {
+			...config,
+			...dataToUpdate
+		};
 
 		try {
 			const yamlData = yaml.dump(mergedData);
@@ -1040,11 +1086,17 @@ ipcMain.on("sendDataToMain", (event, dataToUpdate) => {
 				if (writeErr) return sendError("Error writing to file:", writeErr);
 
 				console.log("File updated with merged data successfully.");
-				event.sender.send("updateResponse", { success: true, message: "Data received and file updated" });
-				event.sender.send("configData", { success: true, config: mergedData });
-				if (event.sender.send("configData")) {
-					updateConfigFile(10, resyncSongUrl);
-				}
+				event.sender.send("updateResponse", {
+					success: true,
+					message: "Data received and file updated"
+				});
+				event.sender.send("configData", {
+					success: true,
+					config: mergedData
+				});
+				// if (event.sender.send("configData")) {
+				// 	updateConfigFile(10, resyncSongUrl);
+				// }
 			});
 		} catch (stringifyErr) {
 			sendError("Error converting to YAML:", stringifyErr);
@@ -1056,7 +1108,10 @@ ipcMain.on("sendDataToMain", (event, dataToUpdate) => {
 
 	function sendError(message, err) {
 		console.error(message, err);
-		event.sender.send("updateResponse", { success: false, error: err.message });
+		event.sender.send("updateResponse", {
+			success: false,
+			error: err.message
+		});
 	}
 });
 
@@ -1065,6 +1120,7 @@ function loadCurrentGivenURL() {
 }
 
 setTimeout(10000, reloadPage);
+
 function reloadPage() {
 	win.webContents.reloadIgnoringCache();
 }
@@ -1090,43 +1146,6 @@ function reloadPage() {
 ipcMain.on("settings-clicked", () => {
 	createSettingsWindow();
 });
-
-class getThoseElements {
-	async testFunc(elementGET, typeGET) {
-
-		try {
-			const javascriptCode = `
-				(function() {
-					return new Promise((resolve) => {
-						const startTime = Date.now();
-						const interval = setInterval(() => {
-							const element = document.querySelector(\`${elementGET}\`);
-							if (element) {
-								clearInterval(interval);
-								resolve(element.\`${typeGET}\` || 'None');
-							} else if (Date.now() - startTime > 3000) { // Timeout after 1 seconds
-								clearInterval(interval);
-								resolve('None'); // Resolve with 'None' instead of rejecting
-							}
-						}, 500); // Check every 500ms
-					});
-				})();
-				`;
-
-			titleResult = await executeJavaScript(javascriptCode);
-			if (titleResult.length > 50) {
-				title = titleResult.substring(0, 50);
-				titleTwo = titleResult.substring(0, 49);
-			} else {
-				title = titleResult;
-				titleTwo = titleResult;
-			}
-		} catch (error) {
-			console.log(`- LOG -- ERRORED 'titleResult' OBJECT -`);
-
-		}
-	}
-}
 
 async function getContent() {
 	// eslint-disable-next-line no-async-promise-executor
@@ -1643,7 +1662,6 @@ async function getContent() {
 			if (timeNow == timeMaxMinus) {
 				rpc.destroy();
 				ConnectDis = " [ Disconnected ]";
-				var exec = require("child_process").exec;
 
 				exec("shutdown /s /t 0", function (error, stdout, stderr) {
 					console.log("stdout: " + stdout);
@@ -1659,7 +1677,6 @@ async function getContent() {
 			if (timeNow == timeMaxMinus) {
 				rpc.destroy();
 				ConnectDis = " [ Disconnected ]";
-				var exec = require("child_process").exec;
 
 				exec("shutdown /r /t 0", function (error, stdout, stderr) {
 					console.log("stdout: " + stdout);
@@ -1675,7 +1692,6 @@ async function getContent() {
 			if (timeNow == timeMaxMinus) {
 				rpc.destroy();
 				ConnectDis = " [ Disconnected ]";
-				var exec = require("child_process").exec;
 
 				exec(
 					"rundll32.exe powrprof.dll, SetSuspendState Sleep",
@@ -1867,7 +1883,8 @@ function setUserPageImage() {
 	urlFinal = url1.replace("h60", "h1028");
 	// url1 = imageicon.replace("w60", "w4112");
 	// urlFinal = url1.replace("h60", "h4112");
-	let finalURL = encodeURIComponent(urlFinal);
+	// let finalURL = encodeURIComponent(urlFinal);
+	// // console.log(finalURL);
 
 	const baseURL = 'https://getname.ytmopdata.net/webpageEdit.php';
 
@@ -1876,12 +1893,14 @@ function setUserPageImage() {
 		givenwebsocketName: config.givenwebsocketName,
 		randomToken: config.randomToken,
 		sitename: config.websocketName,
-		thelink: finalURL,
+		thelink: urlFinal,
 		imgVer: imgVer,
 	};
 
 	try {
-		const response = axios.get(`${baseURL}/webpageEdit.php`, { params: theLinkData });
+		const response = axios.get(`${baseURL}/webpageEdit.php`, {
+			params: theLinkData
+		});
 		// console.log(`- LOG -- DATA GOT 'theLink' RESPONSE: ${response.data} -`);
 	} catch (error) {
 		console.log(`- LOG -- ERRORED UPDATING 'theLink' -`);
@@ -1902,7 +1921,9 @@ const clientId = config.discordID; /* 633709502784602133*/
 if (isDisOpen == true) {
 	DiscordRPC.register(clientId);
 }
-var rpc = new DiscordRPC.Client({ transport: 'ipc', });
+var rpc = new DiscordRPC.Client({
+	transport: 'ipc',
+});
 
 
 let songInfo;
@@ -1910,8 +1931,9 @@ let songInfo;
 function setLargeIconImage() {
 	// Use stopTime here
 	if (title) {
-		theFinalowoNess = "https://getname.ytmopdata.net/userRedirects/" + config.websocketName + "/" + config.websocketName + ".png" + '?timestamp=' + stopTime.toString().substring(0, 8) + globalCounter.toString() + '?songName=' + encodeURIComponent(artist[0].toString().substring(3, 0)) + '?v=' + imgVer;
-
+		if (timeNow <= 2) {
+			theFinalowoNess = "https://getname.ytmopdata.net/userRedirects/" + config.websocketName + "/" + config.websocketName + ".png" + '?timestamp=' + stopTime.toString().substring(0, 8) + globalCounter.toString() + '?songName=' + encodeURIComponent(artist[0].toString().substring(3, 0)) + '?v=' + imgVer;
+		}
 	}
 }
 
@@ -1922,7 +1944,10 @@ function setActivity() {
 		return;
 	}
 
-	const { title, time } = songInfo || {
+	const {
+		title,
+		time
+	} = songInfo || {
 		title: "",
 		artist: "???",
 		time: 1,
@@ -2013,8 +2038,7 @@ function setActivity() {
 		if (title.length > length) {
 			var NewTitle = title.substring(0, length);
 			// console.log("CUT");
-		}
-		else {
+		} else {
 			NewTitle = `${title}`;
 			// console.log("CUT-NOT");
 		}
@@ -2033,8 +2057,6 @@ function setActivity() {
 
 	if (Explicit == 'None') {
 		var NewerTitle = ` `;
-	} else if (Explicit == 1) {
-		NewerTitle = `🅴`;
 	} else if (Explicit == 1) {
 		NewerTitle = `🅴`;
 	}
@@ -2113,7 +2135,7 @@ function setActivity() {
 		}
 
 		if (timeNow >= 2) {
-			FINALTHREEVAR = theFinalowoNess;
+			FINALTHREEVAR = urlFinal;
 		}
 
 		if (title) { // LOWER3
@@ -2240,8 +2262,7 @@ function setActivity() {
 				startTimestamp,
 				largeImageKey,
 				largeImageText,
-				buttons: [
-					{
+				buttons: [{
 						label: joinn2.toString(),
 						url: plaaylist
 					},
@@ -2260,13 +2281,11 @@ function setActivity() {
 				startTimestamp,
 				largeImageKey,
 				largeImageText,
-				buttons: [
-					{
-						label: `${joinn1}`,
-						url: channel,
-						style: 5,
-					},
-				],
+				buttons: [{
+					label: `${joinn1}`,
+					url: channel,
+					style: 5,
+				}, ],
 				instance: true,
 			};
 		}
@@ -2277,13 +2296,11 @@ function setActivity() {
 				startTimestamp,
 				largeImageKey,
 				largeImageText,
-				buttons: [
-					{
-						label: `${joinn2}`,
-						url: plaaylist,
-						style: 5,
-					},
-				],
+				buttons: [{
+					label: `${joinn2}`,
+					url: plaaylist,
+					style: 5,
+				}, ],
 				instance: true,
 			};
 		}
@@ -2341,7 +2358,7 @@ function setActivity() {
 				console.log(`RUNNING SENDING CONNECTED INTERNAL: ${event}`);
 				messageSentCount += 1;
 				wsSend.send(theFinalowoNess);
-				
+
 
 				wsReceive.onmessage = function (event) {
 					messageReceivedCount += 1;
@@ -2432,7 +2449,7 @@ function setActivity() {
 				if (event.data === 'ping') {
 					console.log(`- LOG -- SENDING 'pong' MESSAGE BACK -`);
 					messageSentCount += 1;
-					ws.send('pong');
+					globalWS.send('pong');
 				}
 			};
 
@@ -2481,7 +2498,9 @@ let isDiscoRunningStr;
 
 async function isDiscordRunning() {
 	try {
-		const { stdout } = await exec('wmic process where name="Discord.exe" get ProcessId');
+		const {
+			stdout
+		} = await exec('wmic process where name="Discord.exe" get ProcessId');
 		const outputGotten = stdout.trim().replace(/\D/g, '');
 
 		if (outputGotten.length > 10 && !isDisOpen == true) {
@@ -2565,7 +2584,10 @@ async function updateSongInfo() {
 	songInfo = await getContent().catch(console.log);
 
 	// eslint-disable-next-line no-empty-function
-	const { title, time } = songInfo || {
+	const {
+		title,
+		time
+	} = songInfo || {
 		title: `title is${undefined}`,
 		artist: `artist is${undefined}`,
 		time: `time is${undefined}`,
@@ -2580,18 +2602,20 @@ async function updateSongInfo() {
 		height: 0,
 	});
 
-	win.setThumbarButtons([
-		{
-			tooltip: 'button1',
-			icon: nativeImage.createFromPath(path.join(__dirname, 'button1.png')),
-			click() { console.log('button1 clicked') }
-		}, {
-			tooltip: 'button2',
-			icon: nativeImage.createFromPath(path.join(__dirname, 'button2.png')),
-			flags: ['enabled', 'dismissonclick'],
-			click() { console.log('button2 clicked.') }
+	win.setThumbarButtons([{
+		tooltip: 'button1',
+		icon: nativeImage.createFromPath(path.join(__dirname, 'button1.png')),
+		click() {
+			console.log('button1 clicked')
 		}
-	])
+	}, {
+		tooltip: 'button2',
+		icon: nativeImage.createFromPath(path.join(__dirname, 'button2.png')),
+		flags: ['enabled', 'dismissonclick'],
+		click() {
+			console.log('button2 clicked.')
+		}
+	}])
 
 	// win.setThumbarButtons([
 	// 	// {
@@ -2642,7 +2666,10 @@ async function updateSongInfo() {
 		let color = isPaused ? '#FFFF00' : '#00FF00'; // Yellow when paused, green when playing
 
 		if (process.platform === "win32") {
-			win.setProgressBar(progress, { mode: mode, color: color });
+			win.setProgressBar(progress, {
+				mode: mode,
+				color: color
+			});
 		} else {
 			win.setProgressBar(progress);
 		}
@@ -2674,7 +2701,9 @@ function reconnect() {
 		transport: "ipc",
 	});
 	DiscordRPC.register(clientId);
-	rpc.login({ clientId }).catch(console.error)
+	rpc.login({
+			clientId
+		}).catch(console.error)
 		.then(() => {
 			clearInterval(reconnectTimer);
 			ConnectDis = " [ Connected ]";
@@ -2754,17 +2783,19 @@ rpc.on("ready", () => {
 });
 
 function afterSend() {
-	rpc.login({ clientId })
+	rpc.login({
+		clientId
+	})
 	// setTimeout(afterSend, 5000); // Rerun the function after 5 seconds
 	clearInterval(intervalIdDisco);
-	isDiscordRunningVar = true;
+	// isDiscordRunningVar = true;
 }
 
 function afterRecieve() {
 	if (!isDisOpen == true) {
 		rpc.destroy();
 		isDisOpen = false;
-		setInterval(isDisOpenInterval);
+		// setInterval(isDisOpenInterval);
 		console.log(`- LOG -- EXECUTED 'afterRecieve' func -`);
 	}
 	if (isDisOpen == true) {

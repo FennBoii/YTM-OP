@@ -154,7 +154,7 @@
 		"loudness": "^0.4.2",
 		"minimist": "^1.2.8",
 		"mkdirp": "^3.0.1",
-		"node": "^20.15.0",
+		"node": "^22.7.0",
 		"node-addon-api": "^8.0.0",
 		"node-alsa-ctl": "^0.0.2",
 		"node-fetch": "^3.3.2",
@@ -172,7 +172,7 @@
 		"ytm-op": "file:"
 	},
 	"devDependencies": {
-		"electron": "^31.0.2",
+		"electron": "^32.0.1",
 		"electron-builder": "^24.6.4"
 	},
 	"repository": {

@@ -1,2 +1,3 @@
 <h2>YTM-OP UNDER CONSTRUCTION</h2>
-THERE IS A MOST RECENT BUILD EXE WITHIN THIS REPO, EVERY UPDATE I WILL UPDATE THIS EXE. IT CAN BE LOCATED IN "RECENT EXE\YTM-OP-1.0.9.exe".
+There is a most recent build exe within this repo, every new commit I will update this exe. It can be located in "RECENT EXE\YTM-OP-Setup-1.0.9.exe".
+Or if your lazy, here [LinkToFolderWithinGithub](https://github.com/FennBoii/YTM-OP/tree/underConstruction/RECENT%20EXE)

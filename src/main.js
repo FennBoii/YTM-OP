@@ -2171,7 +2171,7 @@ function setActivity() {
 			nextSongCounter = 0;
 		}
 
-		if (timeNow < 2) {
+		if (timeNow < 1) {
 			// nextSongCounter = 0;
 			if (nextSongCounter == 0) {
 				if (wsSend) {

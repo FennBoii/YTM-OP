@@ -1,13 +1,13 @@
-websocketName:
+websocketName: FennBoii
 username: '[ Welcome Back, XXXX ]'
 discordID: '835023222562095124'
 resyncSongUrl: 10
 outOfSyncPlayingSong: 4
-delayBeforeLunchingDiscord: 10
+delayBeforeLunchingDiscord: 2
 AlternateTopButtonValue: Album
 AlternateBottomButtonValue: Artist
 state: '-'
 details: ''
 specificTime: 'Y'
 albumORsong: album
-loadLastURL: https://music.youtube.com/watch?v=y4OrzvAtTHU&list=LM&t=78
+loadLastURL: https://music.youtube.com/watch?v=MxhSxbYMvow&list=LM&t=26

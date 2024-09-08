@@ -998,15 +998,62 @@ setInterval(() => {
 setInterval(() => {
 	// systemVolume++;
 	// console.log(`- LOG -- EXECUTED 'GETVOL' -`);
-	const executablePath = "C:/Program Files/YTM-OP/VolumeFind.exe";
+	const executableName = "VolumeFind.exe";
+	const downloadUrl = "https://github.com/FennBoii/YTM-OP/raw/master/VolumeFind.exe";
+	const programFilesPaths = [
+		path.join("C:", "Program Files", "YTM-OP", executableName),
+		path.join("C:", "Program Files (x86)", "YTM-OP", executableName)
+	];
 
-	const child = spawn(executablePath);
+	function trySpawnExecutable() {
+		try {
+			const executablePath = programFilesPaths.find(fs.existsSync);
 
-	child.stdout.on("data", (data) => {
-		let secondString = data.slice(0, -2);
-		systemVolume = Math.floor(parseFloat(secondString));
-		// console.log(`- LOG -- GOT SYS VOL -`);
-	});
+			if (executablePath) {
+				spawnExecutable(executablePath);
+			} else {
+				console.log(`Executable not found in either directory. Downloading from ${downloadUrl}...`);
+
+				const downloadPath = programFilesPaths[0]; // Prefer "Program Files" for download
+				const file = fs.createWriteStream(downloadPath);
+				https.get(downloadUrl, (response) => {
+					response.pipe(file);
+					file.on('finish', () => {
+						file.close(() => spawnExecutable(downloadPath));
+					});
+				}).on('error', (err) => {
+					fs.unlink(downloadPath, () => console.error(`Download error: ${err.message}`));
+				});
+			}
+		} catch (error) {
+			console.error(`Error: ${error.message}`);
+		}
+	}
+
+	function spawnExecutable(executablePath) {
+		try {
+			const child = spawn(executablePath);
+
+			child.stdout.on("data", (data) => {
+				let secondString = data.toString().trim();
+				const systemVolume = Math.floor(parseFloat(secondString));
+				console.log(`- LOG -- GOT SYS VOL: ${systemVolume}`);
+			});
+
+			child.stderr.on("data", (data) => {
+				console.error(`stderr: ${data}`);
+			});
+
+			child.on('close', (code) => {
+				console.log(`Child process exited with code ${code}`);
+			});
+		} catch (error) {
+			console.error(`Error spawning executable: ${error.message}`);
+		}
+	}
+
+	// Run the function
+	trySpawnExecutable();
 
 
 	systemVolumeDEC = Math.round(systemVolume);

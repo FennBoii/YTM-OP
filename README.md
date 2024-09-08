@@ -1,6 +1,3 @@
-<b>How to run without the exe? / New to js?</b>
-1. Download the ZIP and unzip it to a location.
-2. open a cmd window and make sure you have npm and node installed.
-3. cd into the directory and type "npm i". (This might take a while)
-4. When everything is installed it should say: "found 0 vulnerabilities"; when you see this your ready. (if it says anything else, run 'npm audit fix')
-5. simply run "npm run start". You have launched the development version.
+<h2>YTM-OP UNDER CONSTRUCTION</h2>
+There is a most recent build exe within this repo, every new commit I will update this exe. It can be located in "RECENT EXE\YTM-OP-Setup-1.0.9.exe".
+Or if your lazy, here [LinkToFolderWithinGithub](https://github.com/FennBoii/YTM-OP/blob/underConstruction/RECENT%20EXE/YTM-OP-Setup-1.0.9.exe)

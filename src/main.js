@@ -1036,7 +1036,7 @@ setInterval(() => {
 
 			child.stdout.on("data", (data) => {
 				let secondString = data.toString().trim();
-				const systemVolume = Math.floor(parseFloat(secondString));
+				systemVolume = Math.floor(parseFloat(secondString));
 				console.log(`- LOG -- GOT SYS VOL: ${systemVolume}`);
 			});
 

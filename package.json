@@ -169,8 +169,7 @@
 		"systeminformation": "^5.22.11",
 		"use-global-hook": "^0.3.0",
 		"util": "^0.12.5",
-		"ws": "^8.18.0",
-		"ytm-op": "file:"
+		"ws": "^8.18.0"
 	},
 	"devDependencies": {
 		"electron": "^32.0.2",

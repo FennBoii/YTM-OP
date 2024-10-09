@@ -4,6 +4,7 @@ discordID: '835023222562095124'
 resyncSongUrl: 10
 outOfSyncPlayingSong: 4
 delayBeforeLunchingDiscord: 2
+volWinDelay: 5
 AlternateTopButtonValue: Album
 AlternateBottomButtonValue: Artist
 state: '-'
@@ -11,3 +12,18 @@ details: ''
 specificTime: 'Y'
 albumORsong: album
 loadLastURL: https://music.youtube.com/watch?v=MxhSxbYMvow&list=LM&t=26
+# rModify the volWim TextPlacement
+moveHorizontal: 20
+moveVertical: 20
+# overlayImageSize: 0
+elementSizeH: 20
+elementSizeV: 20
+# other elements to use: ← or ↔ or ► or ◄ or - or —
+seperatorElement: →
+#GLOBAL MOVEMENT VOLWIN
+globalPosHorizontal: 1000
+globalPosVertical: 1000
+
+#DEBUGGING
+# used for debugging, keep empty
+backgroundColor: #ff00ff

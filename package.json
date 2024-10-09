@@ -146,6 +146,7 @@
 		"easy-volume": "^1.1.0",
 		"electron-context-menu": "^4.0.4",
 		"electron-localshortcut": "^3.2.1",
+		"express": "^4.21.1",
 		"html-to-text": "^9.0.5",
 		"jpeg-js": "^0.4.4",
 		"js-yaml": "^4.1.0",
@@ -168,7 +169,8 @@
 		"systeminformation": "^5.22.11",
 		"use-global-hook": "^0.3.0",
 		"util": "^0.12.5",
-		"ws": "^8.18.0"
+		"ws": "^8.18.0",
+		"ytm-op": "file:"
 	},
 	"devDependencies": {
 		"electron": "^32.0.2",

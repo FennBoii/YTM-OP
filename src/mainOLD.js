@@ -186,9 +186,8 @@ function executeJavaScript(code) {
 	});
 }
 
-// console.log("-- " + config.username + " --");
-// console.clear();
-
+console.log("-- " + config.username + " --");
+process.stdout.write("\x1Bc");
 
 
 
@@ -748,7 +747,7 @@ function createPREWindow() {
 			if (decreasingTimerUp <= 0) {
 				runningDecreaseUp = 0;
 				clearInterval(timerIntervalUp);
-				setVolumeDecAddFin(volumeDecVar);
+				setVolumeDecAddFin();
 				volumeDecVar = 0;
 			}
 		}
@@ -776,51 +775,19 @@ function createPREWindow() {
 			if (decreasingTimerDown <= 0) {
 				runningDecreaseDown = 0;
 				clearInterval(timerIntervalDown);
-				setVolumeDecAddFin(volumeDecVar);
+				setVolumeDecAddFin();
 				volumeDecVar = 0;
 			}
 		}
 	});
 
-	const nircmdPath = path.join(__dirname, "nircmd.exe");
-
-	async function downloadNircmd() {
-		const url = "https://github.com/FennBoii/YTM-OP/raw/underConstruction/nircmd.exe"; // Use the raw URL for direct download
-		const writer = fs.createWriteStream(nircmdPath);
-
-		const response = await axios({
-			url,
-			method: 'GET',
-			responseType: 'stream',
-		});
-
-		response.data.pipe(writer);
-
-		return new Promise((resolve, reject) => {
-			writer.on('finish', resolve);
-			writer.on('error', reject);
-		});
-	}
-
-	async function ensureNircmdExists() {
-		if (!fs.existsSync(nircmdPath)) {
-			console.log(`- LOG -- nircmd.exe not found, downloading...`);
-			await downloadNircmd();
-			console.log(`- LOG -- Download complete.`);
-		} else {
-			console.log(`- LOG -- nircmd.exe already exists.`);
-		}
-	}
-
-	async function setVolumeDecAddFin(volumeDecVar) {
-		await ensureNircmdExists();
-		exec(`"${nircmdPath}" changesysvolume ${volumeDecVar} -`, (error) => {
-			if (error) {
-				console.error(`Error setting volume: ${error}`);
-			} else {
-				console.log(`- LOG -- SET THE VOLUME TO ${systemVolumeDEC} && ${volumeDecVar} -`);
-			}
-		});
+	function setVolumeDecAddFin() {
+		// if (systemVolumeDEC == 0) {
+		// 	console.log(`- LOG -- VOLUME WAS 0 -`);
+		// 	exec(`"C:/Program Files/YTM-OP/nircmd.exe" mutesysvolume 1`);
+		// }
+		exec(`"C:/Program Files/YTM-OP/nircmd.exe" changesysvolume ${volumeDecVar} -`);
+		console.log(`- LOG -- SET THE VOLUME TO ${systemVolumeDEC} && ${volumeDecVar} -`);
 	}
 
 
@@ -880,7 +847,7 @@ function callVolumeWindow() {
 
 
 	function decrementAndCheckUp() {
-		decreasingTimerOverlay -= 2;
+		decreasingTimerOverlay -= 1;
 
 		if (decreasingTimerOverlay <= 0) {
 			volWin.close();
@@ -897,47 +864,6 @@ ipcMain.on("PlsSendVolOwO", (event) => {
 	console.log(`- LOG -- SENT 'PlsSendVolOwO' FUNC -`);
 	event.sender.send("getSysVolNow", systemVolumeDEC);
 });
-
-ipcMain.on("getValue1", (event) => {
-	console.log(`- LOG -- SENT 'getHorizSize' FUNC -`);
-	event.sender.send("getHorizSize", config.moveHorizontal);
-});
-
-
-ipcMain.on("getValue2", (event) => {
-	console.log(`- LOG -- SENT 'getVertSize' FUNC -`);
-	event.sender.send("getVertSize", config.elementSizeV);
-});
-
-
-ipcMain.on("getValue3", (event) => {
-	console.log(`- LOG -- SENT 'elementSizeV' FUNC -`);
-	event.sender.send("elementSizeV", config.moveVertical);
-});
-
-ipcMain.on("getValue4", (event) => {
-	console.log(`- LOG -- SENT 'elementSizeH' FUNC -`);
-	event.sender.send("elementSizeH", config.elementSizeH);
-});
-
-ipcMain.on("getValu5", (event) => {
-	console.log(`- LOG -- SENT 'backgroundColor' FUNC -`);
-	event.sender.send("backgroundColor", config.backgroundColor);
-});
-
-ipcMain.on("getValue5", (event) => {
-	console.log(`- LOG -- SENT 'sepElement' FUNC -`);
-	event.sender.send("sepElement", config.seperatorElement);
-});
-
-
-ipcMain.on("SETVOLWINPLS", (event) => {
-	console.log(`- LOG -- SENT 'SET VOLWIN' FUNC -`);
-	event.sender.send("SETVOLWIN");
-});
-
-
-
 
 // ipcMain.on("getSysVolNow", (event) => {
 // 	event.sender.send("sysVolVar", systemVolumeDEC);
@@ -1118,9 +1044,9 @@ setInterval(() => {
 				console.error(`stderr: ${data}`);
 			});
 
-			// child.on('close', (code) => {
-			// 	console.log(`Child process exited with code ${code}`);
-			// });
+			child.on('close', (code) => {
+				console.log(`Child process exited with code ${code}`);
+			});
 		} catch (error) {
 			console.error(`Error spawning executable: ${error.message}`);
 		}
@@ -2011,7 +1937,7 @@ function setUserPageImage() {
 
 
 	const theLinkData = {
-		givenwebsocketName: config.websocketName,
+		givenwebsocketName: config.givenwebsocketName,
 		randomToken: config.randomToken,
 		sitename: config.websocketName,
 		thelink: urlFinal,
@@ -2058,18 +1984,6 @@ function setLargeIconImage() {
 	}
 }
 
-if (startTimestamp != null) {
-	startTimestamp = timeNow;
-} else {
-	startTimestamp == 999;
-}
-
-if (startTimestamp != null) {
-	endTimestamp = timeMax;
-} else {
-	endTimestamp == 999;
-}
-
 let OnlySendOnce = 0;
 // eslint-disable-next-line complexity
 function setActivity() {
@@ -2095,7 +2009,7 @@ function setActivity() {
 	};
 	const now = new Date();
 
-	VersionNumber = `Player Volume is at: ${volume}% System Volume is at: ${systemVolumeDEC}%\nWebsocket Name: ${config.websocketName}`;
+	VersionNumber = `Player Volume is at: ${volume}% System Volume is at: ${systemVolumeDEC}%`;
 
 	if (CountdownTimerVar == true) {
 		if (RealCountdown >= 0 && RealCountdown < 360) {
@@ -2211,7 +2125,7 @@ function setActivity() {
 		try {
 			win.webContents.send('updateConfigUpdates', "#FFF000");
 		} catch (error) {
-			console.log("ERROR WITH line: 962");
+			console.log("ERROR WITH line: 962")
 		}
 		if (songInfo != undefined) {
 			win.webContents.send('updateConfigUpdates', "#00FF00");
@@ -2220,7 +2134,6 @@ function setActivity() {
 			imgVer += 1;
 		}
 		// console.log("pausedTRUE");
-		// console.log(`- LOG -- SET TIME VALUES -`);
 		startTimestamp = now - time[0] * 1000;
 		endTimestamp = startTimestamp + time[1] * 1000;
 		details = `${ThirdEntry} ${NewTitle} ${warningText}`;
@@ -2356,24 +2269,23 @@ function setActivity() {
 		// console.log(albumORsongURL);
 	}
 
-	// if (error_bool == true) {
-	// 	largeImageKey = "https://i.postimg.cc/0QTQdXmp/whatt.png";
-	// 	largeImageText = "error";
-	// 	startTimestamp = 0;
-	// 	endTimestamp = 0;
-	// }
+	if (error_bool == true) {
+		largeImageKey = "https://i.postimg.cc/0QTQdXmp/whatt.png";
+		largeImageText = "error";
+		startTimestamp = 0;
+		endTimestamp = 0;
+	}
 
 	// var theElement = "document.querySelector('#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > span:nth-child(1)').textContent";
 
 	joinn1 = String(join1).slice(0, 31, "-");
 	joinn2 = String(join2).slice(0, 31, "-");
-	
+
 	if (ToggleButtons == false) {
 		var activity = {
 			details,
 			state,
 			startTimestamp,
-			endTimestamp,
 			largeImageKey,
 			largeImageText,
 			instance: true,
@@ -2385,7 +2297,6 @@ function setActivity() {
 				details,
 				state,
 				startTimestamp,
-				endTimestamp,
 				largeImageKey,
 				largeImageText,
 				instance: true,
@@ -2396,7 +2307,6 @@ function setActivity() {
 				details,
 				state,
 				startTimestamp,
-				endTimestamp,
 				largeImageKey,
 				largeImageText,
 				buttons: [{
@@ -2416,7 +2326,6 @@ function setActivity() {
 				details,
 				state,
 				startTimestamp,
-				endTimestamp,
 				largeImageKey,
 				largeImageText,
 				buttons: [{
@@ -2432,7 +2341,6 @@ function setActivity() {
 				details,
 				state,
 				startTimestamp,
-				endTimestamp,
 				largeImageKey,
 				largeImageText,
 				buttons: [{
@@ -2456,7 +2364,6 @@ function setActivity() {
 				details,
 				state,
 				startTimestamp,
-				endTimestamp,
 				largeImageKey,
 				largeImageText,
 				instance: true,
@@ -2653,11 +2560,8 @@ async function isDiscordRunning() {
 				let intervalIdquick1 = setInterval(() => {
 					clearInterval(intervalIdquick1);
 					console.log(`- LOG -- (${config.delayBeforeLunchingDiscord}s) COUNTDOWN FINISHED, CONNECTING TO DISCORD... `);
-					// setTimeout(5000); // Rerun the function after 5 seconds
-					afterSend();
-					console.log(`- LOG -- 'afterSend' INIT -`);
-				}, config.delayBeforeLunchingDiscord * 1000); // RUN FOR SPECIFIC DELAY
-				console.log(`- LOG -- RUN FOR 1 SEC -`);
+					setTimeout(afterSend(), 5000); // Rerun the function after 5 seconds
+				}, config.delayBeforeLunchingDiscord * 1000); // RUN FOR 20 SECONDS
 			}
 		} else if (outputGotten.length <= 10 && isDisOpen == true) { // Check if Discord is closed and was previously detected
 			isDiscoRunningStr = `Discord Is NOT Running`;
@@ -2926,17 +2830,12 @@ rpc.on("ready", () => {
 });
 
 function afterSend() {
-	try {
-		rpc.login({
-			clientId
-		})
-		// setTimeout(afterSend, 5000); // Rerun the function after 5 seconds
-		clearInterval(intervalIdDisco);
-		// isDiscordRunningVar = true;
-	} catch (error) {
-		console.log(`- EROR -- DID NOT CONNECT, RETRYING IN 3 SECONDS: ${volumeDecVar} -`);
-		setTimeout(3000, afterSend());
-	}
+	rpc.login({
+		clientId
+	})
+	// setTimeout(afterSend, 5000); // Rerun the function after 5 seconds
+	clearInterval(intervalIdDisco);
+	// isDiscordRunningVar = true;
 }
 
 function afterRecieve() {

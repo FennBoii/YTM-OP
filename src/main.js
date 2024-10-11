@@ -22,6 +22,7 @@ const localShortcut = require('electron-localshortcut');
 const exec = util.promisify(require('child_process').exec);
 const os = require('os');
 const yaml = require('js-yaml');
+const remoteDownload = require('./modules/remoteDownload.js');
 const WebSocket = require('ws');
 const {
 	app,
@@ -194,348 +195,348 @@ function executeJavaScript(code) {
 
 let win, settingsWin;
 const menuTemplate = [{
-		label: "Utils",
+	label: "Utils",
+	submenu: [{
+		label: "RefreshImage",
+		click() {
+			reloadImageUrl();
+			setLargeIconImage();
+			imgVer += 1;
+		},
+	},
+	{
+		label: "Not Playing Disconnect",
+		click() {
+			if (notPlayingDisconnect == true) {
+				notPlayingDisconnect = false;
+				notPlayingDisconnectText = "";
+			} else {
+				notPlayingDisconnect = true;
+				notPlayingDisconnectText = " [ PausDiscon Enabled ]";
+			}
+		},
+	},
+	{
+		label: "Send Current Url",
+		click() {
+			sendCurrentUrl = true;
+		},
+	},
+	{
+		label: "Sites",
 		submenu: [{
-				label: "RefreshImage",
-				click() {
-					reloadImageUrl();
-					setLargeIconImage();
-					imgVer += 1;
-				},
+			label: "Go to YTM-OP Site",
+			click() {
+				win.loadURL("https://getname.ytmopdata.net/");
+				error_bool = true;
+				rpc.destroy();
+				ConnectDis = " [ Disconnected ]";
+				connectCounter -= 1;
 			},
-			{
-				label: "Not Playing Disconnect",
-				click() {
-					if (notPlayingDisconnect == true) {
-						notPlayingDisconnect = false;
-						notPlayingDisconnectText = "";
-					} else {
-						notPlayingDisconnect = true;
-						notPlayingDisconnectText = " [ PausDiscon Enabled ]";
-					}
-				},
+		},
+		{
+			label: "Go to YTM Homepage",
+			click() {
+				win.loadURL("https://music.youtube.com/");
+				if (connectCounter == 0) {
+					notPlayingDisconnect = false;
+					reconnect();
+					ConnectDis = " [ Connected ]";
+					error_bool = false;
+					connectCounter += 1;
+				}
+				if (connectCounter == 1) {
+					console.log("NO!");
+				}
 			},
-			{
-				label: "Send Current Url",
-				click() {
-					sendCurrentUrl = true;
-				},
-			},
-			{
-				label: "Sites",
-				submenu: [{
-						label: "Go to YTM-OP Site",
-						click() {
-							win.loadURL("https://getname.ytmopdata.net/");
-							error_bool = true;
-							rpc.destroy();
-							ConnectDis = " [ Disconnected ]";
-							connectCounter -= 1;
-						},
-					},
-					{
-						label: "Go to YTM Homepage",
-						click() {
-							win.loadURL("https://music.youtube.com/");
-							if (connectCounter == 0) {
-								notPlayingDisconnect = false;
-								reconnect();
-								ConnectDis = " [ Connected ]";
-								error_bool = false;
-								connectCounter += 1;
-							}
-							if (connectCounter == 1) {
-								console.log("NO!");
-							}
-						},
-					},
-				],
-			},
-			{
-				label: "Connection",
-				submenu: [{
-						label: "-- Connect --",
-						click() {
-							if (connectCounter == 0) {
-								reconnect();
-								ConnectDis = " [ Connected ]";
-								error_bool = false;
-								connectCounter += 1;
-							}
-							if (connectCounter == 1) {
-								console.log("NO!");
-							}
-						},
-						accelerator: "Ctrl+Alt+1",
-					},
-					{
-						label: "-- Disconnect --",
-						click() {
-							error_bool = true;
-							rpc.destroy();
-							ConnectDis = " [ Disconnected ]";
-							connectCounter -= 1;
-						},
-						accelerator: "Ctrl+Alt+2",
-					},
-					{
-						label: "Reset RPC Connection",
-						click() {
-							setTimeout(DiscordDisconnect, 0);
-							setTimeout(DiscordConnect, 100);
-						},
-					},
-				],
-			},
-			{
-				label: "On End Power Options",
-				submenu: [{
-						label: "Quit Application",
-						click() {
-							if (buttonOne == false) {
-								buttonOne = true;
-								buttonTwo = false;
-								buttonThree = false;
-								buttonFour = false;
-								TitleExit = " [ -- 𝑪𝑳𝑶𝑺𝑰𝑵𝑮 𝑨𝑷𝑷𝑳𝑰𝑪𝑨𝑻𝑰𝑶𝑵 𝑶𝑵 𝑬𝑵𝑫 -- ]";
-								CountdownTimerVar = true;
-								quitText = "quitting app";
-							} else {
-								buttonOne = false;
-								TitleExit = "";
-								CountdownTimerVar = false;
-							}
-						},
-					},
-					{
-						label: "Sleep PC",
-						click() {
-							if (buttonTwo == false) {
-								buttonOne = false;
-								buttonTwo = true;
-								buttonThree = false;
-								buttonFour = false;
-								TitleExit = " [ -- 𝑺𝑳𝑬𝑬𝑷𝑰𝑵𝑮 𝑷𝑪 𝑶𝑵 𝑬𝑵𝑫 -- ]";
-								CountdownTimerVar = true;
-								quitText = "sleeping pc";
-							} else {
-								buttonTwo = false;
-								TitleExit = "";
-								CountdownTimerVar = false;
-							}
-						},
-					},
-					{
-						label: "Restart PC",
-						click() {
-							if (buttonThree == false) {
-								buttonOne = false;
-								buttonTwo = false;
-								buttonThree = true;
-								buttonFour = false;
-								TitleExit = " [ -- 𝑹𝑬𝑺𝑻𝑨𝑹𝑻𝑰𝑵𝑮 𝑷𝑪 𝑶𝑵 𝑬𝑵𝑫 -- ]";
-								CountdownTimerVar = true;
-								quitText = "restarting pc";
-							} else {
-								buttonThree = false;
-								TitleExit = "";
-								CountdownTimerVar = false;
-							}
-						},
-					},
-					{
-						label: "Shutdown PC",
-						click() {
-							if (buttonFour == false) {
-								buttonOne = false;
-								buttonTwo = false;
-								buttonThree = false;
-								buttonFour = true;
-								TitleExit = " [ -- 𝑺𝑯𝑼𝑻𝑻𝑰𝑵𝑮 𝑫𝑶𝑾𝑵 𝑷𝑪 𝑶𝑵 𝑬𝑵𝑫 -- ]";
-								CountdownTimerVar = true;
-								quitText = "shutting down pc";
-							} else {
-								buttonFour = false;
-								TitleExit = "";
-								CountdownTimerVar = false;
-							}
-						},
-					},
-					{
-						label: "Toggle Off",
-						click() {
-							buttonOne = false;
-							buttonTwo = false;
-							buttonThree = false;
-							buttonFour = false;
-							TitleExit = "";
-							CountdownTimerVar = false;
-						},
-					},
-				],
-			},
-			{
-				label: "Buttons",
-				submenu: [{
-						label: "ToggleButtonsOn",
-						click() {
-							ToggleButtons = true;
-							ToggleArtist = true;
-							TogglePlaylist = true;
-							secondTitle = true;
-							thirdTitle = true;
-						},
-					},
-					{
-						label: "ToggleButtonsOff",
-						click() {
-							ToggleButtons = false;
-							ToggleArtist = false;
-							TogglePlaylist = false;
-							secondTitle = false;
-							thirdTitle = false;
-						},
-					},
-					{
-						label: "TogglePlaylist",
-						click() {
-							if (TogglePlaylist == true) {
-								TogglePlaylist = false;
-								secondTitle = false;
-							} else {
-								TogglePlaylist = true;
-								secondTitle = true;
-							}
-						},
-					},
-					{
-						label: "ToggleArtist",
-						click() {
-							if (ToggleArtist == true) {
-								ToggleArtist = false;
-								thirdTitle = false;
-							} else {
-								ToggleArtist = true;
-								thirdTitle = true;
-							}
-						},
-					},
-					{
-						label: "ChangeButtonsAlb/Art",
-						click() {
-							if (ToggArtAlb == true) {
-								ToggArtAlb = false;
-							} else {
-								ToggArtAlb = true;
-							}
-						},
-					},
-				],
-			},
-			{
-				label: "Websocket Connections",
-				submenu: [{
-						label: "None",
-						click() {
-							ConnectionTitle = "";
-						},
-					},
-					{
-						label: "Sending",
-						click() {
-							ConnectionTitle = " [ -- Sending -- ]";
-						},
-					},
-					{
-						label: "Receiving",
-						click() {
-							ConnectionTitle = " [ -- Receiving -- ]";
-						},
-					},
-				],
-			},
-			{
-				label: "Extra",
-				submenu: [{
-						role: "Reload",
-					},
-					{
-						type: "separator",
-					},
-					{
-						role: "toggledevtools",
-					},
-					{
-						type: "separator",
-					},
-					{
-						role: "minimize",
-					},
-					{
-						type: "separator",
-					},
-					{
-						role: "undo",
-					},
-					{
-						role: "redo",
-					},
-					{
-						type: "separator",
-					},
-					{
-						role: "cut",
-					},
-					{
-						role: "copy",
-					},
-					{
-						role: "paste",
-					},
-					{
-						type: "separator",
-					},
-					{
-						role: "quit",
-						accelerator: "Ctrl+Q",
-					},
-					{
-						type: "separator",
-					},
-					{
-						label: "Copy PageURL",
-						click() {
-							clipboard.writeText(win.webContents.getURL());
-						},
-					},
-					{
-						label: "Copy SongImageURL",
-						click() {
-							clipboard.writeText(urlFinal);
-						},
-					},
-				],
-			},
+		},
 		],
 	},
 	{
-		label: "Go Back",
-		click() {
-			win.webContents.goBack();
+		label: "Connection",
+		submenu: [{
+			label: "-- Connect --",
+			click() {
+				if (connectCounter == 0) {
+					reconnect();
+					ConnectDis = " [ Connected ]";
+					error_bool = false;
+					connectCounter += 1;
+				}
+				if (connectCounter == 1) {
+					console.log("NO!");
+				}
+			},
+			accelerator: "Ctrl+Alt+1",
 		},
+		{
+			label: "-- Disconnect --",
+			click() {
+				error_bool = true;
+				rpc.destroy();
+				ConnectDis = " [ Disconnected ]";
+				connectCounter -= 1;
+			},
+			accelerator: "Ctrl+Alt+2",
+		},
+		{
+			label: "Reset RPC Connection",
+			click() {
+				setTimeout(DiscordDisconnect, 0);
+				setTimeout(DiscordConnect, 100);
+			},
+		},
+		],
 	},
 	{
-		label: "Go Forward",
-		click() {
-			win.webContents.goForward();
+		label: "On End Power Options",
+		submenu: [{
+			label: "Quit Application",
+			click() {
+				if (buttonOne == false) {
+					buttonOne = true;
+					buttonTwo = false;
+					buttonThree = false;
+					buttonFour = false;
+					TitleExit = " [ -- 𝑪𝑳𝑶𝑺𝑰𝑵𝑮 𝑨𝑷𝑷𝑳𝑰𝑪𝑨𝑻𝑰𝑶𝑵 𝑶𝑵 𝑬𝑵𝑫 -- ]";
+					CountdownTimerVar = true;
+					quitText = "quitting app";
+				} else {
+					buttonOne = false;
+					TitleExit = "";
+					CountdownTimerVar = false;
+				}
+			},
 		},
+		{
+			label: "Sleep PC",
+			click() {
+				if (buttonTwo == false) {
+					buttonOne = false;
+					buttonTwo = true;
+					buttonThree = false;
+					buttonFour = false;
+					TitleExit = " [ -- 𝑺𝑳𝑬𝑬𝑷𝑰𝑵𝑮 𝑷𝑪 𝑶𝑵 𝑬𝑵𝑫 -- ]";
+					CountdownTimerVar = true;
+					quitText = "sleeping pc";
+				} else {
+					buttonTwo = false;
+					TitleExit = "";
+					CountdownTimerVar = false;
+				}
+			},
+		},
+		{
+			label: "Restart PC",
+			click() {
+				if (buttonThree == false) {
+					buttonOne = false;
+					buttonTwo = false;
+					buttonThree = true;
+					buttonFour = false;
+					TitleExit = " [ -- 𝑹𝑬𝑺𝑻𝑨𝑹𝑻𝑰𝑵𝑮 𝑷𝑪 𝑶𝑵 𝑬𝑵𝑫 -- ]";
+					CountdownTimerVar = true;
+					quitText = "restarting pc";
+				} else {
+					buttonThree = false;
+					TitleExit = "";
+					CountdownTimerVar = false;
+				}
+			},
+		},
+		{
+			label: "Shutdown PC",
+			click() {
+				if (buttonFour == false) {
+					buttonOne = false;
+					buttonTwo = false;
+					buttonThree = false;
+					buttonFour = true;
+					TitleExit = " [ -- 𝑺𝑯𝑼𝑻𝑻𝑰𝑵𝑮 𝑫𝑶𝑾𝑵 𝑷𝑪 𝑶𝑵 𝑬𝑵𝑫 -- ]";
+					CountdownTimerVar = true;
+					quitText = "shutting down pc";
+				} else {
+					buttonFour = false;
+					TitleExit = "";
+					CountdownTimerVar = false;
+				}
+			},
+		},
+		{
+			label: "Toggle Off",
+			click() {
+				buttonOne = false;
+				buttonTwo = false;
+				buttonThree = false;
+				buttonFour = false;
+				TitleExit = "";
+				CountdownTimerVar = false;
+			},
+		},
+		],
 	},
 	{
-		label: "EditConfigFile",
-		click() {
-			createConfigWindow();
+		label: "Buttons",
+		submenu: [{
+			label: "ToggleButtonsOn",
+			click() {
+				ToggleButtons = true;
+				ToggleArtist = true;
+				TogglePlaylist = true;
+				secondTitle = true;
+				thirdTitle = true;
+			},
 		},
+		{
+			label: "ToggleButtonsOff",
+			click() {
+				ToggleButtons = false;
+				ToggleArtist = false;
+				TogglePlaylist = false;
+				secondTitle = false;
+				thirdTitle = false;
+			},
+		},
+		{
+			label: "TogglePlaylist",
+			click() {
+				if (TogglePlaylist == true) {
+					TogglePlaylist = false;
+					secondTitle = false;
+				} else {
+					TogglePlaylist = true;
+					secondTitle = true;
+				}
+			},
+		},
+		{
+			label: "ToggleArtist",
+			click() {
+				if (ToggleArtist == true) {
+					ToggleArtist = false;
+					thirdTitle = false;
+				} else {
+					ToggleArtist = true;
+					thirdTitle = true;
+				}
+			},
+		},
+		{
+			label: "ChangeButtonsAlb/Art",
+			click() {
+				if (ToggArtAlb == true) {
+					ToggArtAlb = false;
+				} else {
+					ToggArtAlb = true;
+				}
+			},
+		},
+		],
 	},
+	{
+		label: "Websocket Connections",
+		submenu: [{
+			label: "None",
+			click() {
+				ConnectionTitle = "";
+			},
+		},
+		{
+			label: "Sending",
+			click() {
+				ConnectionTitle = " [ -- Sending -- ]";
+			},
+		},
+		{
+			label: "Receiving",
+			click() {
+				ConnectionTitle = " [ -- Receiving -- ]";
+			},
+		},
+		],
+	},
+	{
+		label: "Extra",
+		submenu: [{
+			role: "Reload",
+		},
+		{
+			type: "separator",
+		},
+		{
+			role: "toggledevtools",
+		},
+		{
+			type: "separator",
+		},
+		{
+			role: "minimize",
+		},
+		{
+			type: "separator",
+		},
+		{
+			role: "undo",
+		},
+		{
+			role: "redo",
+		},
+		{
+			type: "separator",
+		},
+		{
+			role: "cut",
+		},
+		{
+			role: "copy",
+		},
+		{
+			role: "paste",
+		},
+		{
+			type: "separator",
+		},
+		{
+			role: "quit",
+			accelerator: "Ctrl+Q",
+		},
+		{
+			type: "separator",
+		},
+		{
+			label: "Copy PageURL",
+			click() {
+				clipboard.writeText(win.webContents.getURL());
+			},
+		},
+		{
+			label: "Copy SongImageURL",
+			click() {
+				clipboard.writeText(urlFinal);
+			},
+		},
+		],
+	},
+	],
+},
+{
+	label: "Go Back",
+	click() {
+		win.webContents.goBack();
+	},
+},
+{
+	label: "Go Forward",
+	click() {
+		win.webContents.goForward();
+	},
+},
+{
+	label: "EditConfigFile",
+	click() {
+		createConfigWindow();
+	},
+},
 ];
 
 ipcMain.on('quit-app', () => {
@@ -626,19 +627,19 @@ function focusElectronApp() {
 
 
 const SimpleTemplate = [{
-		label: "Close Config Window",
-		click() {
-			configWindow.close();
-			const menu = Menu.buildFromTemplate(menuTemplate);
-			Menu.setApplicationMenu(menu);
-		},
+	label: "Close Config Window",
+	click() {
+		configWindow.close();
+		const menu = Menu.buildFromTemplate(menuTemplate);
+		Menu.setApplicationMenu(menu);
 	},
-	{
-		label: "Go to your info site",
-		click() {
-			shell.openExternal('https://getname.ytmopdata.net/userRedirects/' + config.websocketName + "/" + config.websocketName + ".html");
-		},
+},
+{
+	label: "Go to your info site",
+	click() {
+		shell.openExternal('https://getname.ytmopdata.net/userRedirects/' + config.websocketName + "/" + config.websocketName + ".html");
 	},
+},
 ];
 
 function createConfigWindow() {
@@ -782,38 +783,9 @@ function createPREWindow() {
 		}
 	});
 
-	const nircmdPath = path.join(__dirname, "nircmd.exe");
-
-	async function downloadNircmd() {
-		const url = "https://github.com/FennBoii/YTM-OP/raw/underConstruction/nircmd.exe"; // Use the raw URL for direct download
-		const writer = fs.createWriteStream(nircmdPath);
-
-		const response = await axios({
-			url,
-			method: 'GET',
-			responseType: 'stream',
-		});
-
-		response.data.pipe(writer);
-
-		return new Promise((resolve, reject) => {
-			writer.on('finish', resolve);
-			writer.on('error', reject);
-		});
-	}
-
-	async function ensureNircmdExists() {
-		if (!fs.existsSync(nircmdPath)) {
-			console.log(`- LOG -- nircmd.exe not found, downloading...`);
-			await downloadNircmd();
-			console.log(`- LOG -- Download complete.`);
-		} else {
-			console.log(`- LOG -- nircmd.exe already exists.`);
-		}
-	}
 
 	async function setVolumeDecAddFin(volumeDecVar) {
-		await ensureNircmdExists();
+		await remoteDownload().ensureNircmdExists(); // FIX THIS ALL
 		exec(`"${nircmdPath}" changesysvolume ${volumeDecVar} -`, (error) => {
 			if (error) {
 				console.error(`Error setting volume: ${error}`);
@@ -1998,7 +1970,9 @@ async function reloadImageUrl() {
 	}
 }
 
-function setUserPageImage() {
+async function setUserPageImage() {
+	// console.log(`- LOG -- EXECUTED 'setUserPageImage' FUNC -`);
+
 	// console.log(`- LOG -- EXECUTED 'setUserPageImage' FUNC -`);
 	url1 = imageicon.replace("w60", "w1028");
 	urlFinal = url1.replace("h60", "h1028");
@@ -2007,27 +1981,26 @@ function setUserPageImage() {
 	// let finalURL = encodeURIComponent(urlFinal);
 	// // console.log(finalURL);
 
+	// Base URL for the request
 	const baseURL = 'https://getname.ytmopdata.net/webpageEdit.php';
+	// console.log(`- LOG -- DATA GOT 'theLink' RESPONSE: ${response.data} -`);
 
-
+	// Data to be sent in the request
 	const theLinkData = {
-		givenwebsocketName: config.websocketName,
-		randomToken: config.randomToken,
 		sitename: config.websocketName,
 		thelink: urlFinal,
-		imgVer: imgVer,
+		imgVer: imgVer, // Assuming imgVer is defined elsewhere in your code
 	};
 
 	try {
-		const response = axios.get(`${baseURL}/webpageEdit.php`, {
-			params: theLinkData
-		});
+		// Send the GET request with Axios and await the response
+		const response = await axios.get(baseURL, { params: theLinkData });
 		// console.log(`- LOG -- DATA GOT 'theLink' RESPONSE: ${response.data} -`);
 	} catch (error) {
-		console.log(`- LOG -- ERRORED UPDATING 'theLink' -`);
-	} //LOWER1
-	imgVer + 1;
+		console.log(`- LOG -- ERRORED UPDATING 'theLink' -`, error);
+	}
 }
+
 
 getContent()
 	.then(data => {
@@ -2053,6 +2026,7 @@ function setLargeIconImage() {
 	// Use stopTime here
 	if (title) {
 		if (timeNow <= 2) {
+			let encodedArtist = encodeURIComponent(artist[0].toString());
 			theFinalowoNess = "https://getname.ytmopdata.net/userRedirects/" + config.websocketName + "/" + config.websocketName + ".png" + '?timestamp=' + stopTime.toString().substring(0, 8) + globalCounter.toString() + '?songName=' + encodeURIComponent(artist[0].toString().substring(3, 0)) + '?v=' + imgVer;
 		}
 	}
@@ -2095,7 +2069,7 @@ function setActivity() {
 	};
 	const now = new Date();
 
-	VersionNumber = `Player Volume is at: ${volume}% System Volume is at: ${systemVolumeDEC}%\nWebsocket Name: ${config.websocketName}`;
+	VersionNumber = `Player Volume is at: ${volume}% System Volume is at: ${systemVolumeDEC}%\nWebsocket Name: ${config.websocketName}\n${ConnectionTitle}`;
 
 	if (CountdownTimerVar == true) {
 		if (RealCountdown >= 0 && RealCountdown < 360) {
@@ -2247,7 +2221,7 @@ function setActivity() {
 		}
 		state = `${NewerTitle} ${artistZRe || "Unknown"} ${star1} ${artist[1] || ""} ${star2} ${artist[2] || ""}`;
 
-		if (timeNow <= 3 && paused == "Pause") {
+		if (timeNow <= 2 && paused == "Pause") {
 			stopTime = Date.now();
 			imgVer += 1;
 			reloadImageUrl();
@@ -2268,8 +2242,10 @@ function setActivity() {
 			}
 		}
 
-		if (timeNow >= 2) {
-			FINALTHREEVAR = urlFinal;
+		if (timeNow >= 3) {
+			FINALTHREEVAR = theFinalowoNess;
+			reloadImageUrl();
+			setLargeIconImage();
 		}
 
 		if (title) { // LOWER3
@@ -2367,7 +2343,7 @@ function setActivity() {
 
 	joinn1 = String(join1).slice(0, 31, "-");
 	joinn2 = String(join2).slice(0, 31, "-");
-	
+
 	if (ToggleButtons == false) {
 		var activity = {
 			details,
@@ -2400,13 +2376,13 @@ function setActivity() {
 				largeImageKey,
 				largeImageText,
 				buttons: [{
-						label: joinn2.toString(),
-						url: plaaylist
-					},
-					{
-						label: joinn1.toString(),
-						url: channel
-					},
+					label: joinn2.toString(),
+					url: plaaylist
+				},
+				{
+					label: joinn1.toString(),
+					url: channel
+				},
 				],
 				instance: true,
 			};
@@ -2423,7 +2399,7 @@ function setActivity() {
 					label: `${joinn1}`,
 					url: channel,
 					style: 5,
-				}, ],
+				},],
 				instance: true,
 			};
 		}
@@ -2439,7 +2415,7 @@ function setActivity() {
 					label: `${joinn2}`,
 					url: plaaylist,
 					style: 5,
-				}, ],
+				},],
 				instance: true,
 			};
 		}
@@ -2845,8 +2821,8 @@ function reconnect() {
 	});
 	DiscordRPC.register(clientId);
 	rpc.login({
-			clientId
-		}).catch(console.error)
+		clientId
+	}).catch(console.error)
 		.then(() => {
 			clearInterval(reconnectTimer);
 			ConnectDis = " [ Connected ]";

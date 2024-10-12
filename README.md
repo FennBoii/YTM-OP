@@ -1,5 +1,6 @@
-**Client syncing is REALLY quick as of now and it's fully updated as of now. Enjoy :3 (build it with the underConstruction branch)**
-<h3>Did not know my site was broken, I fixed it right now SORRY</h3>
+**Client syncing is REALLY quick as of now, it uses websockets. Enjoy :3 (build it with the underConstruction branch)**
+
+[LinkToNewestEXE](https://github.com/FennBoii/YTM-OP/blob/underConstruction/RECENT%20EXE/YTM-OP-Setup-1.0.9.exe)
 
 <h2>CHECK OUT THE 'underConstruction' BRANCH</h2>
 

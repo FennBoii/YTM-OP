@@ -9,6 +9,7 @@
 		"lint": "eslint **/*.js",
 		"lint:fix": "eslint --fix **/*.js",
 		"start": "electron . --trace-warnings",
+		"startLOGS": "electron . --trace-warnings --enable-logging",
 		"start-ci": "start-ci.bat",
 		"pack": "electron-builder --dir",
 		"package-linux": "electron-packager . YTMOP --platform=linux --arch=x64",

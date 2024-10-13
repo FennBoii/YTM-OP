@@ -785,7 +785,7 @@ function createPREWindow() {
 
 
 	async function setVolumeDecAddFin(volumeDecVar) {
-		await remoteDownload().ensureNircmdExists(); // FIX THIS ALL
+		await remoteDownload.ensureNircmdExists(); // FIX THIS ALL
 		exec(`"${nircmdPath}" changesysvolume ${volumeDecVar} -`, (error) => {
 			if (error) {
 				console.error(`Error setting volume: ${error}`);
@@ -927,7 +927,23 @@ function createWindow() { // lower
 		icon: "resources/assets/images/Youtube-Music-logo.png",
 		webPreferences: {
 			preload: path.join(__dirname, "preload.js"),
+			contextIsolation: true,
+			enableRemoteModule: false,
+			sandbox: true,
 		},
+	});
+
+	// session.defaultSession.webRequest.onBeforeRequest((details, callback) => {
+	// 	if (details.url.includes('pagead')) {
+	// 		// Block the request
+	// 		callback({ cancel: true });
+	// 	} else {
+	// 		callback({});
+	// 	}
+	// });
+
+	win.webContents.on('did-finish-load', () => {
+		win.webContents.executeJavaScript('console.log("LOADED PAGE");');
 	});
 
 	if (albumORsong == "song") {
@@ -2173,7 +2189,7 @@ function setActivity() {
 			"https://i.postimg.cc/XNPqqY9f/owo.jpg"; /* https://i.postimg.cc/Y9zgFMdS/uwu.webp */
 		largeImageText = "VersionNumberDed"; // ----------------------------- //
 		startTimestamp = now;
-		endTimestamp = 0;
+		endTimestamp = 999;
 		detailsTwo = details;
 		stateTwo = state;
 		try {

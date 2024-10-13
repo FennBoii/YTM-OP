@@ -1,5 +1,7 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
+console.log("Preload script loaded successfully.");
+
 contextBridge.exposeInMainWorld('api', {
   send: (channel, data) => {
     ipcRenderer.send(channel, data);
@@ -27,7 +29,7 @@ function updatePlayerVolumeElement() {
       playerVolumeElement.id = 'playerVolume';
       targetElement.appendChild(playerVolumeElement);
     }
-    
+
     // Listen for playerVolume updates from the main process
     ipcRenderer.on('updatePlayerVolume', (event, playerVolume) => {
       playerVolumeElement.textContent = playerVolume;
@@ -40,7 +42,7 @@ function updatePlayerVolumeElement() {
       playerVolumeElement.style.position = 'relative';
       // playerVolumeElement.style.display = 'grid';
     });
-    
+
     // Stop checking for the element once it's created
     clearInterval(checkIntervalPlayer);
   }
@@ -55,7 +57,7 @@ function updateConfigUpdatesElement() {
       configUpdatesElement.id = 'configUpdates';
       targetElement.appendChild(configUpdatesElement);
     }
-    
+
     // Listen for playerVolume updates from the main process
     ipcRenderer.on('updateConfigUpdates', (event, statusColor) => {
       configUpdatesElement.style.backgroundColor = statusColor;
@@ -119,7 +121,7 @@ function changeYTLayoutElement() {
     parentElement.appendChild(imageIconREAL);
 
     let menuButtons = document.querySelector('#items > ytmusic-guide-entry-renderer:nth-child(1) > tp-yt-paper-item');
-    
+
     ipcRenderer.on('changeYTLayout', (event, imageUrl) => {
       imageIconREAL.src = imageUrl;
       imageIconREAL.style.position = "relative";
@@ -159,7 +161,7 @@ function changeYTLayoutElement() {
       //         90% { background-color: rgba(251, 7, 217, 1); }
       //         100% { background-color: rgba(255, 0, 0, 1); }
       //     }
-  
+
       //     .animate-background {
       //         animation: colorChange 6s infinite;
       //     }
@@ -193,10 +195,10 @@ function changeYTLayoutElement() {
     // }
 
     // if (sliderVolumeKnob) {
-      // sliderVolumeKnob.style.backgroundColor = "red";
-      // sliderVolumeKnob.style.left = "0.3vw"
-      // sliderVolumeKnob.style.position = "relative";
-      // sliderVolumeKnob.style.top = "-1vh";
+    // sliderVolumeKnob.style.backgroundColor = "red";
+    // sliderVolumeKnob.style.left = "0.3vw"
+    // sliderVolumeKnob.style.position = "relative";
+    // sliderVolumeKnob.style.top = "-1vh";
     // }
 
     if (progressContainer) {
@@ -275,111 +277,7 @@ const checkIntervalPlayer = setInterval(updatePlayerVolumeElement, 100); //100
 const checkIntervalSystem = setInterval(updateSystemVolumeElement, 100); //100
 const changeYTLayout = setInterval(changeYTLayoutElement, 100); //1000
 
-(function () {
-  'use strict';
 
-  const adBlockCSS = `
-      .video-ads, .ytp-ad-module, .ytp-ad-player-overlay, .ytp-ad-overlay-container,
-      .ytp-ad-image-overlay, .ytp-ad-skip-button, .ytp-ad-progress, .ytp-ad-marker-container,
-      .ytp-ad-markers, .ad-showing, .ad-interrupting, .ad-created, .ad-display,
-      .ytp-ad-preview-container, .ytp-ad-overlay-slot, .ytp-ad-overlay-background,
-      .ytp-ad-overlay-image, .ytp-ad-overlay-close-button, .ytp-ad-overlay-container,
-      .ytmusic-player-bar .ytp-ad-thumbnail, #ad-container, .ytm-ad-module, div[class*='ad-container'],
-      #player-ads, .html5-ads, .ytp-ad-feedback-dialog, .ad-container-loaded, [id^="ad_block"],
-      [class*="overlay-ad"], [class*="ad-block"], [class*="advertisement"], [class*="sponsored"],
-      [id*="ad_block_container"], .html5-video-player[id*="ad"]
-      {
-          display: none !important;
-          width: 0 !important;
-          height: 0 !important;
-          margin: 0 !important;
-          padding: 0 !important;
-      }
-      .ytp-ad-module, .ytp-ad-player-overlay, #secondary[ytd-watch-flexy][is-two-columns], 
-      .ytp-ad-text-overlay, .ytp-ad-message-container, .ytp-player-content.ad-interrupting {
-          visibility: hidden !important;
-          width: 0 !important;
-          height: 0 !important;
-          margin: 0 !important;
-          padding: 0 !important;
-      }
-  `;
-
-  const style = document.createElement('style');
-  style.innerHTML = adBlockCSS;
-  document.head.appendChild(style);
-  
-  const adObserverCallback = (mutations) => {
-      const adContainers = document.querySelectorAll(`
-          .video-ads, .ytp-ad-module .ad-showing, .ytp-ad-player-overlay, .ytp-ad-overlay-container, 
-          .ytmusic-player-bar .ytp-ad-thumbnail, #ad-container, .ytm-ad-module, [id^="ad_block"], 
-          [class*="overlay-ad"], [class*="ad-block"], [class*="advertisement"], [class*="sponsored"], 
-          [id*="ad_block_container"], .html5-video-player[id*="ad"]
-      `);
-      
-      adContainers.forEach(adContainer => {
-          if (adContainer) {
-              adContainer.remove();
-          }
-      });
-
-      const skipButtons = document.querySelectorAll('.ytp-ad-skip-button, .ytp-ad-overlay-close-button');
-      skipButtons.forEach(button => {
-          if (button && button.style.display !== 'none') {
-              button.click();
-          }
-      });
-  };
-
-  const observeAdElements = () => {
-      const observer = new MutationObserver(adObserverCallback);
-      observer.observe(document.body, { childList: true, subtree: true });
-  };
-
-  const hijackXHR = () => {
-      const originalXHR = window.XMLHttpRequest;
-      
-      function newXHR() {
-          const xhr = new originalXHR();
-          const originalOpen = xhr.open;
-          
-          xhr.open = function (method, url) {
-              if (url.includes('ad') || url.includes('doubleclick.net') || url.includes('googlesyndication') || url.includes('googleadservices')) {
-                  url = 'about:blank';
-              }
-              originalOpen.apply(xhr, arguments);
-          };
-
-          xhr.addEventListener('readystatechange', function () {
-              if (this.readyState === 4 && this.status === 200 && this.responseURL.includes('/get_video_info')) {
-                  let responseText = this.responseText;
-                  if (responseText.includes('ad')) {
-                  }
-              }
-          });
-
-          return xhr;
-      }
-
-      window.XMLHttpRequest = newXHR;
-  };
-
-  const hideAdDetectOverlay = () => {
-      const detectionOverlays = document.querySelectorAll('div[id*="adBlock"], div[class*="ad-block"]');
-      detectionOverlays.forEach(overlay => {
-          overlay.remove();
-      });
-  };
-
-  const observeDetectionOverlay = () => {
-      const observer = new MutationObserver(hideAdDetectOverlay);
-      observer.observe(document.body, { childList: true, subtree: true });
-  };
-
-  observeAdElements();
-  hijackXHR();
-  observeDetectionOverlay();
-})()
 
 // let myPolicy;
 // if (window.trustedTypes && window.trustedTypes.createPolicy) { // Feature detection
@@ -409,3 +307,156 @@ const changeYTLayout = setInterval(changeYTLayoutElement, 100); //1000
 //       console.error('Target element not found');
 //   }
 // });
+
+// Function to block ads
+function blockAds() {
+  console.log('Starting YouTube Ad Blocker');
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // CSS for ad blocking
+    const adBlockCSS = `
+      /* Your existing CSS for ad blocking */
+      .video, .video-ads, .ytp-ad-module, .ytp-ad-player-overlay, .ytp-ad-overlay-container,
+      .ytp-ad-image-overlay, .ytp-ad-skip-button, .ytp-ad-progress, .ytp-ad-marker-container,
+      .ytp-ad-markers, .ad-showing, .ad-interrupting, .ad-created, .ad-display,
+      .ytp-ad-preview-container, .ytp-ad-overlay-slot, .ytp-ad-overlay-background,
+      .ytp-ad-overlay-image, .ytp-ad-overlay-close-button, .ytp-ad-overlay-container,
+      .ytmusic-player-bar .ytp-ad-thumbnail, #ad-container, .ytm-ad-module, div[class*='ad-container'],
+      #player-ads, .html5-ads, .ytp-ad-feedback-dialog, .ad-container-loaded, [id^="ad_block"],
+      [class*="overlay-ad"], [class*="ad-block"], [class*="advertisement"], [class*="sponsored"],
+      [id*="ad_block_container"], .html5-video-player[id*="ad"] {
+          display: none !important;
+          width: 0 !important;
+          height: 0 !important;
+          margin: 0 !important;
+          padding: 0 !important;
+      }
+      .ytp-ad-module, .ytp-ad-player-overlay, #secondary[ytd-watch-flexy][is-two-columns], 
+      .ytp-ad-text-overlay, .ytp-ad-message-container, .ytp-player-content.ad-interrupting {
+          visibility: hidden !important;
+          width: 0 !important;
+          height: 0 !important;
+          margin: 0 !important;
+          padding: 0 !important;
+      }
+    `;
+
+    // Inject CSS to hide ads
+    const style = document.createElement('style');
+    style.textContent = adBlockCSS;
+    document.head.appendChild(style);
+    console.log('Ad block CSS injected');
+
+    // Function to remove ad elements
+    const removeAds = () => {
+      const adSelectors = `
+        .video-ads,
+        .yts-display-ad,
+        .ytp-ad-module,
+        .ytp-ad-overlay-container,
+        .ytp-ad-player-overlay,
+        .ytp-ad-module.ad-showing,
+        .ytp-ad-player-content,
+        .ytp-ad-skip-button,
+        .yts-sponsored-content,
+        .promoted-playlist-container,
+        .ytmusic-player-bar .ytp-ad-thumbnail,
+        #ad-container,
+        .ytm-ad-module,
+        .ytp-ce-element,
+        .ytp-ce-video,
+        .ytp-ce-text,
+        [id^="ad_block"],
+        [id*="ad"], .ad-container, .ad-label,
+        [class*="overlay-ad"],
+        [class*="ad-block"],
+        [class*="advertisement"],
+        [class*="sponsored"],
+        [id*="ad_block_container"],
+        .html5-video-player[id*="ad"],
+        .ytp-paid-content-overlay,
+        .ytp-ad-persistent-progress-bar-container,
+        span.badge-style-type-ad-stark,
+        #movie_player > div.ytp-doubletap-ui-legacy
+      `.split(',').map(selector => selector.trim());
+
+      adSelectors.forEach(selector => {
+        const ads = document.querySelectorAll(selector);
+        ads.forEach(ad => {
+          ad.remove();
+          console.log(`Removed ad with selector: ${selector}`);
+        });
+      });
+
+      const skipButtons = document.querySelectorAll('.ytp-ad-skip-button, .ytp-ad-overlay-close-button');
+      skipButtons.forEach(button => {
+        if (button && button.style.display !== 'none') {
+          button.click();
+          console.log('Clicked skip button');
+        }
+      });
+    };
+
+    // Set up MutationObserver to monitor ad elements
+    const observeAdElements = () => {
+      const observer = new MutationObserver(removeAds);
+      observer.observe(document.body, { childList: true, subtree: true });
+      console.log('MutationObserver set up to monitor ad changes');
+    };
+
+    // Hijack XMLHttpRequest to block ad-related requests
+    const hijackXHR = () => {
+      const originalXHR = window.XMLHttpRequest;
+
+      function newXHR() {
+        const xhr = new originalXHR();
+        const originalOpen = xhr.open;
+
+        xhr.open = function (method, url) {
+          if (url.includes('pagead2.googlesyndication.com') || 
+              url.includes('youtube.com/api/stats/ads') || url.includes('i.ytimg.com/') || url.includes('youtube.com/pagead/adview')) {
+            console.log(`Blocked XHR request to: ${url}`);
+            url = 'about:blank'; // Block the request
+          }
+          return originalOpen.apply(xhr, arguments);
+        };
+
+        return xhr;
+      }
+
+      window.XMLHttpRequest = newXHR;
+      console.log('XMLHttpRequest hijacked to block ad requests');
+    };
+
+    // Hide ad detection overlays
+    const hideAdDetectOverlay = () => {
+      const detectionOverlays = document.querySelectorAll('div[id*="adBlock"], div[class*="ad-block"]');
+      detectionOverlays.forEach(overlay => {
+        overlay.remove();
+        console.log('Removed ad detection overlay');
+      });
+    };
+
+    // Observe detection overlay
+    const observeDetectionOverlay = () => {
+      const observer = new MutationObserver(hideAdDetectOverlay);
+      observer.observe(document.body, { childList: true, subtree: true });
+      console.log('MutationObserver set up to monitor ad detection overlays');
+    };
+
+    // Initialize functions
+    observeAdElements();
+    hijackXHR();
+    observeDetectionOverlay();
+  });
+}
+
+// Ensure we are in the right context to call the function
+contextBridge.exposeInMainWorld('blockAds', blockAds);
+blockAds();
+
+
+
+
+
+// win.webContents.executeJavaScript(`console.log("LOADED ADBLOCKER SCRIPT")`);

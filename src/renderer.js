@@ -1,6 +1,7 @@
 // Request the current config data on page load
 window.api.send('load-config');
 
+console.log("Renderer script loaded successfully.");
 var errorCatch = 0;
 
     const yaml = window.yaml;
@@ -54,3 +55,32 @@ document.getElementById('saveConfig').addEventListener('click', function () {
         this.style.backgroundColor = 'white';
     }, 3800); // After 1 second, start the slide-in animation
 });
+
+function blockAdsUsingJavaScript() {
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            mutation.addedNodes.forEach((node) => {
+                if (node.nodeType === 1 && node.tagName === 'IFRAME') {
+                    // Block iframes with ad URLs
+                    if (node.src.includes('doubleclick.net') || node.src.includes('googlesyndication.com')) {
+                        console.log(`Blocked iframe ad: ${node.src}`);
+                        node.remove(); // Remove the iframe node from the DOM
+                    }
+                }
+
+                // Block ad containers
+                if (node.nodeType === 1 && node.classList.contains('ad-container')) {
+                    console.log('Blocked ad container');
+                    node.remove(); // Remove the ad container from the DOM
+                }
+            });
+        });
+    });
+
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+    });
+}
+
+blockAdsUsingJavaScript();

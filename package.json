@@ -1,7 +1,7 @@
 {
 	"name": "ytm-op",
 	"version": "1.0.9",
-	"description": "This is a Youtube Music Client with a Discord Rich Presense",
+	"description": "This is a Youtube Music Client with a Discord Rich Presence",
 	"main": "src/main.js",
 	"scripts": {
 		"test": "electron .",
@@ -66,6 +66,8 @@
 		"files": [
 			"**/*",
 			"!dist/*",
+			"!RECENT EXE/*",
+			"!node_modules/*",
 			"!dist_old/*"
 		],
 		"extraResources": [
@@ -144,10 +146,9 @@
 		"clipboardy": "^4.0.0",
 		"discord-rpc": "^4.0.1",
 		"dotenv": "^16.4.1",
-		"easy-volume": "^1.1.0",
 		"electron-context-menu": "^4.0.4",
-		"electron-localshortcut": "^3.2.1",
 		"express": "^4.21.1",
+		"fs-extra": "^11.2.0",
 		"html-to-text": "^9.0.5",
 		"jpeg-js": "^0.4.4",
 		"js-yaml": "^4.1.0",
@@ -156,8 +157,8 @@
 		"loudness": "^0.4.2",
 		"minimist": "^1.2.8",
 		"mkdirp": "^3.0.1",
-		"node": "^22.8.0",
-		"node-addon-api": "^8.0.0",
+		"node": "^18.20.5",
+		"node-addon-api": "^8.2.2",
 		"node-alsa-ctl": "^0.0.2",
 		"node-fetch": "^3.3.2",
 		"node-gyp": "^10.0.0",
@@ -171,11 +172,13 @@
 		"use-global-hook": "^0.3.0",
 		"util": "^0.12.5",
 		"ws": "^8.18.0",
+		"xml2js": "^0.6.2",
 		"ytm-op": "file:"
 	},
 	"devDependencies": {
-		"electron": "^32.0.2",
-		"electron-builder": "^25.0.5"
+		"electron": "nightly",
+		"electron-builder": "^25.1.8",
+		"electron-nightly": "^35.0.0-nightly.20241119"
 	},
 	"repository": {
 		"type": "git",

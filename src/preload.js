@@ -1,6 +1,7 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
 console.log("Preload script loaded successfully.");
+var countDown = 0;
 
 contextBridge.exposeInMainWorld('api', {
   send: (channel, data) => {
@@ -111,64 +112,97 @@ function changeYTLayoutElement() {
   const imageIcon = document.querySelector('#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.thumbnail-image-wrapper.style-scope.ytmusic-player-bar > img');
   const parentElement = document.querySelector('#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.thumbnail-image-wrapper.style-scope.ytmusic-player-bar');
   // document.body.style = "--paper-slider-knob-color: #f00";
-
   if (parentElement) {
 
     imageIcon.style.display = "none";
 
-    let imageIconREAL = document.createElement('img');
-    imageIconREAL.id = 'daddysMilk';
-    parentElement.appendChild(imageIconREAL);
+    // let imageIconREAL = document.createElement('img');
+    // imageIconREAL.id = 'daddysMilk';
+    // parentElement.appendChild(imageIconREAL);
 
     let menuButtons = document.querySelector('#items > ytmusic-guide-entry-renderer:nth-child(1) > tp-yt-paper-item');
 
     ipcRenderer.on('changeYTLayout', (event, imageUrl) => {
-      imageIconREAL.src = imageUrl;
-      imageIconREAL.style.position = "relative";
-      imageIconREAL.style.overflow = "hidden";
-      imageIconREAL.style.left = "20px";
-      imageIconREAL.style.position = "fixed";
-      imageIconREAL.style.top = "-200px";
-      imageIconREAL.style.width = "min-content";
-      imageIconREAL.style.height = "200px";
-      imageIconREAL.style.zIndex = "1";
+      // imageIconREAL.src = imageUrl;
+      // imageIconREAL.style.position = "relative";
+      // imageIconREAL.style.overflow = "hidden";
+      // imageIconREAL.style.left = "20px";
+      // imageIconREAL.style.position = "fixed";
+      // imageIconREAL.style.top = "-200px";
+      // imageIconREAL.style.width = "min-content";
+      // imageIconREAL.style.height = "200px";
+      // imageIconREAL.style.zIndex = "1";
 
       const styleElement = document.createElement('style');
-      styleElement.textContent = `
-        #daddysMilk {
-          transition: transform 0.3s ease, opacity 0.3s ease;
-        }
-    
-        #daddysMilk:hover {
-          opacity: 0.3;
-          pointer-events: none;
-        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+      // NON PREMIUM ADS STOOF
+      // const removeUpgradeButton = document.querySelector('#items > ytmusic-guide-entry-renderer:nth-child(4)');
+      // if (removeUpgradeButton) {
+      //   removeUpgradeButton.remove();
+      // }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      if (countDown == 0) {
+        styleElement.textContent = `
+          @keyframes colorChange {
+              0% { background-color: rgba(255, 0, 0, 1); }
+              10% { background-color: rgba(255, 154, 0, 1); }
+              20% { background-color: rgba(208, 222, 33, 1); }
+              30% { background-color: rgba(79, 220, 74, 1); }
+              40% { background-color: rgba(63, 218, 216, 1); }
+              50% { background-color: rgba(47, 201, 226, 1); }
+              60% { background-color: rgba(28, 127, 238, 1); }
+              70% { background-color: rgba(95, 21, 242, 1); }
+              80% { background-color: rgba(186, 12, 248, 1); }
+              90% { background-color: rgba(251, 7, 217, 1); }
+              100% { background-color: rgba(255, 0, 0, 1); }
+          }
+  
+          .animate-background {
+              animation: colorChange 6s infinite;
+          }
       `;
-      document.head.appendChild(styleElement);
+        document.head.appendChild(styleElement);
 
-      // const styleElement = document.createElement('style');
-      // styleElement.textContent = `
-      //     @keyframes colorChange {
-      //         0% { background-color: rgba(255, 0, 0, 1); }
-      //         10% { background-color: rgba(255, 154, 0, 1); }
-      //         20% { background-color: rgba(208, 222, 33, 1); }
-      //         30% { background-color: rgba(79, 220, 74, 1); }
-      //         40% { background-color: rgba(63, 218, 216, 1); }
-      //         50% { background-color: rgba(47, 201, 226, 1); }
-      //         60% { background-color: rgba(28, 127, 238, 1); }
-      //         70% { background-color: rgba(95, 21, 242, 1); }
-      //         80% { background-color: rgba(186, 12, 248, 1); }
-      //         90% { background-color: rgba(251, 7, 217, 1); }
-      //         100% { background-color: rgba(255, 0, 0, 1); }
-      //     }
-
-      //     .animate-background {
-      //         animation: colorChange 6s infinite;
-      //     }
-      // `;
-      // document.head.appendChild(styleElement);
-
-      // imageIconREAL.classList.add('animate-background');
+        // imageIconREAL.classList.add('animate-background');
+        countDown += 1;
+      }
     });
 
 
@@ -176,13 +210,12 @@ function changeYTLayoutElement() {
     const progressBar = document.querySelector("#progress-bar");
     const progressBarLower = document.querySelector("#progress-bar>div");
     const parentPlayerBar = document.querySelector("#layout>ytmusic-player-bar");
-    const sliderContainer = document.querySelector("#sliderContainer");
-    const sliderBar = document.querySelector("#sliderBar");
+    const sliderContainer = document.querySelectorAll("#sliderContainer")[2];
+    const progressContainer = document.querySelectorAll("#progressContainer")[2];
+    const sliderBar = document.querySelectorAll("#sliderBar")[2];
     // const sliderBarKnob = document.getElementsByClassName("slider-knob-inner.style-scope.tp-yt-paper-slider");
-    const sliderBarKnob = document.querySelectorAll('#sliderKnobContainer')[1];
+    const sliderBarKnob = document.querySelector('#sliderKnob > div');
     const hoverVolumeSlider = document.querySelector('#volume-slider');
-    const progressContainer = document.querySelectorAll('#progressContainer')[2];
-    const sliderKnobContainer = document.querySelectorAll('#sliderKnobContainer')[2];
     const sliderVolumeKnob = document.querySelector('#volume-slider');
     const parentCenterDiv = document.createElement("div");
 
@@ -202,16 +235,17 @@ function changeYTLayoutElement() {
     // }
 
     if (progressContainer) {
-      progressContainer.style.top = "-10px";
+      progressContainer.style.top = "-8px"
+      progressContainer.style.height = "15px"
     }
 
-    if (sliderKnobContainer) {
-      sliderKnobContainer.style.top = "-10px";
+    if (sliderBar) {
+      sliderBar.style.top = "-10px";
     }
 
     if (sliderBarKnob) {
       sliderBarKnob.style.backgroundColor = 'red';
-      sliderBarKnob.style.top = '13.5px';
+      // sliderVolumeKnob.style.width = "5px";
     }
 
     if (hoverVolumeSlider) {
@@ -231,7 +265,6 @@ function changeYTLayoutElement() {
 
     if (progressBar) {
       sliderContainer.style.height = "10px";
-      sliderBar.style.top = "-13px";
       progressBar.style = "--paper-slider-height: 4px";
       progressBar.style.display = "flex";
       progressBar.style.width = "min-content";
@@ -309,151 +342,151 @@ const changeYTLayout = setInterval(changeYTLayoutElement, 100); //1000
 // });
 
 // Function to block ads
-function blockAds() {
-  console.log('Starting YouTube Ad Blocker');
+// function blockAds() {
+//   console.log('Starting YouTube Ad Blocker');
 
-  document.addEventListener('DOMContentLoaded', () => {
-    // CSS for ad blocking
-    const adBlockCSS = `
-      /* Your existing CSS for ad blocking */
-      .video, .video-ads, .ytp-ad-module, .ytp-ad-player-overlay, .ytp-ad-overlay-container,
-      .ytp-ad-image-overlay, .ytp-ad-skip-button, .ytp-ad-progress, .ytp-ad-marker-container,
-      .ytp-ad-markers, .ad-showing, .ad-interrupting, .ad-created, .ad-display,
-      .ytp-ad-preview-container, .ytp-ad-overlay-slot, .ytp-ad-overlay-background,
-      .ytp-ad-overlay-image, .ytp-ad-overlay-close-button, .ytp-ad-overlay-container,
-      .ytmusic-player-bar .ytp-ad-thumbnail, #ad-container, .ytm-ad-module, div[class*='ad-container'],
-      #player-ads, .html5-ads, .ytp-ad-feedback-dialog, .ad-container-loaded, [id^="ad_block"],
-      [class*="overlay-ad"], [class*="ad-block"], [class*="advertisement"], [class*="sponsored"],
-      [id*="ad_block_container"], .html5-video-player[id*="ad"] {
-          display: none !important;
-          width: 0 !important;
-          height: 0 !important;
-          margin: 0 !important;
-          padding: 0 !important;
-      }
-      .ytp-ad-module, .ytp-ad-player-overlay, #secondary[ytd-watch-flexy][is-two-columns], 
-      .ytp-ad-text-overlay, .ytp-ad-message-container, .ytp-player-content.ad-interrupting {
-          visibility: hidden !important;
-          width: 0 !important;
-          height: 0 !important;
-          margin: 0 !important;
-          padding: 0 !important;
-      }
-    `;
+//   document.addEventListener('DOMContentLoaded', () => {
+//     // CSS for ad blocking
+//     const adBlockCSS = `
+//       /* Your existing CSS for ad blocking */
+//       .video, .video-ads, .ytp-ad-module, .ytp-ad-player-overlay, .ytp-ad-overlay-container,
+//       .ytp-ad-image-overlay, .ytp-ad-skip-button, .ytp-ad-progress, .ytp-ad-marker-container,
+//       .ytp-ad-markers, .ad-showing, .ad-interrupting, .ad-created, .ad-display,
+//       .ytp-ad-preview-container, .ytp-ad-overlay-slot, .ytp-ad-overlay-background,
+//       .ytp-ad-overlay-image, .ytp-ad-overlay-close-button, .ytp-ad-overlay-container,
+//       .ytmusic-player-bar .ytp-ad-thumbnail, #ad-container, .ytm-ad-module, div[class*='ad-container'],
+//       #player-ads, .html5-ads, .ytp-ad-feedback-dialog, .ad-container-loaded, [id^="ad_block"],
+//       [class*="overlay-ad"], [class*="ad-block"], [class*="advertisement"], [class*="sponsored"],
+//       [id*="ad_block_container"], .html5-video-player[id*="ad"] {
+//           display: none !important;
+//           width: 0 !important;
+//           height: 0 !important;
+//           margin: 0 !important;
+//           padding: 0 !important;
+//       }
+//       .ytp-ad-module, .ytp-ad-player-overlay, #secondary[ytd-watch-flexy][is-two-columns],
+//       .ytp-ad-text-overlay, .ytp-ad-message-container, .ytp-player-content.ad-interrupting {
+//           visibility: hidden !important;
+//           width: 0 !important;
+//           height: 0 !important;
+//           margin: 0 !important;
+//           padding: 0 !important;
+//       }
+//     `;
 
-    // Inject CSS to hide ads
-    const style = document.createElement('style');
-    style.textContent = adBlockCSS;
-    document.head.appendChild(style);
-    console.log('Ad block CSS injected');
+//     // Inject CSS to hide ads
+//     const style = document.createElement('style');
+//     style.textContent = adBlockCSS;
+//     document.head.appendChild(style);
+//     console.log('Ad block CSS injected');
 
-    // Function to remove ad elements
-    const removeAds = () => {
-      const adSelectors = `
-        .video-ads,
-        .yts-display-ad,
-        .ytp-ad-module,
-        .ytp-ad-overlay-container,
-        .ytp-ad-player-overlay,
-        .ytp-ad-module.ad-showing,
-        .ytp-ad-player-content,
-        .ytp-ad-skip-button,
-        .yts-sponsored-content,
-        .promoted-playlist-container,
-        .ytmusic-player-bar .ytp-ad-thumbnail,
-        #ad-container,
-        .ytm-ad-module,
-        .ytp-ce-element,
-        .ytp-ce-video,
-        .ytp-ce-text,
-        [id^="ad_block"],
-        [id*="ad"], .ad-container, .ad-label,
-        [class*="overlay-ad"],
-        [class*="ad-block"],
-        [class*="advertisement"],
-        [class*="sponsored"],
-        [id*="ad_block_container"],
-        .html5-video-player[id*="ad"],
-        .ytp-paid-content-overlay,
-        .ytp-ad-persistent-progress-bar-container,
-        span.badge-style-type-ad-stark,
-        #movie_player > div.ytp-doubletap-ui-legacy
-      `.split(',').map(selector => selector.trim());
+//     // Function to remove ad elements
+//     const removeAds = () => {
+//       const adSelectors = `
+//         .video-ads,
+//         .yts-display-ad,
+//         .ytp-ad-module,
+//         .ytp-ad-overlay-container,
+//         .ytp-ad-player-overlay,
+//         .ytp-ad-module.ad-showing,
+//         .ytp-ad-player-content,
+//         .ytp-ad-skip-button,
+//         .yts-sponsored-content,
+//         .promoted-playlist-container,
+//         .ytmusic-player-bar .ytp-ad-thumbnail,
+//         #ad-container,
+//         .ytm-ad-module,
+//         .ytp-ce-element,
+//         .ytp-ce-video,
+//         .ytp-ce-text,
+//         [id^="ad_block"],
+//         [id*="ad"], .ad-container, .ad-label,
+//         [class*="overlay-ad"],
+//         [class*="ad-block"],
+//         [class*="advertisement"],
+//         [class*="sponsored"],
+//         [id*="ad_block_container"],
+//         .html5-video-player[id*="ad"],
+//         .ytp-paid-content-overlay,
+//         .ytp-ad-persistent-progress-bar-container,
+//         span.badge-style-type-ad-stark,
+//         #movie_player > div.ytp-doubletap-ui-legacy
+//       `.split(',').map(selector => selector.trim());
 
-      adSelectors.forEach(selector => {
-        const ads = document.querySelectorAll(selector);
-        ads.forEach(ad => {
-          ad.remove();
-          console.log(`Removed ad with selector: ${selector}`);
-        });
-      });
+//       adSelectors.forEach(selector => {
+//         const ads = document.querySelectorAll(selector);
+//         ads.forEach(ad => {
+//           ad.remove();
+//           console.log(`Removed ad with selector: ${selector}`);
+//         });
+//       });
 
-      const skipButtons = document.querySelectorAll('.ytp-ad-skip-button, .ytp-ad-overlay-close-button');
-      skipButtons.forEach(button => {
-        if (button && button.style.display !== 'none') {
-          button.click();
-          console.log('Clicked skip button');
-        }
-      });
-    };
+//       const skipButtons = document.querySelectorAll('.ytp-ad-skip-button, .ytp-ad-overlay-close-button');
+//       skipButtons.forEach(button => {
+//         if (button && button.style.display !== 'none') {
+//           button.click();
+//           console.log('Clicked skip button');
+//         }
+//       });
+//     };
 
-    // Set up MutationObserver to monitor ad elements
-    const observeAdElements = () => {
-      const observer = new MutationObserver(removeAds);
-      observer.observe(document.body, { childList: true, subtree: true });
-      console.log('MutationObserver set up to monitor ad changes');
-    };
+//     // Set up MutationObserver to monitor ad elements
+//     const observeAdElements = () => {
+//       const observer = new MutationObserver(removeAds);
+//       observer.observe(document.body, { childList: true, subtree: true });
+//       console.log('MutationObserver set up to monitor ad changes');
+//     };
 
-    // Hijack XMLHttpRequest to block ad-related requests
-    const hijackXHR = () => {
-      const originalXHR = window.XMLHttpRequest;
+//     // Hijack XMLHttpRequest to block ad-related requests
+//     const hijackXHR = () => {
+//       const originalXHR = window.XMLHttpRequest;
 
-      function newXHR() {
-        const xhr = new originalXHR();
-        const originalOpen = xhr.open;
+//       function newXHR() {
+//         const xhr = new originalXHR();
+//         const originalOpen = xhr.open;
 
-        xhr.open = function (method, url) {
-          if (url.includes('pagead2.googlesyndication.com') || 
-              url.includes('youtube.com/api/stats/ads') || url.includes('i.ytimg.com/') || url.includes('youtube.com/pagead/adview')) {
-            console.log(`Blocked XHR request to: ${url}`);
-            url = 'about:blank'; // Block the request
-          }
-          return originalOpen.apply(xhr, arguments);
-        };
+//         xhr.open = function (method, url) {
+//           if (url.includes('pagead2.googlesyndication.com') ||
+//               url.includes('youtube.com/api/stats/ads') || url.includes('i.ytimg.com/') || url.includes('youtube.com/pagead/adview')) {
+//             console.log(`Blocked XHR request to: ${url}`);
+//             url = 'about:blank'; // Block the request
+//           }
+//           return originalOpen.apply(xhr, arguments);
+//         };
 
-        return xhr;
-      }
+//         return xhr;
+//       }
 
-      window.XMLHttpRequest = newXHR;
-      console.log('XMLHttpRequest hijacked to block ad requests');
-    };
+//       window.XMLHttpRequest = newXHR;
+//       console.log('XMLHttpRequest hijacked to block ad requests');
+//     };
 
-    // Hide ad detection overlays
-    const hideAdDetectOverlay = () => {
-      const detectionOverlays = document.querySelectorAll('div[id*="adBlock"], div[class*="ad-block"]');
-      detectionOverlays.forEach(overlay => {
-        overlay.remove();
-        console.log('Removed ad detection overlay');
-      });
-    };
+//     // Hide ad detection overlays
+//     const hideAdDetectOverlay = () => {
+//       const detectionOverlays = document.querySelectorAll('div[id*="adBlock"], div[class*="ad-block"]');
+//       detectionOverlays.forEach(overlay => {
+//         overlay.remove();
+//         console.log('Removed ad detection overlay');
+//       });
+//     };
 
-    // Observe detection overlay
-    const observeDetectionOverlay = () => {
-      const observer = new MutationObserver(hideAdDetectOverlay);
-      observer.observe(document.body, { childList: true, subtree: true });
-      console.log('MutationObserver set up to monitor ad detection overlays');
-    };
+//     // Observe detection overlay
+//     const observeDetectionOverlay = () => {
+//       const observer = new MutationObserver(hideAdDetectOverlay);
+//       observer.observe(document.body, { childList: true, subtree: true });
+//       console.log('MutationObserver set up to monitor ad detection overlays');
+//     };
 
-    // Initialize functions
-    observeAdElements();
-    hijackXHR();
-    observeDetectionOverlay();
-  });
-}
+//     // Initialize functions
+//     observeAdElements();
+//     hijackXHR();
+//     observeDetectionOverlay();
+//   });
+// }
 
-// Ensure we are in the right context to call the function
-contextBridge.exposeInMainWorld('blockAds', blockAds);
-blockAds();
+// // Ensure we are in the right context to call the function
+// contextBridge.exposeInMainWorld('blockAds', blockAds);
+// blockAds();
 
 
 

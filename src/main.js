@@ -1,29 +1,15 @@
-// process.on('unhandledRejection', (error) => {
-// 	console.error('Unhandled Promise Rejection:', error);
-// 	// Add additional error handling logic as needed
-// });
-
-// const readline = require('readline');
-
-// readline.emitKeypressEvents(process.stdin);
-// process.stdin.setRawMode = true;
-
-// var scrapeWebContent = require('app.scrapeWebContent');
 /* eslint-disable no-inline-comments */
 /* eslint-disable complexity */
 /* eslint-disable max-len */
 /* eslint-disable no-unused-vars */
 /* ---------------------------------DEFINE BEFORE RUN--------------------------------- */
 const DiscordRPC = require("discord-rpc");
-const crypto = require('crypto');
-const easyVolume = require("easy-volume");
 const util = require('util');
-const localShortcut = require('electron-localshortcut');
 const exec = util.promisify(require('child_process').exec);
 const os = require('os');
 const yaml = require('js-yaml');
-const remoteDownload = require('./modules/remoteDownload.js');
 const WebSocket = require('ws');
+const xml2js = require('xml2js');
 const {
 	app,
 	Menu,
@@ -149,8 +135,8 @@ var ToggArtAlb = false,
 	theFinalowoNess = "Nada There is nothing YET NONEEEEE",
 	systemVolumeDEC, url1, imageiconNOW, imageReplace2, isDisOpen = false,
 	disconLog = true,
-	decreasingTimerUp, decreasingTimerDown, decreasingTimerOverlay, playingFrom, wsSend = false,
-	wsReceive = false,
+	decreasingTimerUp, decreasingTimerDown, decreasingTimerOverlay, playingFrom, wsSend = null,
+	wsReceive = null,
 	getCurrentSongUrl;
 var albumORsong = config.albumORsong;
 
@@ -165,7 +151,7 @@ var globalWS;
 // [ ------------------------------------------------------- ]
 // [ ------------------------------------------------------- ]
 
-// var VersionNumber = `Volume is: ${volume}`; // 'Updated(v3.3.1 - 18:12 - 03-13-2022);';
+// var VersionNumber = `Volume is: ${volume}`; // 'Updated(v3.3.1 - 18:12 - 03-13-2022)';
 
 // [ ------------------------------------------------------- ]
 // [ ------------------------------------------------------- ]
@@ -187,10 +173,10 @@ function executeJavaScript(code) {
 	});
 }
 
-// console.log("-- " + config.username + " --");
-// console.clear();
+console.log("-- " + config.username + " --");
+process.stdout.write("\x1Bc");
 
-
+let showAllIPs;
 
 
 let win, settingsWin;
@@ -541,7 +527,6 @@ const menuTemplate = [{
 
 ipcMain.on('quit-app', () => {
 	app.quit();
-	app.relaunch();
 });
 
 ipcMain.on("load-config", (event) => {
@@ -727,88 +712,104 @@ function createPREWindow() {
 	});
 	console.log(`- LOG -- EXECUTED 'createPREWindow' -`);
 
-	let runningDecreaseUp = 0;
-	let volumeDecVar = 0;
-	globalShortcut.register('VolumeUp', () => {
-		callVolumeWindow();
-		decreasingTimerUp = 50;
-
-		if (runningDecreaseUp == 0) {
-			var timerIntervalUp = setInterval(decrementAndCheckUp, 1);
-			decreasingTimerUp = 50;
-			runningDecreaseUp = 1;
-		} else {
-			decreasingTimerUp = 50;
-		}
-		volumeDecVar += 1250;
-
-
-		function decrementAndCheckUp() {
-			decreasingTimerUp -= 1;
-
-			if (decreasingTimerUp <= 0) {
-				runningDecreaseUp = 0;
-				clearInterval(timerIntervalUp);
-				setVolumeDecAddFin(volumeDecVar);
-				volumeDecVar = 0;
-			}
-		}
-	});
-
-
-	let runningDecreaseDown = 0;
-	globalShortcut.register('VolumeDown', () => {
-		callVolumeWindow();
-		decreasingTimerDown = 50;
-
-		if (runningDecreaseDown == 0) {
-			var timerIntervalDown = setInterval(decrementAndCheckDown, 1);
-			decreasingTimerDown = 50;
-			runningDecreaseDown = 1;
-		} else {
-			decreasingTimerDown = 50;
-		}
-		volumeDecVar -= 1250;
-
-
-		function decrementAndCheckDown() {
-			decreasingTimerDown -= 1;
-
-			if (decreasingTimerDown <= 0) {
-				runningDecreaseDown = 0;
-				clearInterval(timerIntervalDown);
-				setVolumeDecAddFin(volumeDecVar);
-				volumeDecVar = 0;
-			}
-		}
-	});
-
-
-	async function setVolumeDecAddFin(volumeDecVar) {
-		await remoteDownload.ensureNircmdExists(); // FIX THIS ALL
-		exec(`"${nircmdPath}" changesysvolume ${volumeDecVar} -`, (error) => {
-			if (error) {
-				console.error(`Error setting volume: ${error}`);
-			} else {
-				console.log(`- LOG -- SET THE VOLUME TO ${systemVolumeDEC} && ${volumeDecVar} -`);
-			}
-		});
+	function setVolumeDecAddFin() {
+		// if (systemVolumeDEC == 0) {
+		// 	console.log(`- LOG -- VOLUME WAS 0 -`);
+		// 	exec(`"C:/Program Files/YTM-OP/nircmd.exe" mutesysvolume 1`);
+		// }
+		exec(`"C:/Program Files/YTM-OP/nircmd.exe" changesysvolume ${volumeDecVar} -`);
+		console.log(`- LOG -- SET THE VOLUME TO ${systemVolumeDEC} && ${volumeDecVar} -`);
 	}
+}
+
+let runningDecreaseUp = 0;
+let volumeDecVar = 0;
+let runningDecreaseDown = 0;
+let muteCount = 0;
+function registerMediaKeys() {
+	const mediaKeys = {
+		'MediaPreviousTrack': () => {
+			const selector = blockMediaKeys
+				? 'document.querySelector("#left-controls > div > tp-yt-paper-icon-button:nth-child(2)").click()'
+				: 'document.querySelector("#left-controls > div > tp-yt-paper-icon-button.previous-button.style-scope.ytmusic-player-bar").click()';
+			win.webContents.executeJavaScript(selector);
+		},
+		'MediaPlayPause': () => {
+			win.webContents.executeJavaScript('document.getElementById("play-pause-button").click()');
+		},
+		'MediaNextTrack': () => {
+			const selector = blockMediaKeys
+				? 'document.querySelector("#left-controls > div > tp-yt-paper-icon-button:nth-child(5)").click()'
+				: 'document.querySelector("#left-controls > div > tp-yt-paper-icon-button.next-button.style-scope.ytmusic-player-bar").click()';
+			win.webContents.executeJavaScript(selector);
+		},
+		'VolumeMute': () => {
+			callVolumeWindow();
+			if (muteCount == 0) {
+				console.log(`- LOG -- VOLUME MUTED -`);
+				exec(`"C:/Program Files/YTM-OP/nircmd.exe" mutesysvolume 1`);
+				muteCount = 1;
+			} else if (muteCount == 1) {
+				console.log(`- LOG -- VOLUME UNMUTED -`);
+				exec(`"C:/Program Files/YTM-OP/nircmd.exe" mutesysvolume 0`);
+				muteCount = 0;
+			}
+		},
+		'VolumeUp': () => {
+			callVolumeWindow();
+			decreasingTimerUp = 50;
+
+			if (runningDecreaseUp == 0) {
+				var timerIntervalUp = setInterval(decrementAndCheckUp, 1);
+				decreasingTimerUp = 50;
+				runningDecreaseUp = 1;
+			} else {
+				decreasingTimerUp = 50;
+			}
+			volumeDecVar += 1250;
 
 
-	let muteCount = 0;
-	globalShortcut.register('VolumeMute', (event) => {
-		callVolumeWindow();
-		if (muteCount == 0) {
-			console.log(`- LOG -- VOLUME MUTED -`);
-			exec(`"C:/Program Files/YTM-OP/nircmd.exe" mutesysvolume 1`);
-			muteCount = 1;
-		} else if (muteCount == 1) {
-			console.log(`- LOG -- VOLUME UNMUTED -`);
-			exec(`"C:/Program Files/YTM-OP/nircmd.exe" mutesysvolume 0`);
-			muteCount = 0;
+			function decrementAndCheckUp() {
+				decreasingTimerUp -= 1;
+
+				if (decreasingTimerUp <= 0) {
+					runningDecreaseUp = 0;
+					clearInterval(timerIntervalUp);
+					setVolumeDecAddFin();
+					volumeDecVar = 0;
+				}
+			}
+		},
+		'VolumeDown': () => {
+			callVolumeWindow();
+			decreasingTimerDown = 50;
+
+			if (runningDecreaseDown == 0) {
+				var timerIntervalDown = setInterval(decrementAndCheckDown, 1);
+				decreasingTimerDown = 50;
+				runningDecreaseDown = 1;
+			} else {
+				decreasingTimerDown = 50;
+			}
+			volumeDecVar -= 1250;
+
+
+			function decrementAndCheckDown() {
+				decreasingTimerDown -= 1;
+
+				if (decreasingTimerDown <= 0) {
+					runningDecreaseDown = 0;
+					clearInterval(timerIntervalDown);
+					setVolumeDecAddFin();
+					volumeDecVar = 0;
+				}
+			}
 		}
-	});
+	};
+
+	for (const [key, handler] of Object.entries(mediaKeys)) {
+		globalShortcut.register(key, handler);
+	}
 }
 
 
@@ -852,7 +853,7 @@ function callVolumeWindow() {
 
 
 	function decrementAndCheckUp() {
-		decreasingTimerOverlay -= 2;
+		decreasingTimerOverlay -= 1;
 
 		if (decreasingTimerOverlay <= 0) {
 			volWin.close();
@@ -870,47 +871,6 @@ ipcMain.on("PlsSendVolOwO", (event) => {
 	event.sender.send("getSysVolNow", systemVolumeDEC);
 });
 
-ipcMain.on("getValue1", (event) => {
-	console.log(`- LOG -- SENT 'getHorizSize' FUNC -`);
-	event.sender.send("getHorizSize", config.moveHorizontal);
-});
-
-
-ipcMain.on("getValue2", (event) => {
-	console.log(`- LOG -- SENT 'getVertSize' FUNC -`);
-	event.sender.send("getVertSize", config.elementSizeV);
-});
-
-
-ipcMain.on("getValue3", (event) => {
-	console.log(`- LOG -- SENT 'elementSizeV' FUNC -`);
-	event.sender.send("elementSizeV", config.moveVertical);
-});
-
-ipcMain.on("getValue4", (event) => {
-	console.log(`- LOG -- SENT 'elementSizeH' FUNC -`);
-	event.sender.send("elementSizeH", config.elementSizeH);
-});
-
-ipcMain.on("getValu5", (event) => {
-	console.log(`- LOG -- SENT 'backgroundColor' FUNC -`);
-	event.sender.send("backgroundColor", config.backgroundColor);
-});
-
-ipcMain.on("getValue5", (event) => {
-	console.log(`- LOG -- SENT 'sepElement' FUNC -`);
-	event.sender.send("sepElement", config.seperatorElement);
-});
-
-
-ipcMain.on("SETVOLWINPLS", (event) => {
-	console.log(`- LOG -- SENT 'SET VOLWIN' FUNC -`);
-	event.sender.send("SETVOLWIN");
-});
-
-
-
-
 // ipcMain.on("getSysVolNow", (event) => {
 // 	event.sender.send("sysVolVar", systemVolumeDEC);
 // });
@@ -927,24 +887,43 @@ function createWindow() { // lower
 		icon: "resources/assets/images/Youtube-Music-logo.png",
 		webPreferences: {
 			preload: path.join(__dirname, "preload.js"),
-			contextIsolation: true,
-			enableRemoteModule: false,
-			sandbox: true,
 		},
 	});
 
-	// session.defaultSession.webRequest.onBeforeRequest((details, callback) => {
-	// 	if (details.url.includes('pagead')) {
-	// 		// Block the request
-	// 		callback({ cancel: true });
-	// 	} else {
-	// 		callback({});
-	// 	}
-	// });
+	function loadAdBlockRules() {
+		fs.readFile('./adBLOCK/adblock.xml', (err, data) => {
+			if (err) throw err;
 
-	win.webContents.on('did-finish-load', () => {
-		win.webContents.executeJavaScript('console.log("LOADED PAGE");');
-	});
+			xml2js.parseString(data, (err, result) => {
+				if (err) throw err;
+
+				// Create a list of rules to block
+				const rules = result.rules.rule.map(rule => rule.url[0]);
+				const blockList = rules.map(url => `*://*.${url}/*`); // Block all subdomains
+
+				// Add more specific ad domains
+				blockList.push('*://*.googlesyndication.com/sodar/*');
+				blockList.push('*://*.doubleclick.net/ddm/trackimp/*');
+				blockList.push('*://*.googlesyndication.com/activeview_ext/*');
+				blockList.push('*://googlesyndication.com/ddm/activity_ext*');
+				blockList.push('*://youtube.com/api/stats/ads/*');
+				blockList.push('*://youtube.com/api/stats/ads*');
+
+				// Log loaded filter rules for debugging
+				console.log('Loaded filter rules:', blockList);
+
+				// Apply blocking for all network requests
+				win.webContents.session.webRequest.onBeforeRequest({ urls: blockList }, (details) => {
+					console.log(`Blocking request: ${details.url}`);
+					console.log(details);  // Log the details to check request attributes
+					showAllIPs += "\n||" + details.url;
+					return { cancel: true }; // Block the request
+				});
+			});
+		});
+	}
+
+	loadAdBlockRules();
 
 	if (albumORsong == "song") {
 		win.loadURL(config.loadLastURL);
@@ -973,7 +952,9 @@ function createWindow() { // lower
 		app.exit();
 	});
 	win.on("closed", () => {
-		rpc.destroy();
+		if (isDisOpen == true) {
+			rpc.destroy();
+		}
 		ConnectDis = " [ Disconnected ]";
 		win = null;
 	});
@@ -1047,6 +1028,25 @@ function createWindow() { // lower
 	console.log(`- LOG -- EXECUTED CREATEWINDOW -`);
 }
 
+ipcMain.handle('load-ad-block-rules', async () => {
+	return new Promise((resolve, reject) => {
+		fs.readFile('./adBLOCK/adblock.xml', (err, data) => {
+			if (err) return reject(err);
+
+			xml2js.parseString(data, (err, result) => {
+				if (err) return reject(err);
+
+				const rules = result.rules.rule.map(rule => rule.url[0]);
+				const blockList = rules.map(url => `*://${url}/*`);
+				resolve(blockList); // Send the blockList back to the renderer
+			});
+		});
+	});
+});
+
+
+// console.log(win.webContents.listenerCount(''));
+
 setInterval(() => {
 	try {
 		win.webContents.send('changeYTLayout', imageReplace2);
@@ -1099,16 +1099,16 @@ setInterval(() => {
 			child.stdout.on("data", (data) => {
 				let secondString = data.toString().trim();
 				systemVolume = Math.floor(parseFloat(secondString));
-				console.log(`- LOG -- GOT SYS VOL: ${systemVolume}`);
+				// console.log(`- LOG -- GOT SYS VOL: ${systemVolume}`);
 			});
 
 			child.stderr.on("data", (data) => {
 				console.error(`stderr: ${data}`);
 			});
 
-			// child.on('close', (code) => {
-			// 	console.log(`Child process exited with code ${code}`);
-			// });
+			child.on('close', (code) => {
+				// console.log(`Child process exited with code ${code}`);
+			});
 		} catch (error) {
 			console.error(`Error spawning executable: ${error.message}`);
 		}
@@ -1123,7 +1123,7 @@ setInterval(() => {
 	try {
 		win.webContents.send('updateSystemVolume', "system vol:\n" + systemVolumeDEC);
 	} catch (error) {
-		console.log("ERROR WITH line: 962")
+		console.log("ERROR WITH line: 1092")
 	}
 
 }, 1000);
@@ -1226,12 +1226,6 @@ ipcMain.on("sendDataToMain", (event, dataToUpdate) => {
 
 function loadCurrentGivenURL() {
 	win.loadURL(config.loadLastURL);
-}
-
-setTimeout(10000, reloadPage);
-
-function reloadPage() {
-	win.webContents.reloadIgnoringCache();
 }
 
 // async function createCustomElement() {
@@ -1919,6 +1913,7 @@ async function getContent() {
 			finalExtractNow,
 			countDownLoadAgain,
 			theTimeNowGot,
+			showAllIPs,
 			// finalURL,
 			// CountdownTimerVar, thelink, VersionNumber, synctimeGET, systemVolume, ToggleButtons, ChannelToggle, TogglePlaylist, ToggleArtist, volume, artist, songUrl, titleTwo, detailsTwo, stateTwo, ConnectDis, detailsThree, channel, error_bool, PlaylistCounter, ConnectionTitle, RealCountdown, CountdownTime, secondTitle, thirdTitle, paused, imageicon, repeat, playlist, channelname, Explicit, join1, join2, timeNow, timeMax, notPlayingDisconnect, notPlayingDisconnectText, buttonOne, buttonTwo, buttonThree, buttonFour, warningText, getNAME, TitleExit, quitText, connectCounter, RealCountdownTitleBar, CountdownTimerVar, sysVol, LICKCHeck, playlistToggleVisible,
 			// ToggArtAlb, configWindow, finalContactVar, GfinalContactVar, urlFinal, outputTest, title, ImageIcon, playlistname, FINALTHREEVAR, joinn1, joinn2, largeImageText, plaaylist, largeImageKey, details, endTimestamp, startTimestamp
@@ -1988,8 +1983,6 @@ async function reloadImageUrl() {
 
 async function setUserPageImage() {
 	// console.log(`- LOG -- EXECUTED 'setUserPageImage' FUNC -`);
-
-	// console.log(`- LOG -- EXECUTED 'setUserPageImage' FUNC -`);
 	url1 = imageicon.replace("w60", "w1028");
 	urlFinal = url1.replace("h60", "h1028");
 	// url1 = imageicon.replace("w60", "w4112");
@@ -1997,26 +1990,34 @@ async function setUserPageImage() {
 	// let finalURL = encodeURIComponent(urlFinal);
 	// // console.log(finalURL);
 
-	// Base URL for the request
 	const baseURL = 'https://getname.ytmopdata.net/webpageEdit.php';
-	// console.log(`- LOG -- DATA GOT 'theLink' RESPONSE: ${response.data} -`);
 
-	// Data to be sent in the request
+
 	const theLinkData = {
+		givenwebsocketName: config.givenwebsocketName,
+		randomToken: config.randomToken,
 		sitename: config.websocketName,
 		thelink: urlFinal,
-		imgVer: imgVer, // Assuming imgVer is defined elsewhere in your code
+		imgVer: imgVer,
 	};
 
 	try {
-		// Send the GET request with Axios and await the response
-		const response = await axios.get(baseURL, { params: theLinkData });
-		// console.log(`- LOG -- DATA GOT 'theLink' RESPONSE: ${response.data} -`);
-	} catch (error) {
-		console.log(`- LOG -- ERRORED UPDATING 'theLink' -`, error);
-	}
-}
+		const response = await axios.get(`${baseURL}/pageEdit.php`, {
+			params: theLinkData,
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			timeout: 5000
+		});
 
+		return response.data;
+
+	} catch (error) {
+		console.error('Error fetching data:', error.message);
+		throw error;
+	}
+	imgVer + 1;
+}
 
 getContent()
 	.then(data => {
@@ -2042,22 +2043,9 @@ function setLargeIconImage() {
 	// Use stopTime here
 	if (title) {
 		if (timeNow <= 2) {
-			let encodedArtist = encodeURIComponent(artist[0].toString());
 			theFinalowoNess = "https://getname.ytmopdata.net/userRedirects/" + config.websocketName + "/" + config.websocketName + ".png" + '?timestamp=' + stopTime.toString().substring(0, 8) + globalCounter.toString() + '?songName=' + encodeURIComponent(artist[0].toString().substring(3, 0)) + '?v=' + imgVer;
 		}
 	}
-}
-
-if (startTimestamp != null) {
-	startTimestamp = timeNow;
-} else {
-	startTimestamp == 999;
-}
-
-if (startTimestamp != null) {
-	endTimestamp = timeMax;
-} else {
-	endTimestamp == 999;
 }
 
 let OnlySendOnce = 0;
@@ -2123,7 +2111,6 @@ function setActivity() {
 	}
 
 	if (paused == 'Play' && qualities == 1 && CountdownTimerVar == false) {
-		console.log("SetACTbru")
 		ThirdEntry = "⏸ •";
 	} else if (paused == 'Play' && qualities == 2 && CountdownTimerVar == false) {
 		ThirdEntry = "⏸ •";
@@ -2189,19 +2176,19 @@ function setActivity() {
 			"https://i.postimg.cc/XNPqqY9f/owo.jpg"; /* https://i.postimg.cc/Y9zgFMdS/uwu.webp */
 		largeImageText = "VersionNumberDed"; // ----------------------------- //
 		startTimestamp = now;
-		endTimestamp = 999;
+		endTimestamp = 0;
 		detailsTwo = details;
 		stateTwo = state;
 		try {
 			win.webContents.send('updateConfigUpdates', "#007aFF");
 		} catch (error) {
-			console.log("ERROR WITH line: 962")
+			console.log("ERROR WITH line: 2144");
 		}
 	} else {
 		try {
 			win.webContents.send('updateConfigUpdates', "#FFF000");
 		} catch (error) {
-			console.log("ERROR WITH line: 962");
+			console.log("ERROR WITH line: 962")
 		}
 		if (songInfo != undefined) {
 			win.webContents.send('updateConfigUpdates', "#00FF00");
@@ -2210,7 +2197,6 @@ function setActivity() {
 			imgVer += 1;
 		}
 		// console.log("pausedTRUE");
-		// console.log(`- LOG -- SET TIME VALUES -`);
 		startTimestamp = now - time[0] * 1000;
 		endTimestamp = startTimestamp + time[1] * 1000;
 		details = `${ThirdEntry} ${NewTitle} ${warningText}`;
@@ -2237,7 +2223,7 @@ function setActivity() {
 		}
 		state = `${NewerTitle} ${artistZRe || "Unknown"} ${star1} ${artist[1] || ""} ${star2} ${artist[2] || ""}`;
 
-		if (timeNow <= 2 && paused == "Pause") {
+		if (timeNow <= 3 && paused == "Pause") {
 			stopTime = Date.now();
 			imgVer += 1;
 			reloadImageUrl();
@@ -2258,10 +2244,8 @@ function setActivity() {
 			}
 		}
 
-		if (timeNow >= 3) {
-			FINALTHREEVAR = theFinalowoNess;
-			reloadImageUrl();
-			setLargeIconImage();
+		if (timeNow >= 2) {
+			FINALTHREEVAR = urlFinal;
 		}
 
 		if (title) { // LOWER3
@@ -2348,12 +2332,12 @@ function setActivity() {
 		// console.log(albumORsongURL);
 	}
 
-	// if (error_bool == true) {
-	// 	largeImageKey = "https://i.postimg.cc/0QTQdXmp/whatt.png";
-	// 	largeImageText = "error";
-	// 	startTimestamp = 0;
-	// 	endTimestamp = 0;
-	// }
+	if (error_bool == true) {
+		largeImageKey = "https://i.postimg.cc/0QTQdXmp/whatt.png";
+		largeImageText = "error";
+		startTimestamp = 0;
+		endTimestamp = 0;
+	}
 
 	// var theElement = "document.querySelector('#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > span > span.subtitle.style-scope.ytmusic-player-bar > yt-formatted-string > span:nth-child(1)').textContent";
 
@@ -2365,7 +2349,6 @@ function setActivity() {
 			details,
 			state,
 			startTimestamp,
-			endTimestamp,
 			largeImageKey,
 			largeImageText,
 			instance: true,
@@ -2377,7 +2360,6 @@ function setActivity() {
 				details,
 				state,
 				startTimestamp,
-				endTimestamp,
 				largeImageKey,
 				largeImageText,
 				instance: true,
@@ -2388,7 +2370,6 @@ function setActivity() {
 				details,
 				state,
 				startTimestamp,
-				endTimestamp,
 				largeImageKey,
 				largeImageText,
 				buttons: [{
@@ -2408,7 +2389,6 @@ function setActivity() {
 				details,
 				state,
 				startTimestamp,
-				endTimestamp,
 				largeImageKey,
 				largeImageText,
 				buttons: [{
@@ -2424,7 +2404,6 @@ function setActivity() {
 				details,
 				state,
 				startTimestamp,
-				endTimestamp,
 				largeImageKey,
 				largeImageText,
 				buttons: [{
@@ -2448,7 +2427,6 @@ function setActivity() {
 				details,
 				state,
 				startTimestamp,
-				endTimestamp,
 				largeImageKey,
 				largeImageText,
 				instance: true,
@@ -2456,17 +2434,17 @@ function setActivity() {
 		}
 	}
 	if (endTimestamp) activity.endTimestamp = endTimestamp;
-	if (isDisOpen == true) rpc.setActivity(activity);
+	if (isDisOpen == true && title) {
+		rpc.setActivity(activity);
+	}
 
-
-	// // Declare WebSocket variables
+	// Declare WebSocket variables
 	// let wsSend = null;
 	// let wsReceive = null;
 
 	const RECONNECT_DELAY = 5000;
 	const MESSAGE_SEND_INTERVAL = 500;
 
-	// Function to initialize and manage WebSocket for sending messages
 	function setupSendWebSocket() {
 
 		if (timeNow > 2) {
@@ -2491,21 +2469,14 @@ function setActivity() {
 				messageSentCount += 1;
 				wsSend.send(theFinalowoNess);
 
-
-				wsReceive.onmessage = function (event) {
-					messageReceivedCount += 1;
-					// console.log(`- LOG - MESSAGE RECEIVED - ${event.data} -`);
-
-					if (sendCurrentUrl == true) {
-						globalWS.send(`CURRENTURL:${win.webContents.getURL()}`);
-						sendCurrentUrl = false;
-					}
-				};
-
 				setInterval(() => {
 					if (globalWS.readyState === WebSocket.OPEN) {
 						messageSentCount += 1;
 						wsSend.send(`SYNCMOMENT:${timeNow}`);
+						if (sendCurrentUrl == true) {
+							globalWS.send(`CURRENTURL:${win.webContents.getURL()}`);
+							sendCurrentUrl = false;
+						}
 					}
 				}, MESSAGE_SEND_INTERVAL);
 			};
@@ -2642,14 +2613,12 @@ async function isDiscordRunning() {
 
 			if (discoConnCount == 0) {
 				console.log(`- LOG -- LAUNCHING 'afterRecieve' ${config.delayBeforeLunchingDiscord * 1000}s -`);
+				afterRecieve();
 				let intervalIdquick1 = setInterval(() => {
 					clearInterval(intervalIdquick1);
 					console.log(`- LOG -- (${config.delayBeforeLunchingDiscord}s) COUNTDOWN FINISHED, CONNECTING TO DISCORD... `);
-					// setTimeout(5000); // Rerun the function after 5 seconds
-					afterSend();
-					console.log(`- LOG -- 'afterSend' INIT -`);
-				}, config.delayBeforeLunchingDiscord * 1000); // RUN FOR SPECIFIC DELAY
-				console.log(`- LOG -- RUN FOR 1 SEC -`);
+					setTimeout(afterSend(), 5000); // Rerun the function after 5 seconds
+				}, config.delayBeforeLunchingDiscord * 1000); // RUN FOR 20 SECONDS
 			}
 		} else if (outputGotten.length <= 10 && isDisOpen == true) { // Check if Discord is closed and was previously detected
 			isDiscoRunningStr = `Discord Is NOT Running`;
@@ -2657,7 +2626,7 @@ async function isDiscordRunning() {
 			isDisOpen = false;
 		}
 	} catch (error) {
-		console.error(`- LOG -- ERROR CHECKING DISCORD RUNNING -`);
+		console.error(`- LOG -- ERROR CHECKING DISCORD RUNNING: "${error}" -`);
 		isDisOpen = false;
 	}
 }
@@ -2910,7 +2879,7 @@ rpc.on("ready", () => {
 	// setInterval(syncTimeSync, 1e8);
 	//setInterval(fullSync, 1e3);
 	setInterval(updateSongInfo, 1e3);
-	setInterval(setPageName, 1e3);
+	// setInterval(setPageName, 1e3);
 	// setInterval(isDiscordRunning, 3e3);
 	setTimeout(setLargeIconImage, 10000);
 	setInterval(setUserPageImage, 2000);
@@ -2918,23 +2887,17 @@ rpc.on("ready", () => {
 });
 
 function afterSend() {
-	try {
-		rpc.login({
-			clientId
-		})
-		// setTimeout(afterSend, 5000); // Rerun the function after 5 seconds
-		clearInterval(intervalIdDisco);
-		// isDiscordRunningVar = true;
-	} catch (error) {
-		console.log(`- EROR -- DID NOT CONNECT, RETRYING IN 3 SECONDS: ${volumeDecVar} -`);
-		setTimeout(3000, afterSend());
-	}
+	rpc.login({
+		clientId
+	})
+	// setTimeout(afterSend, 5000); // Rerun the function after 5 seconds
+	clearInterval(intervalIdDisco);
+	// isDiscordRunningVar = true;
 }
 
 function afterRecieve() {
-	if (!isDisOpen == true) {
-		rpc.destroy();
-		isDisOpen = false;
+	if (isDisOpen == false) {
+		isDisOpen = true;
 		// setInterval(isDisOpenInterval);
 		console.log(`- LOG -- EXECUTED 'afterRecieve' func -`);
 	}
@@ -2945,6 +2908,7 @@ function afterRecieve() {
 		clearInterval(intervalIdDisco);
 		const clientId = config.discordID; /* 633709502784602133*/
 		DiscordRPC.register(clientId);
+		// rpc.setActivity(activity);
 		console.log(`- LOG -- STARTED DISCORDRPC CONNECTION -`);
 	}
 	console.log(`- LOG -- EXECUTED FUNCTION 'afterRecieve' -`);

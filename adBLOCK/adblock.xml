@@ -1,0 +1,26 @@
+<rules>
+    <rule>
+        <url>googleads.g.   ick.net</url>
+        <url>tpc.googlesyndication.com</url>
+        <url>ad.doubleclick.net</url>
+        <url>pagead2.googlesyndication.com</url>
+        <url>partner.googleadservices.com</url>
+        <url>www.googleadservices.com</url>
+        <url>youtube.googleapis.com</url>
+        <url>static.doubleclick.net</url>
+        <url>stats.g.doubleclick.net</url>
+        <url>google.com/ads/measurement</url>
+        <url>googleusercontent.com</url>
+        <url>fonts.gstatic.com</url>
+        <url>client.google.com</url>
+        <url>yt3.ggpht.com</url>
+        <url>lh3.googleusercontent.com</url>
+        <url>youtube.com/api/stats/ads</url>
+        <url>youtube.com/pagead/interaction</url>
+        <url>youtube.com/pagead/adview</url>
+        <url>youtube.com/pcs/activeview</url>
+        <url>tcp.googlesyndication.com</url>
+        <url>ade.googlesyndication.com</url>
+        <url>ade.googlesyndication.com/ddm/activity_ext</url>
+    </rule>
+</rules>
